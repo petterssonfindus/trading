@@ -1,0 +1,9 @@
+/.classpath
+/.settings/
+/bin/
+*.log
+*.class
+*.csv
+*.zip
+*.~*
+/target/
