@@ -57,7 +57,8 @@ public class Simulator {
 			// fär jede Aktie werden die benätigten Indikatoren berechnet 
 			aktie.rechneIndikatoren();
 		}
-		// fär jeden Zeitraum wird eine Simulation durchgefährt 
+		// für jeden Zeitraum wird eine Simulation durchgeführt 
+		// dabei werden alle Objekte neu angelegt: Kurse, Aktien, Depot 
 		for (Zeitraum zeitraum : zeitraeume) {
 			// bereite Depot vor
 			Depot depot = new Depot("Oskars", 10000f);

@@ -1,5 +1,6 @@
 package com.algotrading.depot;
 
+import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -54,7 +55,7 @@ public class Depot {
 	public static final float SCHWELLE_VERKAUF_RESTBESTAND = 100; 
 	private int signalzaehler = 0;
 	private int stoplossZaehler = 0; 
-	private static FileWriter fileWriterHandelstag; 
+	private BufferedWriter fileWriterHandelstag; 
 	
 	public Depot (String name, float geld) {
 		this.name = name; 
@@ -91,11 +92,15 @@ public class Depot {
 		for (Aktie aktie : aktien) {
 			aktie.setStartkurs(heute);
 		}
+		// der Ablauf der Simulation für alle Tage innerhalb des Zeitraums
 		while (Util.istInZeitraum(this.heute, beginn, ende)) {
 			tagZaehler ++;
 			if (tagZaehler > 10) {  // die ersten Tage werden ignoriert
+				// ein Handelstag läuft ab und wird als Tages-Kurs festgehalten 
 				Kurs kurs = simuliereHandelstag(signalStratgie, tagesStrategie);
+				// das Ergebnis des Handels wird als Tags-Kurs an eine Kursreihe gehängt. 
 				this.depotwert.addKurs(kurs);
+				// csv wird ergänzt, wenn dies gewünscht ist 
 				if (writeHandelstag) writeHandelstag(kurs);
 			}
 			this.nextDay();	// dabei wird this.heute weiter gestellt und die Aktienkurse weiter geschaltet
@@ -104,12 +109,14 @@ public class Depot {
 		if (this.heute.after(ende) && ! this.wertpapierbestand.keySet().isEmpty()) {
 			verkaufeGesamtbestand();
 		}
+		// die Ergebnisse im log protokolliert. 
 		log.debug("In Depotsimulation wurden Orders aus Signalen erzeugt: " + signalzaehler);
 		log.debug("In Depotsimulation wurden Orders aus SL erzeugt: " + stoplossZaehler);
 		log.debug("In Depotsimulation wurden Orders erzeugt: " + orders.size());
 		log.debug("In Depotsimulation wurden Trades erzeugt: " + trades.size());
+		// das Ergebnis der Strategie aufbereiten 
 		this.bewerteStrategie();
-		// Aufräumarbeiten: Signale werden gelöscht 
+		// Aufräumarbeiten: Signale werden gelöscht, File schließen.  
 		if (writeHandelstag) this.closeHandelstagFile();
 		for (Aktie aktie : aktien ) {
 			aktie.clearSignale();
@@ -117,7 +124,7 @@ public class Depot {
 	}
 	
 	/**
-	 * Simuliert einen Handelstag mit Kauf / Verkaufsentscheidungen fär alle Aktien 
+	 * Simuliert einen Handelstag mit Kauf / Verkaufsentscheidungen für alle Aktien 
 	 * und einer Depotbewertung 
 	 * @param kaufstrategie
 	 * @param slStrategie
@@ -144,7 +151,7 @@ public class Depot {
 				}
 			}
 		}
-		// Stop-Loss wird äberwacht, falls eines vorhanden ist
+		// Stop-Loss wird überwacht, falls eines vorhanden ist
 		if (tagesStrategie != null) {
 			order = tagesStrategie.entscheideTaeglich(this);
 			// wenn eine Order entstanden ist 
@@ -400,22 +407,17 @@ public class Depot {
 	}
 	/**
 	 * Schreibt an einem einzigen Tag die relevanten Informationen in die Handels-Tag-CSV
-	 * Das File wird zu Beginn erzeugt bleibt während der Simutation geäffnet
-	 * und wird am Ende der Simuation von der Simulation geschlossen. 
+	 * Das File wird zu Beginn erzeugt bleibt während der Simutation geöffnet
+	 * Beim Erzeugen des File wird der Header geschrieben. 
+	 * Das Schliessen übernimmt die Simulation  
 	 * @param depotKurs
 	 */
 	private void writeHandelstag(Kurs depotKurs) {
-		
-		if (fileWriterHandelstag == null) {
-			fileWriterHandelstag = getHandelstagFile();
-			try {
-				fileWriterHandelstag.write(toStringHandelstagHeader());
-			} catch (IOException e) {
-				e.printStackTrace();
-			}
-		}
+		// holt sich das File incl. Header 
+		BufferedWriter privateFileWriter = getHandelstagFile();
+		// schreibt weitere Einträge in das bestehende File 
 		try {
-			fileWriterHandelstag.write(toStringHandelstag(depotKurs));
+			privateFileWriter.append(toStringHandelstag(depotKurs));
 		} catch(Exception e) {
 			e.printStackTrace();
 		}
@@ -474,22 +476,33 @@ public class Depot {
 		return result.toString(); 
 		
 	}
-	
-	private FileWriter getHandelstagFile () {
-		FileWriter fileWriter = null;
-		String dateiname = null;
-		try {
-			dateiname = "Depothandel" + this.name + Long.toString(System.currentTimeMillis());
-			File file = new File(dateiname + ".csv");
-			boolean createFileResult = file.createNewFile();
-			if(!createFileResult) {
-				// Die Datei konnte nicht erstellt werden. Evtl. gibt es diese Datei schon?
-				log.error("Datei konnte nicht erstellt werden:" + dateiname);
-			}
-			fileWriter = new FileWriter(file);
-		} catch (Exception e) {log.error("File konnte nicht eräffnet werden: " + dateiname); }
-		log.info("File erstellt: " + dateiname);
-		return fileWriter; 
+	/**
+	 * Erzeugt ein neues File, in das die Handelstage protokolliert werden können. 
+	 * Zu Beginn wird das File initialisiert und der Header eingetragen. 
+	 * @return immer das File, nie null 
+	 */
+	private BufferedWriter getHandelstagFile () {
+		// statische Variable als Speicher 
+		if (fileWriterHandelstag == null) {
+			String dateiname = "Depothandel" + this.name + Long.toString(System.currentTimeMillis());
+			try {
+				// das Java File-Objekt erzeugen 
+				File file = new File(dateiname + ".csv");
+				// mit dem Java-Objekt ein File auf der Platte erzeugen. 
+				boolean createFileResult = file.createNewFile();
+				if(!createFileResult) {
+					// Die Datei konnte nicht erstellt werden. Evtl. gibt es diese Datei schon?
+					log.error("Datei konnte nicht erstellt werden:" + dateiname);
+				}
+				FileWriter fileWriter = new FileWriter(file);
+				fileWriterHandelstag = new BufferedWriter(fileWriter); 
+				// beim Erzeugen des File wird der Header geschrieben. 
+				fileWriterHandelstag.write(toStringHandelstagHeader());
+
+			} catch (Exception e) {log.error("File konnte nicht eröffnet werden: " + dateiname); }
+			log.info("File erstellt: " + dateiname);
+			};
+		return fileWriterHandelstag; 
 	}
 	
 	private void closeHandelstagFile () {

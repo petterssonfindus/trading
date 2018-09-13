@@ -5,8 +5,18 @@ import java.util.ArrayList;
 import com.algotrading.aktie.Aktie;
 import com.algotrading.aktie.Kurs;
 
-public class RSI {
+public class RSI extends Indikator {
 
+	// verhindert ein Instantiieren 
+	private RSI() {};
+	
+	private static RSI instance; 
+	
+	public static RSI getInstance () {
+		if (instance == null) instance = new RSI(); 
+		return instance; 
+	}
+	
 	/**
 	 * Relative-Stärke-Index
 	 * Das Verhältnis der durschnittlich positiven Tage zu den durchschnittlich negativen Tagen 
@@ -16,7 +26,8 @@ public class RSI {
 	 * @param aktie
 	 * @param tage
 	 */
-	public static void rechne (Aktie aktie, int tage) {
+	public void rechne (Aktie aktie, IndikatorBeschreibung indikatorBeschreibung ) {
+		int tage = (Integer) indikatorBeschreibung.getParameter("tage"); 
 		ArrayList<Kurs> kurse = aktie.getBoersenkurse();
 		float sumUp = 0;
 		float sumDown = 0;

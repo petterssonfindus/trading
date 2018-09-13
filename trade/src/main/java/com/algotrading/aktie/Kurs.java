@@ -30,10 +30,10 @@ public class Kurs {
 	public int volume; 
 	public String wertpapier; 
 	/**
-	 * Der Indikator ist eine Referenz auf die Parameter des Indikators. 
-	 * Der Float ist der Wert fär diesen Kurs 
+	 * Ein Indikator ist eine Referenz auf die Parameter des Indikators mit zugehörigem Float-Wert 
+	 * Der Float ist der Wert für diesen Kurs 
 	 */
-	public HashMap<IndikatorBeschreibung, Float> indikatoren = new HashMap<IndikatorBeschreibung, Float>();
+	private HashMap<IndikatorBeschreibung, Float> indikatoren = new HashMap<IndikatorBeschreibung, Float>();
 
 	public float sar; 
 	public float rsi; 
@@ -42,7 +42,7 @@ public class Kurs {
 	// die Tiefe des Tales 
 	public float tal;
 	
-	// Liste aller Signale - äffentlicher Zugriff nur äber add() und get()
+	// Liste aller Signale - öffentlicher Zugriff nur über add() und get()
 	private ArrayList<Signal> signale; 
 
 	public Kurs() {
@@ -74,8 +74,9 @@ public class Kurs {
 	public String getClose () {
 		return Float.toString(close);
 	}
+	
 	/**
-	 * ein Indikator wurde berechnet und wird dem Kurs hinzugefägt
+	 * ein Indikator wurde berechnet und wird dem Kurs hinzugefügt
 	 * @param indikator
 	 * @param wert
 	 */
@@ -83,6 +84,11 @@ public class Kurs {
 		this.indikatoren.put(indikator, wert);
 	}
 	
+	/**
+	 * ermittelt den Wert eines bestimmten Indikators dieses Kurses. 
+	 * @param indikator die Indikator-Beschreibung 
+	 * @return der float-Wert zu diesem Kurs
+	 */
 	public float getIndikatorWert (IndikatorBeschreibung indikator) {
 		if (this.indikatoren.containsKey(indikator)) {
 			return this.indikatoren.get(indikator);

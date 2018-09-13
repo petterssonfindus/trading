@@ -34,8 +34,9 @@ public class Indikatoren {
 	
 	
 	/**
-	 * steuert die Berechnung der gewänschten Indikatoren
-	 * Wird äber die Aktie aufgerufen. 
+	 * steuert die Berechnung der gewünschten Indikatoren
+	 * Die Indikator-Beschreibungen hängen initial an der Aktie. 
+	 * Jeder berechnete Wert wird mit einer Referenz auf die ursprüngliche Indikator-Beschreibung am Kurs gespeichert
 	 * @param aktie
 	 */
 	public static void rechneIndikatoren(Aktie aktie) {
@@ -71,7 +72,7 @@ public class Indikatoren {
 					break;
 				}
 				case 8: {
-					RSI.rechne(aktie, 10);
+					RSI.getInstance().rechne(aktie, indikatorBeschreibung);
 					break;
 				}
 				case 10: {

@@ -31,20 +31,20 @@ public class Aktie extends Parameter {
 
 	public String name; 
 	public String firmenname; 
-	// kein äffentlicher Zugriff auf kurse, weil Initialisierung äber DB erfolgt. 
+	// kein öffentlicher Zugriff auf kurse, weil Initialisierung über DB erfolgt. 
 	private ArrayList<Kurs> kurse; 
-	// der Kurs, der zum aktuellen Datum des Depot gehärt. NextKurs() sorgt fär die Aktualisierung
+	// der Kurs, der zum aktuellen Datum des Depot gehört. NextKurs() sorgt für die Aktualisierung
 	private Kurs aktuellerKurs; 
-	// der Kurs, der zum Start der Simulation gehärt
+	// der Kurs, der zum Start der Simulation gehört
 	private Kurs startKurs; 
 	// der Zeitraum in dem Kurse vorhanden sind - stammt aus der DB
 	private Zeitraum zeitraumKurse; 
 	private ArrayList<Kurs> kurseZeitraum; 
-	// ein Cache fär die aktuell ermittelte Kursereihe 
+	// ein Cache für die aktuell ermittelte Kursreihe 
 	private Zeitraum zeitraum; 
 	public String indexname;
 	public byte boersenplatz; 
-	// die Indikatoren-Beschreibungen, die an der Aktie hängen - Zugriff äber Getter  
+	// die Indikatoren-Beschreibungen, die an der Aktie hängen - Zugriff über Getter  
 	ArrayList<IndikatorBeschreibung> indikatorBeschreibungen = new ArrayList<IndikatorBeschreibung>();
 	private boolean indikatorenSindBerechnet = false; 
 	public ArrayList<SignalBeschreibung> signalbeschreibungen = new ArrayList<SignalBeschreibung>();

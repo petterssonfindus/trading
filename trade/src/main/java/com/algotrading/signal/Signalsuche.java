@@ -36,9 +36,9 @@ public class Signalsuche {
 	}
 	
 	/**
-	 * steuert die Berechnung von Signalen fär eine Aktie
-	 * Die Signalsuche kännte auch separat/einzeln beauftragt werden. 
-	 * Die Indikatoren mässen bereits berechnet worden sein und hängen am Kurs. 
+	 * steuert die Berechnung von Signalen für eine Aktie
+	 * Die Signalsuche könnte auch separat/einzeln beauftragt werden. 
+	 * Die Indikatoren müssen bereits berechnet worden sein und hängen am Kurs. 
 	 * @param aktie
 	 */
 	public static void rechneSignale (Aktie aktie) {
