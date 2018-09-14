@@ -2,11 +2,24 @@ package com.algotrading.indikator;
 
 import java.util.ArrayList;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import com.algotrading.aktie.Aktie;
 import com.algotrading.aktie.Kurs;
 
-public class OnBalanceVolume {
+public class OnBalanceVolume implements IndikatorAlgorithmus {
 
+	private static final Logger log = LogManager.getLogger(OnBalanceVolume.class);
+	private static OnBalanceVolume instance; 
+	
+	public static OnBalanceVolume getInstance () {
+		if (instance == null) instance = new OnBalanceVolume(); 
+		return instance; 
+	}
+
+	private OnBalanceVolume () {}
+	
 	/**
 	 * Rechnet On-Balance-Volume - Indikator
 	 * Steigt der Kurs, wird das Volumen hinzugerechnet 
@@ -14,11 +27,12 @@ public class OnBalanceVolume {
 	 * @param aktie
 	 * @param dauer
 	 */
-	static void rechne (Aktie aktie, IndikatorBeschreibung indikator) {
+	@Override
+	public void rechne (Aktie aktie, IndikatorBeschreibung indikator) {
 		// holt die Kurse, an denen die Umsätze dran hängen.
 		ArrayList<Kurs> kurse = aktie.getBoersenkurse();
 		// holt den Parameter aus dem Indikator 
-		int x = ((Float) indikator.getParameter("dauer")).intValue();
+		int x = (Integer) indikator.getParameter("dauer");
 		
 		int summe = 0;
 		int umsatzHeute = 0;
@@ -35,6 +49,7 @@ public class OnBalanceVolume {
 			umsatzVortag = kurse.get(0).volume;
 			for (int i = 1 ; i < x ; i++) {
 				kurs = kurse.get(k - x + i);
+				if (kurs == null) log.error("Kurs nicht vorhanden im Indikator OnBalanceVolume");
 				umsatzHeute = kurs.volume;
 				if (umsatzHeute > umsatzVortag) { // der Kurs ist gestiegen
 					// das Volumen wird hinzu addiert 

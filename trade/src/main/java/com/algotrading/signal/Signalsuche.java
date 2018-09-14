@@ -37,7 +37,7 @@ public class Signalsuche {
 	
 	/**
 	 * steuert die Berechnung von Signalen für eine Aktie
-	 * Die Signalsuche könnte auch separat/einzeln beauftragt werden. 
+	 * Die Signalsuche wird in Test-Cases separat/einzeln beauftragt. 
 	 * Die Indikatoren müssen bereits berechnet worden sein und hängen am Kurs. 
 	 * @param aktie
 	 */
@@ -45,7 +45,7 @@ public class Signalsuche {
 		ArrayList<SignalBeschreibung> signalbeschreibungen = aktie.getSignalbeschreibungen();
 		SignalAlgorithmus algo; 
 		for (SignalBeschreibung signalbeschreibung : signalbeschreibungen) {
-			// holt sich den zugehärigen Algoithmus
+			// holt sich den zugehörigen Algorithmus
 			algo = signalAlgorithmen.get(signalbeschreibung.signalTyp);
 			if (algo == null) log.error("sieht aus, wie wenn der Sinalalgorithmus nicht registriert wäre");
 			// startet die Berechnung 

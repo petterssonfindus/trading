@@ -5,7 +5,7 @@ import java.util.ArrayList;
 import com.algotrading.aktie.Aktie;
 import com.algotrading.aktie.Kurs;
 
-public class BergTal extends Indikator {
+public class BergTal implements IndikatorAlgorithmus {
 
 	private static BergTal instance; 
 	

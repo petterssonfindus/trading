@@ -7,7 +7,7 @@ import com.algotrading.aktie.Aktie;
  * @author oskar
  *
  */
-public abstract class Indikator {
+abstract interface IndikatorAlgorithmus {
 	
 	/**
 	 * iteriert über alle Kurse dieser Aktie und berechnet die Indikatorenwerte, die dann am Kurs hängen
@@ -15,6 +15,6 @@ public abstract class Indikator {
 	 * @param aktie
 	 * @param indikatorBeschreibung
 	 */
-	public abstract void rechne (Aktie aktie, IndikatorBeschreibung indikatorBeschreibung);
+	abstract void rechne (Aktie aktie, IndikatorBeschreibung indikatorBeschreibung);
 
 }

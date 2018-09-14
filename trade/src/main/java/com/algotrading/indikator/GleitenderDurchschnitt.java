@@ -2,7 +2,7 @@ package com.algotrading.indikator;
 
 import com.algotrading.aktie.Aktie;
 
-public class GleitenderDurchschnitt extends Indikator {
+public class GleitenderDurchschnitt implements IndikatorAlgorithmus {
 
 	private static GleitenderDurchschnitt instance; 
 	
@@ -18,7 +18,6 @@ public class GleitenderDurchschnitt extends Indikator {
 	 * incluse aktueller Tageskurs 
 	 * @param aktie
 	 */
-	@Override
 	public void rechne (Aktie aktie, IndikatorBeschreibung indikator) {
 		// holt die Kursreihe 
 		float[] kurse = aktie.getKursArray();

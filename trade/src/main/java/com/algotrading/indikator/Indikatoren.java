@@ -1,11 +1,19 @@
 package com.algotrading.indikator;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import com.algotrading.aktie.Aktie;
+import com.algotrading.signal.ADLDelta;
+import com.algotrading.signal.GDDurchbruch;
+import com.algotrading.signal.GDSchnitt;
+import com.algotrading.signal.Jahrestag;
+import com.algotrading.signal.Signal;
+import com.algotrading.signal.SignalAlgorithmus;
+import com.algotrading.signal.SteigendeBergeFallendeTaeler;
 
 /**
  * berechnet alle statistischen Indikatoren auf Basis einer Kursreihe
@@ -16,9 +24,6 @@ import com.algotrading.aktie.Aktie;
 public class Indikatoren {
 	static final Logger log = LogManager.getLogger(Indikatoren.class);
 
-	private static final float BERG = 0.01f;
-	private static final float TAL = -0.01f;
-	
 	public static final short INDIKATOR_GLEITENDER_DURCHSCHNITT = 1; 
 	public static final short INDIKATOR_MINUS_DIFFERENZ = 2; 
 	public static final short INDIKATOR_PLUS_DIFFERENZ = 3; 
@@ -32,6 +37,25 @@ public class Indikatoren {
 	public static final short INDIKATOR_ADL = 12; // Accumulation Distribution Line (MFM * Volumen)
 													// wird auch Chaikin Money Flow genannt, wenn er akkumuliert wird. 
 	
+	private static HashMap<Short, IndikatorAlgorithmus> indikatoren = initialisiereIndikatoren();
+	
+	/**
+	 * Ordnet jedem Indikatortyp einen Algorithmus zu
+	 * @return
+	 */
+	private static HashMap<Short, IndikatorAlgorithmus> initialisiereIndikatoren () {
+		HashMap<Short, IndikatorAlgorithmus> result = new HashMap<Short, IndikatorAlgorithmus>();
+		// die Implementierungen der Signal-Algorithmen einhängen 
+		result.put(Indikatoren.INDIKATOR_GLEITENDER_DURCHSCHNITT, GleitenderDurchschnitt.getInstance());
+		result.put(Indikatoren.INDIKATOR_ADL, AccumulationDistributionLine.getInstance());
+		result.put(Indikatoren.INDIKATOR_MFM, MoneyFlowMultiplier.getInstance());
+		result.put(Indikatoren.INDIKATOR_OBV, OnBalanceVolume.getInstance());
+		result.put(Indikatoren.INDIKATOR_RSI, RSI.getInstance());
+		result.put(Indikatoren.INDIKATOR_SAR, StatisticSAR.getInstance());
+		result.put(Indikatoren.INDIKATOR_VOLATILITAET, Volatilitaet.getInstance());
+		return result; 
+	}
+
 	
 	/**
 	 * steuert die Berechnung der gewünschten Indikatoren
@@ -45,45 +69,9 @@ public class Indikatoren {
 		if (indikatorBeschreibungen == null) log.error("Inputvariable Indikatoren ist null");
 		
 		for (IndikatorBeschreibung indikatorBeschreibung : indikatorBeschreibungen) {
-			switch (indikatorBeschreibung.typ) {
-				case 1: {
-					GleitenderDurchschnitt.getInstance().rechne (aktie, indikatorBeschreibung);
-					break;
-				}
-				case 4: {
-					Volatilitaet.getInstance().rechne(aktie, indikatorBeschreibung);
-					break;
-				}
-				case 5: {
-					BergTal.getInstance().rechne(aktie, indikatorBeschreibung);
-					break;
-				}
-				case 6: {
-//					rechneTal(aktie);
-					break;
-				}
-				case 7: {
-					StatisticSAR.getInstance().rechne(aktie, indikatorBeschreibung);
-					
-					break;
-				}
-				case 8: {
-					RSI.getInstance().rechne(aktie, indikatorBeschreibung);
-					break;
-				}
-				case 10: {
-					OnBalanceVolume.rechne(aktie, indikatorBeschreibung);
-					break;
-				}
-				case 11: {
-					MoneyFlowMultiplier.rechne(aktie, indikatorBeschreibung);
-					break;
-				}
-				case 12: {
-					AccumulationDistributionLine.rechne(aktie, indikatorBeschreibung);
-					break;
-				}
-			}
+			// holt sich die Implementierung des Indikators 
+			IndikatorAlgorithmus indiAlgo = indikatoren.get(indikatorBeschreibung);
+			indiAlgo.rechne(aktie, indikatorBeschreibung);
 		}
 	}
 }

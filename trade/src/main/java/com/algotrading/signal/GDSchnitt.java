@@ -13,12 +13,9 @@ import com.algotrading.aktie.Kurs;
 public class GDSchnitt implements SignalAlgorithmus {
 	static final Logger log = LogManager.getLogger(GDSchnitt.class);
 
-	// wie weit muss ein GD den anderen durchbrechen
-	private static final float SCHWELLEGDDURCHBRUCH = 0.00f;
-
 	/**
 	 * erzeugt ein Signal, wenn der Tageskurs den GD schneidet 
-	 * Stärke ist maximal, wenn alle 3 GDs äber/unter dem Tageskurs sind 
+	 * Stärke ist maximal, wenn alle 3 GDs über/unter dem Tageskurs sind 
 	 * @param kursreihe
 	 */
 	public int ermittleSignal(Aktie aktie, SignalBeschreibung signalbeschreibung) {
@@ -44,7 +41,7 @@ public class GDSchnitt implements SignalAlgorithmus {
 	}
 
 	/**
-	 * bisher darunter, jetzt daräber
+	 * bisher darunter, jetzt darüber
 	 * erzeugt Signale und hängt sie an den Kurs an
 	 */
 	private static boolean pruefeGDSchnittSteigung (Kurs tageskurs, Kurs vortageskurs, IndikatorBeschreibung gd1, IndikatorBeschreibung gd2) {

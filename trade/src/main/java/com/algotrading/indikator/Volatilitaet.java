@@ -5,7 +5,7 @@ import org.apache.commons.math3.stat.descriptive.DescriptiveStatistics;
 import com.algotrading.aktie.*;
 import com.algotrading.aktie.Kurs;
 
-public class Volatilitaet extends Indikator {
+public class Volatilitaet implements IndikatorAlgorithmus {
 
 	private static Volatilitaet instance; 
 	

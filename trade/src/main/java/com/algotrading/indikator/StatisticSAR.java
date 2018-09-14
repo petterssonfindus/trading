@@ -8,7 +8,7 @@ import com.algotrading.aktie.Kurs;
 /**
  * Berechnet den Stop-And-Reverse-Indikator 
  */
-public class StatisticSAR extends Indikator {
+public class StatisticSAR implements IndikatorAlgorithmus {
 
 	private float afstart = 0.02f; // Standardwert
 	private float afstufe = 0.02f; // Standardwert

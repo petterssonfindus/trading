@@ -17,7 +17,7 @@ public class IndikatorBeschreibung extends Parameter {
 	short typ; 
 
 	/**
-	 * Setzt den Typ. Parameter kännen mit addParameter hinzugefägt werden. 
+	 * Setzt den Typ. Parameter können mit addParameter hinzugefügt werden. 
 	 * @param typ
 	 */
 	public IndikatorBeschreibung (short typ) {

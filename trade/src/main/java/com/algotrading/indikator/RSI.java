@@ -5,7 +5,7 @@ import java.util.ArrayList;
 import com.algotrading.aktie.Aktie;
 import com.algotrading.aktie.Kurs;
 
-public class RSI extends Indikator {
+public class RSI implements IndikatorAlgorithmus {
 
 	// verhindert ein Instantiieren 
 	private RSI() {};

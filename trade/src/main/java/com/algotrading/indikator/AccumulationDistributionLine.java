@@ -5,7 +5,16 @@ import java.util.ArrayList;
 import com.algotrading.aktie.Aktie;
 import com.algotrading.aktie.Kurs;
 
-public class AccumulationDistributionLine {
+public class AccumulationDistributionLine implements IndikatorAlgorithmus {
+
+	private static AccumulationDistributionLine instance; 
+	
+	public static AccumulationDistributionLine getInstance () {
+		if (instance == null) instance = new AccumulationDistributionLine(); 
+		return instance; 
+	}
+
+	private AccumulationDistributionLine () {}
 
 	/**
 	 * Accumulation Distribution Line
@@ -17,11 +26,11 @@ public class AccumulationDistributionLine {
 	 * @param aktie
 	 * @param indikator
 	 */
-	static void rechne (Aktie aktie , IndikatorBeschreibung indikator) {
+	public void rechne (Aktie aktie , IndikatorBeschreibung indikator) {
 		// holt die Kurse, an denen die Umsätze dran hängen.
 		ArrayList<Kurs> kurse = aktie.getBoersenkurse();
 		// holt den Parameter "dauer" aus dem Indikator 
-		int x = ((Float) indikator.getParameter("dauer")).intValue();
+		int x = (Integer) indikator.getParameter("dauer");
 		// holt den Parameter "durchschnitt" aus dem Indikator, falls er vorhanden ist 
 		Object durchschnitt = indikator.getParameter("durchschnitt");
 		// wenn nicht vorhanden, wird er vorbelegt mit 1 = linear

@@ -5,7 +5,16 @@ import java.util.ArrayList;
 import com.algotrading.aktie.Aktie;
 import com.algotrading.aktie.Kurs;
 
-public class MoneyFlowMultiplier {
+public class MoneyFlowMultiplier implements IndikatorAlgorithmus {
+
+	private static MoneyFlowMultiplier instance; 
+	
+	public static MoneyFlowMultiplier getInstance () {
+		if (instance == null) instance = new MoneyFlowMultiplier(); 
+		return instance; 
+	}
+
+	private MoneyFlowMultiplier () {}
 
 	/**
 	 * Money Flow Multiplier = [(Close  -  Low) - (High - Close)] /(High - Low) 
@@ -14,11 +23,11 @@ public class MoneyFlowMultiplier {
 	 * @param aktie
 	 * @param indikator
 	 */
-	static void rechne (Aktie aktie, IndikatorBeschreibung indikator) {
+	public void rechne (Aktie aktie, IndikatorBeschreibung indikator) {
 		// holt die Kurse, an denen die Umsätze dran hängen.
 		ArrayList<Kurs> kurse = aktie.getBoersenkurse();
 		// holt den Parameter aus dem Indikator 
-		int x = ((Float) indikator.getParameter("dauer")).intValue();
+		int x = (Integer) indikator.getParameter("dauer");
 		Kurs kurs; 
 		Kurs kursx; 
 		float mfm = 0;
@@ -39,7 +48,7 @@ public class MoneyFlowMultiplier {
 		
 	}
 
-	static float calculateMFM (Kurs kurs) {
+	protected static float calculateMFM (Kurs kurs) {
 		float close = kurs.close;
 		float low = kurs.low;
 		float high = kurs.high;
