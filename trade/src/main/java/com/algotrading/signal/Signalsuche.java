@@ -42,7 +42,7 @@ public class Signalsuche {
 	 * @param aktie
 	 */
 	public static void rechneSignale (Aktie aktie) {
-		ArrayList<SignalBeschreibung> signalbeschreibungen = aktie.signalbeschreibungen;
+		ArrayList<SignalBeschreibung> signalbeschreibungen = aktie.getSignalbeschreibungen();
 		SignalAlgorithmus algo; 
 		for (SignalBeschreibung signalbeschreibung : signalbeschreibungen) {
 			// holt sich den zugehärigen Algoithmus

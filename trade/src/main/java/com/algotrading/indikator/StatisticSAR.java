@@ -8,32 +8,46 @@ import com.algotrading.aktie.Kurs;
 /**
  * Berechnet den Stop-And-Reverse-Indikator 
  */
-public class StatisticSAR {
+public class StatisticSAR extends Indikator {
 
-	private static float afstart; 
-	private static float afstufe;
-	private static float afmaximum; 
-	private static int trendm1 = -1; 
-	private static int trend = trendm1; // Anzahl Tage im UpTrend oder DownTrend
-	private static float high = 0;		// aktueller Hochpunkt 
-	private static float highm1 = 0; 
-	private static float highm2 = 0;
-	private static float low = 0;		// aktueller Tiefpunkt 
-	private static float lowm1 = 0;
-	private static float lowm2 = 0;
-	private static float sar = 0;
-	private static float sarAlt = 0; 
-	private static float tentsar = 0;	// Tentative SAR
-	private static float calcsar = 0;	// Calculated SAR 
-	private static float ep = 0;		// Extrempunkt
-	private static float epAlt = 0; 	// bisheriger Extrempunkt 
-	private static float af = 0;		// Anpassungs-Geschwindigkeit 
-	private static float afAlt = 0; 
+	private float afstart = 0.02f; // Standardwert
+	private float afstufe = 0.02f; // Standardwert
+	private float afmaximum = 0.2f; // Standardwert
+	private int trendm1 = -1; 
+	private int trend = trendm1; // Anzahl Tage im UpTrend oder DownTrend
+	private float high = 0;		// aktueller Hochpunkt 
+	private float highm1 = 0; 
+	private float highm2 = 0;
+	private float low = 0;		// aktueller Tiefpunkt 
+	private float lowm1 = 0;
+	private float lowm2 = 0;
+	private float sar = 0;
+	private float sarAlt = 0; 
+	private float tentsar = 0;	// Tentative SAR
+	private float calcsar = 0;	// Calculated SAR 
+	private float ep = 0;		// Extrempunkt
+	private float epAlt = 0; 	// bisheriger Extrempunkt 
+	private float af = 0;		// Anpassungs-Geschwindigkeit 
+	private float afAlt = 0; 
 	
-	public static void rechne (Aktie aktie, float afStart, float afStufe, float afMaximum) {
-		afstart = afStart;
-		afstufe = afStufe;
-		afmaximum = afMaximum; 
+	private static StatisticSAR instance; 
+	
+	public static StatisticSAR getInstance () {
+		if (instance == null) instance = new StatisticSAR(); 
+		return instance; 
+	}
+	
+	/**
+	 * 
+	 * float afStart, float afStufe, float afMaximum
+	 * @param aktie
+	 */
+	@Override
+	public void rechne (Aktie aktie, IndikatorBeschreibung indikatorBeschreibung) {
+		
+		afstart = (Float) indikatorBeschreibung.getParameter("start");
+		afstufe = (Float) indikatorBeschreibung.getParameter("stufe");
+		afmaximum = (Float) indikatorBeschreibung.getParameter("maximum"); 
 
 		ArrayList<Kurs> kurse = aktie.getBoersenkurse();
 		Kurs kurs;
@@ -74,17 +88,19 @@ public class StatisticSAR {
 			tentsar = rechneSARTentative();
 			trend = rechneTrend(tentsar);
 			sar = rechneSAR(tentsar);
-			kurs.sar = sar; 
+			// das Ergebnis wird in den Kurs eingetragen 
+			kurs.addIndikator(indikatorBeschreibung, sar); 
 			ep = rechneEP(epAlt);
 			af = rechneAF(afAlt);
 			
 		} // i
 		
 	}	// rechne 
+
 	/**
 	 * berechnet den Extrempunkt 
 	 */
-	private static float rechneEP (float EPalt) {
+	private float rechneEP (float EPalt) {
 		float result = 0;
 		if (trend == -1) {
 			result = low;
@@ -104,7 +120,7 @@ public class StatisticSAR {
 	/**
 	 * rechnet SAR 
 	 */
-	private static float rechneSAR (float tentSAR) {
+	private float rechneSAR (float tentSAR) {
 		float result = 0; 
 		if (trend == -1) {
 			result = Math.max(high, epAlt);
@@ -120,7 +136,7 @@ public class StatisticSAR {
 	/**
 	 * rechnet das erwartete SAR
 	 */
-	private static float rechneSARTentative () {
+	private float rechneSARTentative () {
 		float result = 0; 
 		if (trendm1 < 0) {	// wir befinden uns im Down-Trend
 			// das erwartete SAR ermitteln auf Basis gestriger Daten 
@@ -140,7 +156,7 @@ public class StatisticSAR {
 	 * setzt voraus, dass ein voraaussichtliches SAR (tentSAR) berechnet wurde
 	 * @return
 	 */
-	private static int rechneTrend (float tentSAR) {
+	private int rechneTrend (float tentSAR) {
 		int trendNEU = trend; 
 		// präfen, wohin der Trend läuft
 		if (trendm1 < 0 ) { // bisher waren wir im Down-Trend 
@@ -167,7 +183,7 @@ public class StatisticSAR {
 	 * berechnet den AF Acceleration-Faktor
 	 * @return
 	 */
-	private static float rechneAF (float afALT) {
+	private float rechneAF (float afALT) {
 		float afNEU = 0; 
 		if (Math.abs(trend) == 1 ) { // ein neuer Trend, egal welche Richtung 
 			afNEU = afstart; 
@@ -187,7 +203,7 @@ public class StatisticSAR {
 	 * berechnet den auf Vortageswerten basierenden SAR eines Tages. 
 	 * Grundlage sind Vortageswerte von SAR, Extrempunkt und Beschleunigung. 
 	 */
-	private static float rechneCalcSAR () {
+	private float rechneCalcSAR () {
 		return sarAlt + (afAlt * (epAlt - sarAlt));
 	}
 

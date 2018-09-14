@@ -67,7 +67,7 @@ public class Indikatoren {
 					break;
 				}
 				case 7: {
-					StatisticSAR.rechne(aktie, 0.02f, 0.02f, 0.2f);
+					StatisticSAR.getInstance().rechne(aktie, indikatorBeschreibung);
 					
 					break;
 				}

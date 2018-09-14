@@ -1,15 +1,13 @@
 package com.algotrading.indikator;
 
-import java.util.HashMap;
-
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import com.algotrading.util.Parameter;
 
 /**
- * Beschreibt einen Indikator mit Typ und Wert
- * Der Wert ist meist die Zeitdauer
+ * Beschreibt einen Indikator mit Typ 
+ * Alle Parameter werden über die Parameter festgelegt
  * @author oskar
  *
  */
@@ -24,15 +22,6 @@ public class IndikatorBeschreibung extends Parameter {
 	 */
 	public IndikatorBeschreibung (short typ) {
 		this.typ = typ; 
-	}
-	/**
-	 * Ein Konstruktor, der den Standard-Parameter "dauer" setzt 
-	 * @param typ
-	 * @param dauer
-	 */
-	public IndikatorBeschreibung (short typ, int dauer) {
-		this.typ = typ; 
-		addParameter("dauer", (float) dauer);
 	}
 
 	/**

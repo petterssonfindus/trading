@@ -35,13 +35,6 @@ public class Kurs {
 	 */
 	private HashMap<IndikatorBeschreibung, Float> indikatoren = new HashMap<IndikatorBeschreibung, Float>();
 
-	public float sar; 
-	public float rsi; 
-	// die Hähe des Berges - Summe der Kursdifferenzen vor und zuräck
-	public float berg;
-	// die Tiefe des Tales 
-	public float tal;
-	
 	// Liste aller Signale - öffentlicher Zugriff nur über add() und get()
 	private ArrayList<Signal> signale; 
 

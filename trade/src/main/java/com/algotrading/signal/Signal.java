@@ -38,7 +38,7 @@ public class Signal {
 	
 	private int typ;
 	
-	// optional - eine Zahl von 0 - 100 äber die Stärke
+	// optional - eine Zahl von 0 - 100 über die Stärke
 	public float staerke; 
 	/**
 	 * private Konstruktor kann nur äber die Methode erzeugen genutzt werden. 

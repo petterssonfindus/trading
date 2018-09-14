@@ -24,8 +24,9 @@ public class RSI extends Indikator {
 	 * Die Implementierung ist effizient. 
 	 * An jedem Tag kommt eine neue Differnz hinzu, eine alte fällt weg. 
 	 * @param aktie
-	 * @param tage
+	 * @param "tage"
 	 */
+	@Override
 	public void rechne (Aktie aktie, IndikatorBeschreibung indikatorBeschreibung ) {
 		int tage = (Integer) indikatorBeschreibung.getParameter("tage"); 
 		ArrayList<Kurs> kurse = aktie.getBoersenkurse();
@@ -72,9 +73,10 @@ public class RSI extends Indikator {
 			// Durchschnitte berechnen
 			sumUpA = sumUp / tage;
 			sumDownA = Math.abs(sumDown / tage);
-			// rsi berechnen
+			// RSI berechnen
 			rsi = sumUpA / (sumUpA + sumDownA);
-			kursO.rsi = rsi; 
+			// RSI an den Kurs anhängen
+			kursO.addIndikator(indikatorBeschreibung, rsi);
 		
 		}
 	}

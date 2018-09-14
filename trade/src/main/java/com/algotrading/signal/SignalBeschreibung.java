@@ -6,7 +6,8 @@ import org.apache.logging.log4j.Logger;
 import com.algotrading.util.Parameter;
 
 /**
- * Beschreibt die Eigenschaften, die ein Signal erfällen muss
+ * Beschreibt die Eigenschaften, die ein Signal erfüllen muss
+ * Diese werden als Parameter generisch gehalten. 
  * Dient als Berechnungs-Vorschrift 
  * @author oskar
  *

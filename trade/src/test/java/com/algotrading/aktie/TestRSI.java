@@ -5,26 +5,30 @@ import java.util.ArrayList;
 import com.algotrading.aktie.Aktie;
 import com.algotrading.aktie.Aktien;
 import com.algotrading.aktie.Kurs;
-
-import com.algotrading.indikator.RSI;
+import com.algotrading.indikator.IndikatorBeschreibung;
+import com.algotrading.indikator.Indikatoren;
 import junit.framework.TestCase;
 
 public class TestRSI extends TestCase {
 	
-	Aktie RSIAktie; 
+	Aktie rsiAktie; 
+	IndikatorBeschreibung rsi;
 	
 	public void setUp() {
-		RSIAktie = Aktien.getInstance().getAktie("sardata5");
-		
+		rsiAktie = Aktien.getInstance().getAktie("sardata5");
+		rsi = new IndikatorBeschreibung(Indikatoren.INDIKATOR_RSI);
+		rsi.addParameter("tage", 10);
+		rsiAktie.addIndikator(rsi);
 	}
 	
 	public void testRSI() {
-		RSI.rechne(RSIAktie, 10);
 		
-		ArrayList<Kurs> kurse = RSIAktie.getBoersenkurse();
+		rsiAktie.rechneIndikatoren();
+		
+		ArrayList<Kurs> kurse = rsiAktie.getBoersenkurse();
 		Kurs testKurs;
-		testKurs = kurse.get(3);
-		assertEquals(46.55f,testKurs.rsi);
+		testKurs = kurse.get(13);
+		assertEquals(0.3162709f,testKurs.getIndikatorWert(rsi));
 
 	}
 

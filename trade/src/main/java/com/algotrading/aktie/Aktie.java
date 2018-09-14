@@ -47,7 +47,8 @@ public class Aktie extends Parameter {
 	// die Indikatoren-Beschreibungen, die an der Aktie hängen - Zugriff über Getter  
 	ArrayList<IndikatorBeschreibung> indikatorBeschreibungen = new ArrayList<IndikatorBeschreibung>();
 	private boolean indikatorenSindBerechnet = false; 
-	public ArrayList<SignalBeschreibung> signalbeschreibungen = new ArrayList<SignalBeschreibung>();
+	// die Signal-Beschreibungen werden an der Aktie festgehalten und beim Berechnen an die Kurse gehängt
+	private ArrayList<SignalBeschreibung> signalbeschreibungen = new ArrayList<SignalBeschreibung>();
 	private boolean signaleSindBerechnet = false; 
 	
 	/**
@@ -419,6 +420,14 @@ public class Aktie extends Parameter {
 		for (Kurs kurs : this.kurse) {
 			kurs.clearSignale();
 		}
+	}
+	
+	/**
+	 * Zugriff auf die Signalbeschreibungen, die zu Beginn an die Aktie gehängt werden. 
+	 * @return
+	 */
+	public ArrayList<SignalBeschreibung> getSignalbeschreibungen() {
+		return signalbeschreibungen;
 	}
 	
 	public Zeitraum getZeitraumKurse() {

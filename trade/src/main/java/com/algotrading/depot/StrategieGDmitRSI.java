@@ -28,7 +28,7 @@ public class StrategieGDmitRSI extends SignalStrategie {
 				this.GDDurchbruch = false;
 			}
 		}
-		// reagiert auf RSI - Durchbräche  
+		// reagiert auf RSI - Durchbrüche  
 		if (signal.getTyp() == Signal.RSI) {
 			// Eintritt in die Kaufzone
 			if (signal.getKaufVerkauf() == Order.KAUF) {
