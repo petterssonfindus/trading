@@ -1,4 +1,4 @@
-package com.algotrading.aktie;
+package com.algotrading.indikator;
 
 import java.util.ArrayList;
 

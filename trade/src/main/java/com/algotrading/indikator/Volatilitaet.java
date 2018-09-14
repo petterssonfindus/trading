@@ -5,14 +5,23 @@ import org.apache.commons.math3.stat.descriptive.DescriptiveStatistics;
 import com.algotrading.aktie.*;
 import com.algotrading.aktie.Kurs;
 
-public class Volatilitaet {
+public class Volatilitaet extends Indikator {
+
+	private static Volatilitaet instance; 
+	
+	public static Volatilitaet getInstance () {
+		if (instance == null) instance = new Volatilitaet(); 
+		return instance; 
+	}
+
+	private Volatilitaet () {}
 
 	/**
 	 * Volatilität mit Hilfe der apache.math.statistic-Komponente
 	 * @param aktie
-	 * @param x - die gewänscht Zeitraum
 	 */
-	public static void rechne (Aktie aktie, IndikatorBeschreibung indikator) {
+	@Override
+	public void rechne (Aktie aktie, IndikatorBeschreibung indikator) {
 		int x = (Integer) indikator.getParameter("dauer");
 		// wenn weniger Kurse vorhanden sind, als die Zeitraum 
 		if (aktie.getBoersenkurse().size() <= x) return;

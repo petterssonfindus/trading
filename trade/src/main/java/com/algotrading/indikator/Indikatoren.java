@@ -47,19 +47,15 @@ public class Indikatoren {
 		for (IndikatorBeschreibung indikatorBeschreibung : indikatorBeschreibungen) {
 			switch (indikatorBeschreibung.typ) {
 				case 1: {
-					int anzahl = GleitenderDurchschnitt.rechneGleitenderDurchschnitt(aktie, indikatorBeschreibung);
-					log.debug("GleitenderD  berechnet Aktie: " + aktie.toSmallString() + " " + 
-							anzahl + " Berechnungen " + 
-							"Indikator: " + indikatorBeschreibung.toString());
+					GleitenderDurchschnitt.getInstance().rechne (aktie, indikatorBeschreibung);
 					break;
 				}
 				case 4: {
-					Volatilitaet.rechne(aktie, indikatorBeschreibung);
-					
+					Volatilitaet.getInstance().rechne(aktie, indikatorBeschreibung);
 					break;
 				}
 				case 5: {
-					BergTal.rechne(aktie, (Integer) indikatorBeschreibung.getParameter("dauer"));
+					BergTal.getInstance().rechne(aktie, indikatorBeschreibung);
 					break;
 				}
 				case 6: {

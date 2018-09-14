@@ -5,8 +5,17 @@ import java.util.ArrayList;
 import com.algotrading.aktie.Aktie;
 import com.algotrading.aktie.Kurs;
 
-public class BergTal {
+public class BergTal extends Indikator {
 
+	private static BergTal instance; 
+	
+	public static BergTal getInstance () {
+		if (instance == null) instance = new BergTal(); 
+		return instance; 
+	}
+
+	private BergTal () {}
+	
 	/**
 	 * rechnet Berg, wenn nach vorne und nach hinten die Kurse fallen 
 	 * geht beliebig weit nach vorne und hinten, solange die Kurs kontinuierlich sinken.
@@ -14,8 +23,10 @@ public class BergTal {
 	 * @param aktie
 	 * @return
 	 */
-	static void rechne (Aktie aktie, int dauer) {
+	@Override
+	public void rechne (Aktie aktie, IndikatorBeschreibung indikatorBeschreibung) {
 		
+		int dauer = (Integer) indikatorBeschreibung.getParameter("dauer");
 		ArrayList<Kurs> kurse = aktie.getBoersenkurse();
 		float[] kursArray = aktie.getKursArray();
 		Kurs kurs; 
@@ -46,7 +57,7 @@ public class BergTal {
 				if (istBerg) {
 					// wenn ein Berg identifiziert wurde, wird die Summe eingetragen 
 					// mit jedem erfolgreichen Durchlauf wird die Summe grääer
-					kurs.berg = summe; 
+					kurs.addIndikator(indikatorBeschreibung, summe); 
 				}
 			}
 			while (istBerg);

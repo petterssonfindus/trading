@@ -3,6 +3,7 @@ package com.algotrading.signal;
 import java.util.ArrayList;
 
 import com.algotrading.depot.Order;
+import com.algotrading.indikator.IndikatorBeschreibung;
 import com.algotrading.aktie.Aktie;
 import com.algotrading.aktie.Kurs;
 
@@ -28,10 +29,10 @@ public class SteigendeBergeFallendeTaeler implements SignalAlgorithmus {
 		ArrayList<Kurs> alleBerge = new ArrayList<Kurs>();
 		for (Kurs kurs : aktie.getBoersenkurse()) {
 			float staerke; 
-			// präfe, ob Berg vorhanden
+			// prüfe, ob Berg vorhanden
 			if (istBerg(kurs)) {
 				alleBerge.add(kurs);
-				// präfe, ob Kurs zum letzten Berg ansteigt - Delta ist positiv 
+				// prüfe, ob Kurs zum letzten Berg ansteigt - Delta ist positiv 
 				if (alleBerge.size() > 1) {
 					float kursdelta = (kurs.getKurs() - alleBerge.get(alleBerge.size() - 2).getKurs()) / kurs.getKurs();
 					if (kursdelta > SteigendeBergeFallendeTaeler.SCHWELLEBERGSTEIGT) {
@@ -51,19 +52,19 @@ public class SteigendeBergeFallendeTaeler implements SignalAlgorithmus {
 	}
 	
 	/**
-	 * präft, ob der Tageskurs ein Berg ist 
+	 * prüft, ob der Tageskurs ein Berg ist 
 	 * @param tageskurs
 	 * @return
 	 */
-	static boolean istBerg (Kurs tageskurs) {
-		if (tageskurs.berg > SteigendeBergeFallendeTaeler.SCHWELLEBERGSUMME) {
+	static boolean istBerg (Kurs tageskurs, IndikatorBeschreibung indikator) {
+		if (tageskurs.getIndikatorWert(indikator) > SteigendeBergeFallendeTaeler.SCHWELLEBERGSUMME) {
 			return true;
 		}
 		else return false; 
 	}
 
-	static boolean istTal (Kurs tageskurs) {
-		if (tageskurs.tal > SteigendeBergeFallendeTaeler.SCHWELLETALSUMME) {
+	static boolean istTal (Kurs tageskurs, IndikatorBeschreibung indikator) {
+		if (tageskurs.getIndikatorWert(indikator) > SteigendeBergeFallendeTaeler.SCHWELLETALSUMME) {
 			return true;
 		}
 		else return false; 

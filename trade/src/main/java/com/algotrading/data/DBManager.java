@@ -91,6 +91,12 @@ public class DBManager {
 
 	}
 	
+	/**
+	 * Legt eine neue Tabelle an mit der Standard-Datenstruktur
+	 * #TODO Indikatoren werden nicht genutzt - muss entfernt werden. Indikatoren werden bei Bedarf berechnet. 
+	 * @param name der Name der Tabelle in der Datenbank 
+	 * @return true, wenn die Tabelle vorhanden ist
+	 */
 	public static boolean schreibeNeueAktieTabelle (String name) {
 		
 //		String create = "CREATE TABLE IF NOT EXISTS `" + name + "` (" + 
@@ -160,55 +166,6 @@ public class DBManager {
 	}
 	
 	/**
-	 * schreibt alle in einer Kursreihe vorhandenen statistischen Werte, Berg/Tal in die DB
-	 * Voraussetzung ist eine vorhandene Kursreihe mit Kursen 
-	 * @param aktie mit Kursreihe
-	 */
-	public static boolean schreibeIndikatoren(Aktie aktie) {
-		
-		Connection verbindung = ConnectionFactory.getConnection();
-		
-		for (Kurs tageskurs : aktie.getBoersenkurse()) {
-			DBManager.schreibeIndikatoren(tageskurs, aktie.name, verbindung);
-		}
-		return true; 
-	}
-	
-	/**
-	 * schreibt Berg, Tal, letztes Extrem, Vola ... 
-	 * @param kurs 
-	 * @param name Name der Aktie
-	 * @param verbindung
-	 * @return
-	 */
-	public static boolean schreibeIndikatoren (Kurs kurs, String name, Connection verbindung) {
-		String datum = addApostroph(formatSQLDate(kurs.datum), false);
-		String berg = addApostroph(Float.toString(kurs.berg), false);
-		String tal = addApostroph(Float.toString(kurs.tal), false);
-		String kurslE = "";
-// 		String kurslE = addApostroph(Float.toString(kurs.letzterExtremkurs), false);
-
-		String update = "UPDATE " + name + " SET `berg` = " + berg + 
-				", `tal` = " + tal + 
-				", `kurslE` = " + kurslE + 
-				" WHERE `datum` = " + datum ;
-		log.info("UpdateStatement: " + update);
-		Statement anweisung = null;
-		
-		try {
-			anweisung = (Statement) verbindung.createStatement();
-			anweisung.execute(update);
-		} catch (SQLException e) {
-			log.info("Fehler beim Schreiben von Tageskurs minus"
-					+ kurs.toString() + e.toString());
-			return false;
-		}
-		log.info("Tageskurs minus geschrieben" + kurs + " in DB geschrieben ");
-		
-		return true; 
-	}
-	
-	/**
 	 * 
 	 * @param cal
 	 * @return
@@ -235,8 +192,9 @@ public class DBManager {
     	return kurs; 
 		
 	}
+	
 	/**
-	 * Präft eine Kursreihe nach Inkonsistenzen - fehlerhafte Kurse
+	 * Prüft eine Kursreihe nach Inkonsistenzen - fehlerhafte Kurse
 	 * Bei Fehler werden logs geschrieben
 	 * @param name
 	 * @param schwelle der Prozentwert der erlaubten Abweichung z.B. 0.1 
