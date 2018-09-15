@@ -9,10 +9,10 @@ import com.algotrading.aktie.Kurs;
 
 /**
  * repräsentiert ein Kauf/Verkaufsignal 
- * Es kännen mehrere Signale vom gleichen Typ hintereinander auftreten. 
- * Ein Signal gehärt zu einem Tageskurs.
+ * Es können mehrere Signale vom gleichen Typ hintereinander auftreten. 
+ * Ein Signal gehört zu einem Tageskurs.
  * Ein Signal hat keinen Parameter. 
- * Liefert häufig einen Wert äber die Stärke
+ * Liefert häufig einen Wert über die Stärke
  * @author oskar
  *
  */
@@ -41,7 +41,7 @@ public class Signal {
 	// optional - eine Zahl von 0 - 100 über die Stärke
 	public float staerke; 
 	/**
-	 * private Konstruktor kann nur äber die Methode erzeugen genutzt werden. 
+	 * private Konstruktor kann nur über die Methode erzeugen genutzt werden. 
 	 * Dadurch kann beim Erzeugen die Referenz auf den Tageskurs eingetragen werden. 
 	 * @param tageskurs der Kurs, an dem das Signal hängt. 
 	 * @param kaufVerkauf

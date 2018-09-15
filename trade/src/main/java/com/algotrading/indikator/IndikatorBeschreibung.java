@@ -14,7 +14,7 @@ import com.algotrading.util.Parameter;
 public class IndikatorBeschreibung extends Parameter {
 	private static final Logger log = LogManager.getLogger(IndikatorBeschreibung.class);
 	
-	short typ; 
+	private short typ; 
 
 	/**
 	 * Setzt den Typ. Parameter können mit addParameter hinzugefügt werden. 
@@ -22,6 +22,10 @@ public class IndikatorBeschreibung extends Parameter {
 	 */
 	public IndikatorBeschreibung (short typ) {
 		this.typ = typ; 
+	}
+
+	public short getTyp() {
+		return typ;
 	}
 
 	/**

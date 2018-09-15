@@ -17,10 +17,9 @@ public class TestMoneyFlowMultiplier extends TestCase {
 	
 	@Override
 	protected void setUp() throws Exception {
-		// TODO Auto-generated method stub
 		super.setUp();
 		
-		aktie = Aktien.getInstance().getAktie("testaktie");
+		aktie = Aktien.newInstance().getAktie("testaktie");
 		indikatorBeschreibung = new IndikatorBeschreibung(Indikatoren.INDIKATOR_MFM);
 		aktie.addIndikator(indikatorBeschreibung);
 		indikatorBeschreibung.addParameter("dauer", 10);
@@ -30,6 +29,7 @@ public class TestMoneyFlowMultiplier extends TestCase {
 		aktie.rechneIndikatoren();
 		
 		ArrayList<Kurs> kurse = aktie.getBoersenkurse();
+		assertNotNull(kurse);
 		Kurs testKurs;
 		testKurs = kurse.get(13);
 		assertEquals(-0.43711352f,testKurs.getIndikatorWert(indikatorBeschreibung));

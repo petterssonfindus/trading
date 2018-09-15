@@ -17,9 +17,9 @@ import com.algotrading.util.Zeitraum;
 	 * Verzeichnis aller Aktien, zu denen Zeitreihen vorhanden sind
 	 * Es kann sich auch um einen Index handeln 
 	 * Bietet Zugang zu Zeitreihen
-	 * Als Singleton verfägbar
-	 * Das Verzeichnis wird sofort initialisiert, die Kurse werden erst bei Bedarf den Kursreihen hinzugefägt. 
-	 * Derzeit keine DB-Läsung, sondern Programmcode
+	 * Als Singleton verfügbar
+	 * Das Verzeichnis wird sofort initialisiert, die Kurse werden erst bei Bedarf den Kursreihen hinzugefügt. 
+	 * Derzeit keine DB-Lösung, sondern Programmcode
 	 * @author oskar
 	 *
 	 */
@@ -42,6 +42,10 @@ public class Aktien {
 	
 	private Aktien() {}
 	
+	/**
+	 * Wird benutzt, wenn bestehende Indkator- und Signaldaten an den Kursen weiter verwendet werden
+	 * @return eine neue oder eine bestehende Referenz auf Aktien 
+	 */
 	public static Aktien getInstance() {
 		if (instance == null) {
 			instance = new Aktien();
@@ -50,6 +54,19 @@ public class Aktien {
 		}
 		return instance; 
 	}
+	
+	/**
+	 * Wird benutzt, wenn ein neuer Durchlauf gestartet wird
+	 * bei dem keine Indikator, und Signaldaten an Aktien und Kursen hängen sollen.  
+	 * @return immer eine neue Referenz auf Aktien. 
+	 */
+	public static Aktien newInstance() {
+		instance = new Aktien();
+		// das Verzeichnis wird versorgt 
+		initialisiereVerzeichnis();
+		return instance; 
+	}
+
 	/**
 	 * liest und initialisiert eine Aktie anhand eines WP-Namens
 	 * die Kursreihe ist eventuell noch nicht gefällt. 
@@ -83,7 +100,7 @@ public class Aktien {
 		return result;
 	}
 	/**
-	 * Alle Aktien und Indizes, bei denen Kurse innerhalb des gewänschten Zeitraums vorhanden sind 
+	 * Alle Aktien und Indizes, bei denen Kurse innerhalb des gewünschten Zeitraums vorhanden sind 
 	 * @param mitIndizes 
 	 * @return Liste von Aktien mit Kursreihen
 	 */

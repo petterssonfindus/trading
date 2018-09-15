@@ -20,7 +20,7 @@ public class TestSAR extends TestCase {
 		// TODO Auto-generated method stub
 		super.setUp();
 		
-		aktie = Aktien.getInstance().getAktie("sardata5");
+		aktie = Aktien.newInstance().getAktie("sardata5");
 		indikatorBeschreibung = new IndikatorBeschreibung(Indikatoren.INDIKATOR_SAR);
 		aktie.addIndikator(indikatorBeschreibung);
 		indikatorBeschreibung.addParameter("start", 0.02f);

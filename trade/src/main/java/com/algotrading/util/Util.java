@@ -18,7 +18,7 @@ public class Util {
 
 	/**
 	 * macht aus einem GregorianCal-Datum ein String
-	 * kann fär Text-Ausgabe und SQL-Abfragen genutzt werden
+	 * kann für Text-Ausgabe und SQL-Abfragen genutzt werden
 	 * 
 	 * @param date das Datum, das umgewandelt werden soll
 	 * @return ein String oder der Wert 'NULL'
@@ -67,7 +67,7 @@ public class Util {
 	}
 	
 	/**
-	 * präft, ob der Stichtag sich innerhalb oder gleich der Zeitraum befindet 
+	 * prüft, ob der Stichtag sich innerhalb oder gleich der Zeitraum befindet 
 	 * @param stichtag der angefragte Stichtag
 	 * @param beginn
 	 * @param ende
@@ -90,7 +90,7 @@ public class Util {
 	}
 	
 	/**
-	 * ermittelt die Anzahl Tage zwischen 2 Datämern 
+	 * ermittelt die Anzahl Tage zwischen 2 Datümern 
 	 * @param beginn
 	 * @param ende
 	 * @return
@@ -104,7 +104,7 @@ public class Util {
 	
 	/**
 	 * Addiert zu einem Datum Tage hinzu 
-	 * und gibt ein neues Datum zuräck 
+	 * und gibt ein neues Datum zurück 
 	 * @param datum
 	 * @param tage
 	 * @return
@@ -134,7 +134,7 @@ public class Util {
 	 * @param datum
 	 */
 	public static GregorianCalendar parseDatum (String datum) {
-		// präft, ob die ersten 4 Zeichen ein Jahr sein kännten 
+		// prüft, ob die ersten 4 Zeichen ein Jahr sein könnten 
 		int jahr = 0;
 		boolean istJahr = false; 
 		try {
@@ -195,7 +195,7 @@ public class Util {
 		return System.getProperty("user." + property);
 	}
 	/**
-	 * Umschlieät einen Text mit Anfährungszeichen
+	 * Umschließt einen Text mit Anführungszeichen
 	 * @param text
 	 * @return
 	 */

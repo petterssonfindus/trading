@@ -76,12 +76,14 @@ public class Depot {
 		if (ende == null) log.error("Inputparameter Ende = null");
 		if (aktien == null || aktien.isEmpty()) log.error("Inputparameter Aktien = null");
 		if ( ! ende.after(beginn)) log.error("Inputparameter Ende liegt vor Beginn");
+		
 		this.beginn = beginn;
 		this.tagesStrategie = tagesStrategie;
 		this.signalStrategie = signalStratgie; 
 		// eine Aktie mit Zeitreihe wird angelegt, um die Depotwerte zu speichern 
 		this.depotwert = new Aktie(this.name, "Depot " + this.name, Aktien.INDEXDAX,Aktien.BOERSEDEPOT);
-		// die Berechnungen an den Aktien werden durchgefährt
+		
+		// die Berechnungen an den Aktien werden durchgeführt
 		for (Aktie aktie : aktien ) {
 			aktie.rechneSignale();
 		}

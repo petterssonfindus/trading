@@ -24,7 +24,7 @@ import com.algotrading.util.Zeitraum;
  * Repräsentiert eine Aktie am Aktienmarkt
  * Oder auch einen Index oder ein Depot mit täglichen Depotwerten
  * enthält eine Reihe von Kursen mit aufsteigender Sortierung 
- * Erzeugung und Zugang findet äber die Klasse Aktien statt 
+ * Erzeugung und Zugang findet über die Klasse Aktien statt 
  */
 public class Aktie extends Parameter {
 	private static final Logger log = LogManager.getLogger(Aktie.class);
@@ -52,11 +52,11 @@ public class Aktie extends Parameter {
 	private boolean signaleSindBerechnet = false; 
 	
 	/**
-	 * ein Konstruktor mit beschränktem Zugriff fär die Klasse Aktien 
-	 * enthält alles, auäer den Kursen
+	 * ein Konstruktor mit beschränktem Zugriff für die Klasse Aktien 
+	 * enthält alles, außer den Kursen
 	 * @param name Kurzname, Kärzel - intern wird immer mit LowerCase gearbeitet
 	 * @param firmenname offizieller Firmenname, zur Beschriftung verwendet 
-	 * @param indexname zugehäriger Index zu Vergleichszwecken 
+	 * @param indexname zugehöriger Index zu Vergleichszwecken 
 	 * @param boersenplatz 
 	 */
 	public Aktie (String name, String firmenname, String indexname, byte boersenplatz) {
@@ -66,8 +66,8 @@ public class Aktie extends Parameter {
 		this.boersenplatz = boersenplatz;
 	}
 	/**
-	 * Zugriff auf die Indikatoren(Beschreibungen), die fär eine Aktie existieren. 
-	 * Daräber ist ein Zugriff auf die Eindikatoren-Wert am Kurs mäglich. 
+	 * Zugriff auf die Indikatoren(Beschreibungen), die für eine Aktie existieren. 
+	 * Darüber ist ein Zugriff auf die Eindikatoren-Wert am Kurs möglich. 
 	 * @return eine Liste der Indikator-Beschreibungen
 	 */
 	public ArrayList<IndikatorBeschreibung> getIndikatorBeschreibungen() {
@@ -116,7 +116,7 @@ public class Aktie extends Parameter {
 	
 	/**
 	 * ermittelt und initialisiert eine Kursreihe innerhalb eines Zeitraums
-	 * Ein Cache fär einen Zeitraum wird verwendet. 
+	 * Ein Cache für einen Zeitraum wird verwendet. 
 	 * @param beginn
 	 * @param ende
 	 * @return
@@ -124,11 +124,11 @@ public class Aktie extends Parameter {
 	public ArrayList<Kurs> getKurse(Zeitraum zeitraum) {
 		ArrayList<Kurs> result = null;
 		if (zeitraum == null) log.error("Inputvariable Zeispanne ist null");
-		// wenn es bereits eine Zeitraum gibt und diese ist identisch mit der angeforderten
+		// wenn es bereits einen Zeitraum gibt und dieser ist identisch mit der angeforderten
 		if (this.zeitraum != null && this.zeitraum.equals(zeitraum)) {
 			result = this.kurseZeitraum;
 		}
-		// der Cache muss neu gefällt werden 
+		// der Cache muss neu gefüllt werden 
 		else {
 			result = this.sucheBoersenkurse(zeitraum);
 		}
@@ -137,10 +137,10 @@ public class Aktie extends Parameter {
 		return result; 
 	}
 	
-	private ArrayList<Kurs> sucheBoersenkurse (Zeitraum Zeitraum) {
+	private ArrayList<Kurs> sucheBoersenkurse (Zeitraum zeitraum) {
 		ArrayList<Kurs> kurse = new ArrayList<Kurs>();
 		for (Kurs kurs : this.getBoersenkurse()) {
-			if (Util.istInZeitraum(kurs.datum, Zeitraum)) {
+			if (Util.istInZeitraum(kurs.datum, zeitraum)) {
 				kurse.add(kurs);
 			}
 		}
@@ -149,7 +149,7 @@ public class Aktie extends Parameter {
 	
 	/**
 	 * ermittelt und initialisiert eine Kursreihe mit allen vorhandenen Kursen
-	 * ungeeignet fär Depot-Kursreihen 
+	 * ungeeignet für Depot-Kursreihen 
 	 * @param beginn
 	 * @param ende
 	 * @return
@@ -162,7 +162,7 @@ public class Aktie extends Parameter {
 	}
 	/**
 	 * der nächste Tageskurs im Ablauf einer Simulation 
-	 * darf/muss fär jeden Handelstag genau ein Mal aufgerufen werden. 
+	 * darf/muss für jeden Handelstag genau ein Mal aufgerufen werden. 
 	 * @param kurs
 	 * @return
 	 */
@@ -245,10 +245,13 @@ public class Aktie extends Parameter {
 	 * Startet die Berechnung der Indikatoren, die als Indikator-Beschreibungen an der Aktie hängen
 	 */
 	public void rechneIndikatoren () {
-		if (! this.indikatorenSindBerechnet) {
+		if (this.indikatorenSindBerechnet) {
+			log.warn("Berechnung angestossen, obwohl bereits berechnet wurde");
+		} else { 
 			Indikatoren.rechneIndikatoren(this);
 			this.indikatorenSindBerechnet = true;
 		}
+		
 	}
 	/**
 	 * Bestehende SignalBeschreibugen werden entfernt. 
@@ -260,9 +263,10 @@ public class Aktie extends Parameter {
 		this.signalbeschreibungen = new ArrayList<SignalBeschreibung>();
 		this.signaleSindBerechnet = false; 
 	}
+	
 	/**
-	 * Eine neue SignalBeschreibung, die anschlieäend berechnet wird
-	 * Die Berechnung darf noch nicht durchgefährt sein. 
+	 * Eine neue SignalBeschreibung, die anschließend berechnet wird
+	 * Die Berechnung darf noch nicht durchgeführt sein. 
 	 * @param typ
 	 * @return
 	 */
@@ -270,8 +274,9 @@ public class Aktie extends Parameter {
 		if (this.signaleSindBerechnet) log.error("neues Signal, Berechnung bereits durchgefährt");
 		this.signalbeschreibungen.add(signalBeschreibung);
 	}
+	
 	/**
-	 * Berechnet alle Signale fär alle Kurse anhand der SignalBeschreibungen 
+	 * Berechnet alle Signale für alle Kurse anhand der SignalBeschreibungen 
 	 */
 	public void rechneSignale () {
 		if (! this.signaleSindBerechnet && this.signalbeschreibungen.size() > 0) {
@@ -414,7 +419,7 @@ public class Aktie extends Parameter {
 	}
 	
 	/**
-	 * Läscht alle Signale die an Kursen hängen
+	 * Löscht alle Signale die an Kursen hängen
 	 */
 	private void deleteSignale () {
 		for (Kurs kurs : this.kurse) {

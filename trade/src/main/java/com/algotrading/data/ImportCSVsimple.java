@@ -33,8 +33,8 @@ public class ImportCSVsimple {
 	
 	/**
 	 * Steuert das Einlesen aller CSV-Dateien, die sich im o.g. Pfad befinden. 
-	 * Erzeugt Tabellen mit dem Dateinamen als Kärzel mit allen enthaltenen Kursen. 
-	 * Es därfen nur csv-Files enthalten sein #TODO die anderen Files ignorieren
+	 * Erzeugt Tabellen mit dem Dateinamen als Kürzel mit allen enthaltenen Kursen. 
+	 * Es dürfen nur csv-Files enthalten sein #TODO die anderen Files ignorieren
 	 * Ist die Tabelle vorhanden, geschieht nichts. 
 	 */
 	public static void readPfadKurseYahooCSV() {
@@ -42,13 +42,13 @@ public class ImportCSVsimple {
 		File[] directoryListing = getCSVFilesInPath();
 		ImportKursreihe importkursreihe; 
 		if (directoryListing != null) {
-			// Iteriert äber alle enthaltenen Dateien. 
+			// Iteriert über alle enthaltenen Dateien. 
 			for (File child : directoryListing) {
 				log.info("File: " + child.getName());
 				// erzeugt eine ImportKursreihe aus den CSV-Einträgen.
 				importkursreihe = readKurseYahooCSV(child);
 				if (importkursreihe != null) {
-					// erzeugt eine neue Tabelle mit dem Kärzel, falls noch keine vorhanden ist
+					// erzeugt eine neue Tabelle mit dem Kürzel, falls noch keine vorhanden ist
 					if (DBManager.schreibeNeueAktieTabelle(importkursreihe.kuerzel)) {
 						// schreibt die Kurse in die neue Tabelle
 						DBManager.schreibeKurse(importkursreihe);
@@ -63,7 +63,7 @@ public class ImportCSVsimple {
 	
 	/**
 	 * Liest eine einzelne Datei aus dem Pfad. 
-	 * Erzeugt Tabellen mit dem Dateinamen als Kärzel mit allen enthaltenen Kursen. 
+	 * Erzeugt Tabellen mit dem Dateinamen als Kürzel mit allen enthaltenen Kursen. 
 	 * @param name
 	 */
 	public static File getCSVFile (String name) {
@@ -93,13 +93,13 @@ public class ImportCSVsimple {
 		String kuerzel = file.getName().replace(".csv", "");
 		kuerzel = kuerzel.replace("^", "xxx");  // bei Indizes muss das Sonderzeichen entfernt werden wegen der DB.
 		kuerzel = kuerzel.toLowerCase();
-		// die Kursreihe mit dem Kärzel erzeugen
+		// die Kursreihe mit dem Kürzel erzeugen
 		ImportKursreihe importKursreihe = new ImportKursreihe(kuerzel);
 		ArrayList<Kurs> kursreihe = importKursreihe.kurse;
 
         try (BufferedReader br = new BufferedReader(new FileReader(file))) {
         	log.info("CSV-Datei einlesen: " + file.getName());
-        	// erste Zeile enthält die äberschriften
+        	// erste Zeile enthält die Überschriften
         	br.readLine();
         	
             while ((line = br.readLine()) != null) {

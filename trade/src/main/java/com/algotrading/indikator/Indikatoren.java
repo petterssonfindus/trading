@@ -70,7 +70,7 @@ public class Indikatoren {
 		
 		for (IndikatorBeschreibung indikatorBeschreibung : indikatorBeschreibungen) {
 			// holt sich die Implementierung des Indikators 
-			IndikatorAlgorithmus indiAlgo = indikatoren.get(indikatorBeschreibung);
+			IndikatorAlgorithmus indiAlgo = indikatoren.get(indikatorBeschreibung.getTyp());
 			indiAlgo.rechne(aktie, indikatorBeschreibung);
 		}
 	}

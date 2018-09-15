@@ -20,7 +20,7 @@ public class TestAccumulationDistributionLine extends TestCase {
 		// TODO Auto-generated method stub
 		super.setUp();
 		
-		aktie = Aktien.getInstance().getAktie("testaktie");
+		aktie = Aktien.newInstance().getAktie("testaktie");
 		indikatorBeschreibung = new IndikatorBeschreibung(Indikatoren.INDIKATOR_ADL);
 		aktie.addIndikator(indikatorBeschreibung);
 		indikatorBeschreibung.addParameter("dauer", 10);

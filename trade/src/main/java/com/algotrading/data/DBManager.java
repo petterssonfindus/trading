@@ -21,7 +21,7 @@ import com.algotrading.aktie.Kurs;
 
 /**
  * @author oskar <br>
- *         äber diese Klasse läuft sämtlich Kommunikation mit der Datenbank.<br>
+ *         über diese Klasse läuft sämtlich Kommunikation mit der Datenbank.<br>
  */
 
 public class DBManager {
@@ -41,13 +41,13 @@ public class DBManager {
 		int zaehler = 0;
 		
 		Connection connection = ConnectionFactory.getConnection();
-		// iteriert äber alle vorhandenen Kurse 
+		// iteriert über alle vorhandenen Kurse 
 		for (Kurs kurs : kursreihe.kurse) {
 			// schreibt den Kurs in die Tabelle 
 			// wenn ein Fehler entsteht z.B. duplicate Entry, wird gezählt. 
 			if (! DBManager.addKurs(kurs, connection)) zaehler ++;
 		}
-		log.info("Anzahl " + kursreihe.kurse.size() + " Kurse fär " + kursreihe.kuerzel + " Fehler: " + zaehler);
+		log.info("Anzahl " + kursreihe.kurse.size() + " Kurse für " + kursreihe.kuerzel + " Fehler: " + zaehler);
 		return true; 
 	}
 	
@@ -131,7 +131,7 @@ public class DBManager {
 	}
 
 	/**
-	 * fägt einen neuen Kurs in eine bestehende Tabelle
+	 * fügt einen neuen Kurs in eine bestehende Tabelle
 	 * Im Tageskurs sind nur Datum und die Kursreihe relevant 
 	 * Sortierung spielt keine Rolle.
 	 * # TODO Fehlerbehandlung, wenn Kurs bereits vorhanden. 
@@ -214,7 +214,7 @@ public class DBManager {
 		}
 	}
 	/**
-	 * Präft, ob alle Kurse vorhanden sind 
+	 * Prüft, ob alle Kurse vorhanden sind 
 	 * Referenz-Kursreihe ist xxxdja
 	 * @param name
 	 */
@@ -251,7 +251,7 @@ public class DBManager {
 				i ++;
 			}
 			while (i < aktieKurse.size() - 10) ;
-			System.out.println("Aktienkurse gepräft: " + name + 
+			System.out.println("Aktienkurse geprüft: " + name + 
 					" von " + Util.formatDate(kurs1.datum) + " bis " + Util.formatDate(kurs2.datum));
 		}
 		else {	// Aktienkurs ist älter als 1. DowJones-Kurs
@@ -259,7 +259,7 @@ public class DBManager {
 			kurs2 = aktie.getKurs(dow1.datum);
 			// Abstand ist die Anzahl Kurse, die der DOW älter ist 
 			abstand = aktieKurse.indexOf(kurs2);
-			int i = 1; // i iteriert äber die Kurse der Aktie
+			int i = 1; // i iteriert über die Kurse der Aktie
 			do {
 				if (i >= dowKurse.size()) {
 					System.out.println("Kurs fehlt: " + name + " " + i + " last: " + Util.formatDate(kurs2.datum));
@@ -275,7 +275,7 @@ public class DBManager {
 				i ++;
 			}
 			while (i < dowKurse.size() - 10) ;
-			System.out.println("Aktienkurse gepräft: " + name + 
+			System.out.println("Aktienkurse geprüft: " + name + 
 					" von " + Util.formatDate(kurs1.datum) + " bis " + Util.formatDate(kurs2.datum));
 
 		}
@@ -307,7 +307,7 @@ public class DBManager {
 	}
 	
 	/**
-	 * Befällt ein Verzeichnis mit allen Aktien-Stammdaten 
+	 * Befüllt ein Verzeichnis mit allen Aktien-Stammdaten 
 	 * @return
 	 */
 	public static HashMap<String, Aktie> getVerzeichnis () {
@@ -385,7 +385,7 @@ public class DBManager {
 		if (beginn == null) return null;  // #TODO Exception werfen 
 
 		String select = "SELECT * FROM " + name + " WHERE `datum` >= '" + Util.formatDate(beginn) + "'";
-		// den DB-SELECT Ausfähren und eine Kursreihe erzeugen mit enthaltenen Wertpapier-Namen
+		// den DB-SELECT Ausführen und eine Kursreihe erzeugen mit enthaltenen Wertpapier-Namen
 		ArrayList<Kurs> kursreihe = getKursreiheSELECT(select, name);
 		return kursreihe; 
 	}
@@ -418,7 +418,7 @@ public class DBManager {
 	}
 	
 	/**
-	 * die Kursreihe werden mit Tageskursreihen befällt 
+	 * die Kursreihe werden mit Tageskursreihen befüllt 
 	 * @param response
 	 * @return
 	 */
@@ -467,7 +467,7 @@ public class DBManager {
 
 
 	/**
-	 * ergänzt einen Text um ein fährendes Komma und einen SQL-Apostroph vorne
+	 * ergänzt einen Text um ein führendes Komma und einen SQL-Apostroph vorne
 	 * und hinten aus Mueller wird , 'Mueller'
 	 * 
 	 * @param text
@@ -487,7 +487,7 @@ public class DBManager {
 	}
 
 	/**
-	 * macht aus einem GregorianCal-Datum ein String, der fär SQL-Abfragen genutzt wird
+	 * macht aus einem GregorianCal-Datum ein String, der für SQL-Abfragen genutzt wird
 	 * 
 	 * @param date das Datum, das umgewandelt werden soll
 	 * @return ein String oder der Wert 'NULL'

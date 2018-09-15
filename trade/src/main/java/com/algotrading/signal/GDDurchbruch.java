@@ -18,7 +18,7 @@ public class GDDurchbruch implements SignalAlgorithmus {
 
 	/**
 	 * erzeugt ein Signal, wenn der Tageskurs den GD schneidet 
-	 * Stärke ist maximal, wenn alle 3 GDs äber/unter dem Tageskurs sind 
+	 * Stärke ist maximal, wenn alle 3 GDs über/unter dem Tageskurs sind 
 	 * @param kursreihe
 	 */
 	public int ermittleSignal(Aktie aktie, SignalBeschreibung signalbeschreibung) {
@@ -32,11 +32,11 @@ public class GDDurchbruch implements SignalAlgorithmus {
 		for (Kurs kurs : aktie.getKurse(zeitraum)) {
 			Kurs vortageskurs = aktie.getVortageskurs(kurs);
 			if (vortageskurs != null) {
-				// bisher darunter, jetzt daräber
+				// bisher darunter, jetzt darüber
 				// dabei werden die Signale erstellt und mit dem Tageskurs verbunden 
 				if (GDDurchbruch.pruefeGleitenderDurchschnittSteigung(kurs, vortageskurs, indikator)) anzahl++;
 				
-				// bisher daräber, jetzt darunter
+				// bisher darüber, jetzt darunter
 				if (GDDurchbruch.pruefeGleitenderDurchschnittSinkflug(kurs, vortageskurs, indikator)) anzahl++;
 			}
 		}
@@ -44,7 +44,7 @@ public class GDDurchbruch implements SignalAlgorithmus {
 	}
 
 	/**
-	 * bisher darunter, jetzt daräber
+	 * bisher darunter, jetzt darüber
 	 * erzeugt Signale und hängt sie an den Kurs an
 	 */
 	private static boolean pruefeGleitenderDurchschnittSteigung (Kurs tageskurs, Kurs vortageskurs, IndikatorBeschreibung indikator ) {
@@ -55,7 +55,7 @@ public class GDDurchbruch implements SignalAlgorithmus {
 		log.trace("GD-Signal Steigung: " + Util.formatDate(tageskurs.datum) + " - " + vortageskurs.getKurs() + " GDVt: " + gdvt + 
 				" Kurs: " + tageskurs.getKurs() + " GD: " + gd);
 		Signal signal = null; 
-		// wenn am Vortag der Kurs unter dem GD war, und heute der Kurs äber dem GD ist 
+		// wenn am Vortag der Kurs unter dem GD war, und heute der Kurs über dem GD ist 
 		if ((vortageskurs.getKurs() < gdvt + GDDurchbruch.SCHWELLEGDDURCHBRUCH) && 
 				tageskurs.getKurs() > (gd + GDDurchbruch.SCHWELLEGDDURCHBRUCH)) {
 			signal = Signal.create(tageskurs, Order.KAUF, Signal.GDDurchbruch, 0);
@@ -68,7 +68,7 @@ public class GDDurchbruch implements SignalAlgorithmus {
 	}
 
 	/**
-	 * bisher daräber, jetzt darunter
+	 * bisher darüber, jetzt darunter
 	 */
 	private static boolean pruefeGleitenderDurchschnittSinkflug (Kurs tageskurs, Kurs vortageskurs, IndikatorBeschreibung indikator ) {
 		if (tageskurs == null || vortageskurs == null || indikator == null) log.error("Inputvariable ist null"); 

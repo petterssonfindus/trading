@@ -86,11 +86,14 @@ public class Kurs {
 		if (this.indikatoren.containsKey(indikator)) {
 			return this.indikatoren.get(indikator);
 		}
-		else return 0;
+		else {
+			log.error("Kurs enthält den gewünschten Indikator nicht");
+			return 0;
+		}
 	}
 	
 	/**
-	 * gibt den Kurs eines Tages zuräck - i.d.R. der Close-Kurs
+	 * gibt den Kurs eines Tages zurück - i.d.R. der Close-Kurs
 	 * @return
 	 */
 	public float getKurs () {
@@ -101,8 +104,8 @@ public class Kurs {
 		this.close = kurs;
 	}
 	/**
-	 * Bietet Zugriff auf die Aktie äber eine Referenz (derzeit äber den Namen) 
-	 * @return die Aktie, zu dem der Kurs gehärt 
+	 * Bietet Zugriff auf die Aktie über eine Referenz (derzeit über den Namen) 
+	 * @return die Aktie, zu dem der Kurs gehört 
 	 */
 	 public Aktie getAktie() {
 		 return Aktien.getInstance().getAktie(this.wertpapier);

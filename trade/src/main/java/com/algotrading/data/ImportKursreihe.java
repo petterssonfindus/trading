@@ -5,7 +5,7 @@ import java.util.ArrayList;
 import com.algotrading.aktie.Kurs;
 
 /**
- * Dient als Zwischenspeicher fär eingelesene Kursdaten, die anschlieäend in die DB geschrieben werden. 
+ * Dient als Zwischenspeicher für eingelesene Kursdaten, die anschließend in die DB geschrieben werden. 
  * @author Oskar
  */
 public class ImportKursreihe {

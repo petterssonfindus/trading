@@ -54,7 +54,7 @@ public class Simulator {
 				// die Indikator-Konfigurationen werden in jeder Aktie gespeichert
 				aktie.addIndikator(indikator);
 			}
-			// fär jede Aktie werden die benätigten Indikatoren berechnet 
+			// für jede Aktie werden die benötigten Indikatoren berechnet 
 			aktie.rechneIndikatoren();
 		}
 		// für jeden Zeitraum wird eine Simulation durchgeführt 
@@ -73,7 +73,7 @@ public class Simulator {
 				}
 			}
 	
-			// die Depot-Simulation wird durchgefährt, dabei werden auch Signale berechnet 
+			// die Depot-Simulation wird durchgeführt, dabei werden auch Signale berechnet 
 			depot.simuliereDepot(signalStrategie, tagesStrategie, aktien, zeitraum.beginn, zeitraum.ende, writeHandelstag);
 			
 			// auf Wunsch wird pro Simulation csv-Listen erstellt

@@ -15,7 +15,7 @@ public class TestRSI extends TestCase {
 	IndikatorBeschreibung rsi;
 	
 	public void setUp() {
-		rsiAktie = Aktien.getInstance().getAktie("sardata5");
+		rsiAktie = Aktien.newInstance().getAktie("sardata5");
 		rsi = new IndikatorBeschreibung(Indikatoren.INDIKATOR_RSI);
 		rsi.addParameter("tage", 10);
 		rsiAktie.addIndikator(rsi);
