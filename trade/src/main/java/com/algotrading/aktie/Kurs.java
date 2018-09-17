@@ -10,6 +10,7 @@ import org.apache.logging.log4j.Logger;
 import com.algotrading.data.DBManager;
 import com.algotrading.indikator.IndikatorBeschreibung;
 import com.algotrading.signal.Signal;
+import com.algotrading.signal.SignalBeschreibung;
 import com.algotrading.util.Util;
 /**
  * ein Tageskurs enthält Kursdaten, Indikatoren, und Signale
@@ -58,6 +59,20 @@ public class Kurs {
 	 */
 	public ArrayList<Signal> getSignale () {
 		return this.signale; 
+	}
+	/**
+	 * Zugriff auf das Signal einer bestimmten SignalBeschreibung
+	 * @param signalBeschreibung
+	 * @return ein Signal oder null, wenn nicht vorhanden
+	 */
+	public Signal getSignal (SignalBeschreibung signalBeschreibung) {
+		Signal result = null; 
+		for (Signal signal : this.signale) {
+			if (signal.getSignalBeschreibung().equals(signalBeschreibung)) {
+				result = signal; 
+			}
+		}
+		return result; 
 	}
 	
 	public void clearSignale () {

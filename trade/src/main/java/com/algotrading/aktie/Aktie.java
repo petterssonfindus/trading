@@ -411,13 +411,32 @@ public class Aktie extends Parameter {
 	public ArrayList<Signal> getSignale() {
 		if ( this.kurse == null) log.error("keine Kurse vorhanden in Aktie " + this.name);
 		ArrayList<Signal> signale = new ArrayList<Signal>();
-		// geht durch alle Kurse und holt die angehängten Signale
+		// geht durch alle Kurse und holt alle angehängten Signale
 		for (Kurs kurs : this.kurse) {
 			signale.addAll(kurs.getSignale());
 		}
 		return signale;
 	}
 	
+	/**
+	 * alle Signale einer zugehörigen Signal-Beschreibung 
+	 * von allen Tageskursen nach Datum aufsteigend
+	 * @return eine Liste mit 0 - n Signalen 
+	 */
+	public ArrayList<Signal> getSignale(SignalBeschreibung signalBeschreibung) {
+		if ( this.kurse == null) log.error("keine Kurse vorhanden in Aktie " + this.name);
+		ArrayList<Signal> signale = new ArrayList<Signal>();
+		Signal signal = null; 
+		// geht durch alle Kurse und holt die gewünschten Signale
+		for (Kurs kurs : this.kurse) {
+			signal = kurs.getSignal(signalBeschreibung);
+			if (signal != null) {
+				signale.add(signal);
+			}
+		}
+		return signale;
+	}
+
 	/**
 	 * Löscht alle Signale die an Kursen hängen
 	 */

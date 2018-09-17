@@ -9,9 +9,10 @@ import com.algotrading.aktie.Kurs;
 
 /**
  * repräsentiert ein Kauf/Verkaufsignal 
- * Es können mehrere Signale vom gleichen Typ hintereinander auftreten. 
+ * Wurde ausgelöst auf Basis einer SignalBeschreibung mit Parametern
+ * Es können mehrere Signale vom gleichen Typ auftreten. 
  * Ein Signal gehört zu einem Tageskurs.
- * Ein Signal hat keinen Parameter. 
+ * Ein Signal hat keinen Parameter, aber eine Referenz auf die SignalBeschreibung
  * Liefert häufig einen Wert über die Stärke
  * @author oskar
  *
@@ -20,6 +21,8 @@ public class Signal {
 	private static final Logger log = LogManager.getLogger(Signal.class);
 
 	private Kurs tageskurs; 
+	
+	private SignalBeschreibung signalBeschreibung; 
 
 	private byte kaufVerkauf;
 	// die Liste aller Signale
@@ -48,7 +51,8 @@ public class Signal {
 	 * @param typ
 	 * @param staerke
 	 */
-	private Signal (Kurs tageskurs, byte kaufVerkauf, int typ, float staerke){
+	private Signal (SignalBeschreibung sB, Kurs tageskurs, byte kaufVerkauf, int typ, float staerke){
+		this.signalBeschreibung = sB; 
 		this.tageskurs = tageskurs; 
 		this.kaufVerkauf = kaufVerkauf;
 		this.typ = typ;
@@ -63,8 +67,8 @@ public class Signal {
 	 * @param staerke
 	 * @return
 	 */
-	public static Signal create (Kurs tageskurs, byte kaufVerkauf, int typ, float staerke) {
-		Signal signal = new Signal(tageskurs, kaufVerkauf, typ, staerke);
+	public static Signal create (SignalBeschreibung sB, Kurs tageskurs, byte kaufVerkauf, int typ, float staerke) {
+		Signal signal = new Signal(sB, tageskurs, kaufVerkauf, typ, staerke);
 		tageskurs.addSignal(signal);
 		log.debug("neues Signal: " + signal.toString());
 		return signal;
@@ -94,6 +98,11 @@ public class Signal {
 	public void setKaufVerkauf(byte kaufVerkauf) {
 		this.kaufVerkauf = kaufVerkauf;
 	}
+	
+	public SignalBeschreibung getSignalBeschreibung() {
+		return signalBeschreibung;
+	}
+	
 	public String toString () {
 		String result; 
 		result = this.tageskurs.wertpapier + Util.separator +

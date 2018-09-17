@@ -25,7 +25,6 @@ public class Signalsuche {
 		HashMap<Short, SignalAlgorithmus> result = new HashMap<Short, SignalAlgorithmus>();
 		// die Implementierungen der Signal-Algorithmen einhängen 
 		result.put(Signal.GDDurchbruch, new GDDurchbruch());
-		result.put(Signal.GDSchnitt, new GDSchnitt());
 		result.put(Signal.Jahrestag, new Jahrestag());
 		result.put(Signal.ADL, new ADLDelta());
 		result.put(Signal.FallenderBerg, new SteigendeBergeFallendeTaeler());
@@ -36,7 +35,7 @@ public class Signalsuche {
 	}
 	
 	/**
-	 * steuert die Berechnung von Signalen für eine Aktie
+	 * steuert die Berechnung von allen Signalen einer Aktie auf Basis der vorhandene SignalBeschreibungen 
 	 * Die Signalsuche wird in Test-Cases separat/einzeln beauftragt. 
 	 * Die Indikatoren müssen bereits berechnet worden sein und hängen am Kurs. 
 	 * @param aktie

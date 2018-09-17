@@ -27,17 +27,17 @@ public class Jahrestag implements SignalAlgorithmus {
 	 * Genau ein Signal pro Jahr
 	 * @param kursreihe
 	 */
-	public int ermittleSignal(Aktie aktie, SignalBeschreibung signalbeschreibung) {
+	public int ermittleSignal(Aktie aktie, SignalBeschreibung sB) {
 		if (aktie == null) log.error("Inputparameter Aktie ist null");
-		if (signalbeschreibung == null) log.error("Inputparameter Signalbeschreibung ist null");
+		if (sB == null) log.error("Inputparameter Signalbeschreibung ist null");
 		int anzahl = 0;
 		jahreszahl = 0;
-		int tage = (Integer) signalbeschreibung.getParameter("tage");
-		int kaufverkauf = (Integer) signalbeschreibung.getParameter("kaufverkauf");
-		Zeitraum zeitraum = (Zeitraum) signalbeschreibung.getParameter("zeitraum");
+		int tage = (Integer) sB.getParameter("tage");
+		int kaufverkauf = (Integer) sB.getParameter("kaufverkauf");
+		Zeitraum zeitraum = (Zeitraum) sB.getParameter("zeitraum");
 		
 		for (Kurs kurs : aktie.getKurse(zeitraum)) {
-			if (Jahrestag.pruefeJahrestag(kurs, tage, kaufverkauf)) anzahl++;
+			if (Jahrestag.pruefeJahrestag(sB, kurs, tage, kaufverkauf)) anzahl++;
 		}
 		return anzahl; 
 	}
@@ -45,7 +45,7 @@ public class Jahrestag implements SignalAlgorithmus {
 	/**
 	 * erzeugt Jahrestag-Signal und hängt es an den Kurs an
 	 */
-	private static boolean pruefeJahrestag (Kurs tageskurs, int jahrestag, int kaufverkauf) {
+	private static boolean pruefeJahrestag (SignalBeschreibung sB, Kurs tageskurs, int jahrestag, int kaufverkauf) {
 		if (tageskurs == null ) log.error("Inputvariable ist null"); 
 		boolean result = false; 
 		GregorianCalendar datum = tageskurs.datum;
@@ -54,7 +54,7 @@ public class Jahrestag implements SignalAlgorithmus {
 		if (dayofyear > jahrestag && year > jahreszahl) {
 			log.debug("Jahrestag eingetreten: " + tageskurs.wertpapier + " " + 
 					jahrestag + " " + kaufverkauf + " " + Util.formatDate(datum));
-			Signal.create(tageskurs, (byte) kaufverkauf, Signal.Jahrestag, 0);
+			Signal.create(sB, tageskurs, (byte) kaufverkauf, Signal.Jahrestag, 0);
 			jahreszahl = datum.get(Calendar.YEAR);
 			result = true; 
 		}
