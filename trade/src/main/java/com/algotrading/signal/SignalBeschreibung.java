@@ -21,5 +21,9 @@ public class SignalBeschreibung extends Parameter {
 		this.signalTyp = signalTyp; 
 		log.debug("neue SignalBeschreibung Typ: " + signalTyp);
 	}
+
+	public short getSignalTyp() {
+		return signalTyp;
+	}
 	
 }

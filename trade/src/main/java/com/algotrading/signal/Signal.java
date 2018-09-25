@@ -39,8 +39,6 @@ public class Signal {
 	public static final short RSI = 10; 
 	public static final short ADL = 12; 
 	
-	private int typ;
-	
 	// optional - eine Zahl von 0 - 100 über die Stärke
 	public float staerke; 
 	/**
@@ -51,37 +49,35 @@ public class Signal {
 	 * @param typ
 	 * @param staerke
 	 */
-	private Signal (SignalBeschreibung sB, Kurs tageskurs, byte kaufVerkauf, int typ, float staerke){
+	private Signal (SignalBeschreibung sB, Kurs tageskurs, byte kaufVerkauf, float staerke){
 		this.signalBeschreibung = sB; 
 		this.tageskurs = tageskurs; 
 		this.kaufVerkauf = kaufVerkauf;
-		this.typ = typ;
 		this.staerke = staerke;
 	}
 	
 	/**
 	 * Die Signalsuche hat ein Signal identifiziert und hängt es in den Kurs ein
+	 * Der Typ ist in der zugehörigen Signalbeschreibung festgelegt. 
 	 * @param tageskurs
 	 * @param kaufVerkauf
-	 * @param typ
 	 * @param staerke
 	 * @return
 	 */
-	public static Signal create (SignalBeschreibung sB, Kurs tageskurs, byte kaufVerkauf, int typ, float staerke) {
-		Signal signal = new Signal(sB, tageskurs, kaufVerkauf, typ, staerke);
+	public static Signal create (SignalBeschreibung sB, Kurs tageskurs, byte kaufVerkauf, float staerke) {
+		Signal signal = new Signal(sB, tageskurs, kaufVerkauf, staerke);
 		tageskurs.addSignal(signal);
 		log.debug("neues Signal: " + signal.toString());
 		return signal;
 	}
+	/**
+	 * Zugriff auf Typ-Eigenschaft, die an der Beschreibung gehalten wird
+	 * @return
+	 */
+	public short getTyp () {
+		return this.signalBeschreibung.getSignalTyp();
+	}
 
-	public void setTyp (byte typ) {
-		this.typ = typ;
-	}
-	
-	public int getTyp () {
-		return this.typ;
-	}
-	
 	public Kurs getTageskurs () {
 		return this.tageskurs;
 	}
@@ -108,7 +104,7 @@ public class Signal {
 		result = this.tageskurs.wertpapier + Util.separator +
 			Util.formatDate(this.tageskurs.datum) + Util.separator + 
 			this.kaufVerkaufToString() + Util.separator + 
-			this.typ + Util.separator + 
+			this.signalBeschreibung.getSignalTyp() + Util.separator + 
 			Util.toString(this.staerke);
 		return result;
 	}

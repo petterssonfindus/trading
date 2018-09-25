@@ -7,13 +7,6 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import com.algotrading.aktie.Aktie;
-import com.algotrading.signal.ADLDelta;
-import com.algotrading.signal.GDDurchbruch;
-import com.algotrading.signal.GDSchnitt;
-import com.algotrading.signal.Jahrestag;
-import com.algotrading.signal.Signal;
-import com.algotrading.signal.SignalAlgorithmus;
-import com.algotrading.signal.SteigendeBergeFallendeTaeler;
 
 /**
  * berechnet alle statistischen Indikatoren auf Basis einer Kursreihe

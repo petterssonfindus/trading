@@ -54,7 +54,7 @@ public class Jahrestag implements SignalAlgorithmus {
 		if (dayofyear > jahrestag && year > jahreszahl) {
 			log.debug("Jahrestag eingetreten: " + tageskurs.wertpapier + " " + 
 					jahrestag + " " + kaufverkauf + " " + Util.formatDate(datum));
-			Signal.create(sB, tageskurs, (byte) kaufverkauf, Signal.Jahrestag, 0);
+			Signal.create(sB, tageskurs, (byte) kaufverkauf, 0);
 			jahreszahl = datum.get(Calendar.YEAR);
 			result = true; 
 		}

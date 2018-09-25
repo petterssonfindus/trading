@@ -15,7 +15,7 @@ public class GDDurchbruch implements SignalAlgorithmus {
 
 	/**
 	 * erzeugt ein Signal, wenn der Tageskurs den GD schneidet 
-	 * Stärke ist maximal, wenn alle 3 GDs über/unter dem Tageskurs sind 
+	 * Stärke sagt aus, wie weit der Kurs vom GD abweicht. 
 	 * Parameter "schwelle" - Dezimalwert der Überschreitung 
 	 * Parameter "indikator" - die zugehörige GD-IndikatorBeschreibung
 	 * Parameter "zeitraum" - der zu berechnende Zeitraum
@@ -61,7 +61,7 @@ public class GDDurchbruch implements SignalAlgorithmus {
 		// wenn am Vortag der Kurs unter dem GD war, und heute der Kurs über dem GD ist 
 		if ((vortageskurs.getKurs() < (gdvt * schwelle)) && 
 				tageskurs.getKurs() > (gd * schwelle)) {
-			signal = Signal.create(sB, tageskurs, Order.KAUF, Signal.GDDurchbruch, 0);
+			signal = Signal.create(sB, tageskurs, Order.KAUF, 0);
 			result = true; 
 			signal.staerke = (tageskurs.getKurs() - gd) / gd;
 			log.debug("GD-Steigung erkannt: " + Util.formatDate(tageskurs.datum) + " VTKurs " + vortageskurs.getKurs() + " GDVt: " + gdvt + 
@@ -82,7 +82,7 @@ public class GDDurchbruch implements SignalAlgorithmus {
 		
 		if ((vortageskurs.getKurs() > (gdvt * schwelle)) && 
 				tageskurs.getKurs() < (gd * schwelle)) {
-			signal = Signal.create(sB, tageskurs, Order.VERKAUF, Signal.GDDurchbruch, 0);
+			signal = Signal.create(sB, tageskurs, Order.VERKAUF, 0);
 			result = true;
 			signal.staerke = (gd - tageskurs.getKurs()) / gd;
 			log.debug("GD-Sinkflug: " + Util.formatDate(tageskurs.datum) + " VTKurs " + vortageskurs.getKurs() + " GDVt: " + gdvt + 
