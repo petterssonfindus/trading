@@ -1,5 +1,7 @@
 /.classpath
 /.settings/
+/.metadata
+/log
 /bin/
 *.log
 *.class

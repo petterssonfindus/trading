@@ -28,9 +28,9 @@ public class Volatilitaet implements IndikatorAlgorithmus {
 		
 		Kurs tageskurs; 
 		DescriptiveStatistics stats = new DescriptiveStatistics();
-		// beim Einfägen weiterer Werte fliegt automatisch der erst raus
+		// beim Einfügen weiterer Werte fliegt automatisch der erst raus
 		stats.setWindowSize(x);
-		// die Werte auffällen ohne Berechnung
+		// die Werte auffüllen ohne Berechnung
 		for (int i = 0 ; i < x ; i++) {
 			stats.addValue(aktie.getBoersenkurse().get(i).getKurs());
 		}

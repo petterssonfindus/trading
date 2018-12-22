@@ -43,6 +43,21 @@ public class Aktie extends Parameter {
 	// ein Cache für die aktuell ermittelte Kursreihe 
 	private Zeitraum zeitraum; 
 	public String indexname;
+	private String ISIN; 
+	public String getISIN() {
+		return ISIN;
+	}
+	public void setISIN(String iSIN) {
+		ISIN = iSIN;
+	}
+	// die Datenquelle 1=Yahoo
+	private int quelle; 
+	public int getQuelle() {
+		return quelle;
+	}
+	public void setQuelle(int quelle) {
+		this.quelle = quelle;
+	}
 	public byte boersenplatz; 
 	// die Indikatoren-Beschreibungen, die an der Aktie hängen - Zugriff über Getter  
 	ArrayList<IndikatorBeschreibung> indikatorBeschreibungen = new ArrayList<IndikatorBeschreibung>();
@@ -54,7 +69,7 @@ public class Aktie extends Parameter {
 	/**
 	 * ein Konstruktor mit beschränktem Zugriff für die Klasse Aktien 
 	 * enthält alles, außer den Kursen
-	 * @param name Kurzname, Kärzel - intern wird immer mit LowerCase gearbeitet
+	 * @param name Kurzname, Kürzel - intern wird immer mit LowerCase gearbeitet
 	 * @param firmenname offizieller Firmenname, zur Beschriftung verwendet 
 	 * @param indexname zugehöriger Index zu Vergleichszwecken 
 	 * @param boersenplatz 

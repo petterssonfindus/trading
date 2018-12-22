@@ -69,8 +69,8 @@ public class Aktien {
 
 	/**
 	 * liest und initialisiert eine Aktie anhand eines WP-Namens
-	 * die Kursreihe ist eventuell noch nicht gefällt. 
-	 * Wird beim Zugriff gefällt. 
+	 * die Kursreihe ist eventuell noch nicht gefüllt. 
+	 * Wird beim Zugriff gefüllt. 
 	 * @param wertpapier
 	 * @return
 	 */
@@ -85,7 +85,7 @@ public class Aktien {
 			// zu Beginn sind alle Kursreihen vorhanden, aber ohne Kurse 
 			if (aktie == null) log.error("Aktie ist null : " + wertpapier);
 		}
-		else log.error("Aktie nicht vorhanden: " + wertpapier);
+		else log.error("Aktie im Verzeichnis nicht vorhanden: " + wertpapier);
 		return aktie; 
 	}
 	

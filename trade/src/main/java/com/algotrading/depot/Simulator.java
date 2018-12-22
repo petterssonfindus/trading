@@ -93,7 +93,7 @@ public class Simulator {
 
 	}
 	/**
-	 * äffnet die StrategieInOut-Datei 
+	 * öffnet die StrategieInOut-Datei 
 	 */
 	private static FileWriter openInputOutput () {
 		FileWriter fileWriter = null;
@@ -115,7 +115,7 @@ public class Simulator {
 		return fileWriter;
 	}
 	/**
-	 * Schlieät die In-Out-Datei 
+	 * Schliesst die In-Out-Datei 
 	 * @param fileWriter
 	 */
 	private static void closeInputOutput (FileWriter fileWriter) {

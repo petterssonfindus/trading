@@ -13,6 +13,8 @@ import com.algotrading.aktie.Kurs;
 import com.algotrading.indikator.Indikatoren;
 import com.algotrading.signal.Signal;
 import com.algotrading.util.Util;
+import com.algotrading.util.Zeitraum;
+
 import junit.framework.TestCase;
 
 public class DBManagerTest extends TestCase {
@@ -89,6 +91,23 @@ public class DBManagerTest extends TestCase {
 		assertNotNull(test);
 		assertTrue(test.size() > 30);
 		
+	}
+	
+	public void testGetZeitraumAktie () {
+		Zeitraum zeitraum = DBManager.getZeitraumVorhandeneKurse(Aktien.getInstance().getAktie("testaktie"));
+		assertNotNull(zeitraum);
+		assertEquals(1426633200000L, zeitraum.beginn.getTimeInMillis());
+		assertEquals(1518130800000L, zeitraum.ende.getTimeInMillis());
+		
+	}
+	
+	/**
+	 * Der letzte gespeicherte Kurs
+	 */
+	public void testGetLastKurs () {
+		GregorianCalendar test = DBManager.getLastKurs(Aktien.getInstance().getAktie("testaktie"));
+		assertNotNull(test);
+		assertEquals("2018-02-09", Util.formatDate(test));
 	}
 	
 	

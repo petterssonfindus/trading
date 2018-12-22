@@ -1,6 +1,8 @@
 package com.algotrading.util;
 
+import java.io.File;
 import java.sql.Date;
+import java.util.ArrayList;
 import java.util.GregorianCalendar;
 
 import org.apache.logging.log4j.LogManager;
@@ -10,10 +12,47 @@ import junit.framework.TestCase;
 
 public class UtilTest extends TestCase {
 	private static final Logger log = LogManager.getLogger(UtilTest.class);
-
+	
+	public void testUnixTime () {
+		long x = 1517094000L;
+		long x2 = 567817200L;
+		GregorianCalendar y = Util.unixTimeToGregorianCalendar(x);
+		GregorianCalendar y2 = Util.unixTimeToGregorianCalendar(x2);
+		String d1 = Util.formatDate(y);
+		String d2 = Util.formatDate(y2);
+		System.out.println("Zeit aus " + x + " ist " + d1);
+		System.out.println("Zeit aus " + x2 + " ist " + d2);
+		assertEquals("2018-01-28", d1);
+		assertEquals("1987-12-30", d2);
+	}
+	
+	public void testUnixTimeTransform () {
+		long x = 1000 * 1517094000L;
+		long x2 = 1000 * 567817200L;
+		GregorianCalendar y = Util.toGregorianCalendar(x);
+		GregorianCalendar y2 = Util.toGregorianCalendar(x2);
+		String d1 = Util.formatDate(y);
+		String d2 = Util.formatDate(y2);
+		System.out.println("Zeit aus " + x + " ist " + d1);
+		System.out.println("Zeit aus " + x2 + " ist " + d2);
+		assertEquals("2018-01-28", d1);
+		assertEquals("1987-12-30", d2);
+	}
+	
 	public void testFloatString () {
 		float test = 17.834f;
 		log.info("Utiltest: " + Util.toString(test));
+	}
+	
+	public void testGetHeute () {
+		GregorianCalendar heute = Util.getHeute();
+		assertNotNull(heute);
+		log.info("Heute: " + Util.formatDate(heute));
+		System.out.println("Heute: " + Util.formatDate(heute));
+	}
+	
+	public void testGetLetzterHandelstag() {
+		Util.getLetzterHandelstag();
 	}
 	
 	public void testZeitraum () {
@@ -49,6 +88,26 @@ public class UtilTest extends TestCase {
 		log.info("Beginn: " + Util.formatDate(beginn) + " Ende: "+ Util.formatDate(ende));
 	}
 	
+	public void testDatumFormatTrenner() {
+		GregorianCalendar beginn = new GregorianCalendar(2017,11,2);
+		String test1 = Util.formatDate(beginn, ".");
+		assertTrue(test1.equalsIgnoreCase("2017.12.02"));
+		GregorianCalendar ende = new GregorianCalendar(2018,0,2);
+		String test2 = Util.formatDate(ende, ":");
+		assertTrue(test2.equalsIgnoreCase("2018:01:02"));
+		log.info("Beginn: " + test1 + " Ende: "+ test2);
+		
+	}
+	
+	public void testDatumFormatTrennerJahr() {
+		GregorianCalendar beginn = new GregorianCalendar(2017,11,2);
+		String test1 = Util.formatDate(beginn, ".", true);
+		assertTrue(test1.equalsIgnoreCase("2017.12.02"));
+		String test2 = Util.formatDate(beginn, ".", false);
+		assertTrue(test2.equalsIgnoreCase("02.12.2017"));
+		
+	}
+	
 	public void testParseDatumJJJJ_MM_TT () {
 		String testDatum = "2017-12-02";
 		GregorianCalendar datum = Util.parseDatum(testDatum);
@@ -59,6 +118,22 @@ public class UtilTest extends TestCase {
 		String testDatum = "04.01.2010";
 		GregorianCalendar datum = Util.parseDatum(testDatum);
 		assertNotNull(datum);
+		String test = Util.formatDate(datum, "-", true);
+		assertEquals("2010-01-04", test);
+	}
+	
+	public void testParseFloat () {
+		String testString = "40.12";
+		Float testFloat = Util.parseFloat(testString);
+		assertNotNull(testFloat);
+		assertEquals(new Float(40.12f), testFloat);
+	}
+	
+	public void testParseFloatKomma() {
+		String testString2 = "40,12";
+		Float testFloat2 = Util.parseFloat(testString2);
+		assertNotNull(testFloat2);
+		assertEquals(new Float(40.12f), testFloat2);
 	}
 	
 	public void testAnzahlTage () {
@@ -120,5 +195,6 @@ public class UtilTest extends TestCase {
 		assertEquals("1970-01-12", Util.formatDate(test));
 				
 	}
+	
 
 }

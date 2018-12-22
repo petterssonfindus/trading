@@ -19,7 +19,7 @@ public class AccumulationDistributionLine implements IndikatorAlgorithmus {
 	/**
 	 * Accumulation Distribution Line
 	 * MFM * Volume (akkumuliert) 
-	 * Volumen ist positiv, wenn Schlusskurs nahe Hächstkurs
+	 * Volumen ist positiv, wenn Schlusskurs nahe Höchstkurs
 	 * Chaikin Money Flow rechnet identisch, akkumuliert zusätzlich Perioden-Daten
 	 * http://stockcharts.com/school/doku.php?id=chart_school:technical_indicators:accumulation_distribution_line#trend_confirmation
 	 * http://stockcharts.com/school/doku.php?id=chart_school:technical_indicators:chaikin_money_flow_cmf

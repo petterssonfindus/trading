@@ -23,7 +23,7 @@ public class ImportCSVsimpleTest extends TestCase {
 	
 
 	public void testImportCSV() {
-		// holt sich ein File der gewänschten Datei
+		// holt sich ein File der gewünschten Datei
 		File file = ImportCSVsimple.getCSVFile(name);
 		ImportKursreihe kursreihe = ImportCSVsimple.readKurseYahooCSV(file);
 		assertNotNull(kursreihe);

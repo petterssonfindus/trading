@@ -14,16 +14,27 @@ import junit.framework.TestCase;
 public class AktienTest extends TestCase {
 	
 	public void testGetKursreihe() {
-		Aktie aktie = Aktien.getInstance().getAktie("dax");
+		Aktie aktie = Aktien.getInstance().getAktie("testaktie");
 		assertNotNull(aktie);
-		assertEquals("dax", aktie.name);
+		assertEquals("testaktie", aktie.name);
 		ArrayList<Kurs> kursreihe = aktie.getBoersenkurse();
 		assertTrue(kursreihe.size() > 200);
-		// der 2. Aufruf bekommt die selbe Kursre ihe 
-		Aktie aktie2 = Aktien.getInstance().getAktie("dax");
+		// der 2. Aufruf bekommt die selbe Kursreihe 
+		Aktie aktie2 = Aktien.getInstance().getAktie("testaktie");
 		assertTrue(aktie == aktie2);
 		assertTrue(aktie.getBoersenkurse() == aktie2.getBoersenkurse());
 		
+	}
+	
+	public void testVerzeichnis() {
+		Aktien aktien = Aktien.getInstance();
+		assertNotNull(aktien);
+		ArrayList<Aktie> alleAktien = aktien.getAllAktien();
+		assertNotNull(alleAktien);
+		assertTrue(alleAktien.size() > 10);
+		for (Aktie aktie : alleAktien) {
+			assertNotNull(aktie);
+		}
 	}
 	
 	public void testGetAktien () {
