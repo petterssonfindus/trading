@@ -18,7 +18,6 @@ public class Parameter {
 	public Object getParameter (String name) {
 		Object result; 
 		result = this.parameter.get(name);
-		if (result == null);
 		return result; 
 	}
 	

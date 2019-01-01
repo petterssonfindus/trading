@@ -16,13 +16,20 @@ public class GleitenderDurchschnitt implements IndikatorAlgorithmus {
 	/**
 	 * Summe aller Tageskurse der letzten x Tage / Anzahl 
 	 * incluse aktueller Tageskurs 
-	 * @param aktie
+	 * Parameter: dauer - die Zeitdauer, die berücksichtigt wird
+	 * 			  berechnungsart (optional) - 0 = der Durchschnittswert (default) 
+	 * 								1 = die Differenz zum aktuellen Kurs 
 	 */
 	public void rechne (Aktie aktie, IndikatorBeschreibung indikator) {
 		// holt die Kursreihe 
 		float[] kurse = aktie.getKursArray();
-		// holt den Parameter
+		// holt die gewünschte Dauer
 		int x = ((Integer) indikator.getParameter("dauer")).intValue();
+		// holt die Berechnungs-Art als Wert oder Differenz zum Kurs
+		int berechnungsArt = 0; 
+		Object o = indikator.getParameter("berechnungsart");
+		if (o != null) berechnungsArt = ((Integer) o).intValue();
+		
 		float summe = 0;
 		
 		// addiert die Kurse der vergangenen x Tage. 
@@ -39,12 +46,15 @@ public class GleitenderDurchschnitt implements IndikatorAlgorithmus {
 			summe += kursneu;
 			summe -= kursalt; 
 			float ergebnis = summe / x;
-			// das Ergebnis in den Kurs eintragen
+			// abhängig von der Berechnungs-Art wird noch die Differenz berechnet. 
+			if (berechnungsArt == 1) {
+				ergebnis -= kursneu;
+			}
+			// das GD-Ergebnis in den Kurs eintragen
 			aktie.getBoersenkurse().get(i).addIndikator(indikator, ergebnis); 
 			Indikatoren.log.trace("GD: " + x + " - " + ergebnis);
 		}
 
 	}
-
 
 }

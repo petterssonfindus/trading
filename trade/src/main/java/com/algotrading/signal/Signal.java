@@ -39,6 +39,8 @@ public class Signal {
 	public static final short RSI = 10; 
 	public static final short ADL = 12; 
 	
+	public static final short MinMax = 13; 
+	
 	// optional - eine Zahl von 0 - 100 über die Stärke
 	public float staerke; 
 	/**

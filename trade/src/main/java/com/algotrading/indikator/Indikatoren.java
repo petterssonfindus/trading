@@ -29,6 +29,8 @@ public class Indikatoren {
 	public static final short INDIKATOR_MFM = 11; // Money Flow Multiplier
 	public static final short INDIKATOR_ADL = 12; // Accumulation Distribution Line (MFM * Volumen)
 													// wird auch Chaikin Money Flow genannt, wenn er akkumuliert wird. 
+	public static final short PERFORMANCE = 13; 
+	public static final short STEIGUNG = 14; 
 	
 	private static HashMap<Short, IndikatorAlgorithmus> indikatoren = initialisiereIndikatoren();
 	

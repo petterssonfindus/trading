@@ -80,6 +80,20 @@ public class UtilTest extends TestCase {
 		assertEquals(0f, Util.rundeBetrag(0.004f));
 	}
 	
+	public void testRechneRendite() {
+		float ergebnis = Util.rechneRendite(100f, 105f, 250);
+		assertEquals(0.05F, ergebnis);
+		float ergebnis2 = Util.rechneRendite(100f, 105f, 125);
+		assertEquals(0.1F, ergebnis2);
+		float ergebnis3 = Util.rechneRendite(100f, 105f, 30);
+		float ergebnis3a = Util.rundeBetrag(ergebnis3);
+		assertEquals(0.42F, ergebnis3a);
+		float ergebnis4 = Util.rundeBetrag(ergebnis3);
+		assertEquals(0.42F, ergebnis4);
+		float ergebnis5 = Util.rechneRendite(100f, 200f, 500);
+		assertEquals(0.5F, ergebnis5);
+	}
+	
 	public void testDatumFormat() {
 		GregorianCalendar beginn = new GregorianCalendar(2017,11,2);
 		assertTrue(Util.formatDate(beginn).equalsIgnoreCase("2017-12-02"));

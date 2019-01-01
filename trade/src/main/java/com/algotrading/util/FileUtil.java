@@ -68,11 +68,18 @@ public class FileUtil {
 	}
 	
 	/**
+	 * Der Pfad zum csv-Verzeichnis 
+	 */
+	public static String getCSVPfad () {
+		return "C:\\Users\\XK02200\\Documents\\data\\programmierung\\gittrade\\trade\\csv\\";
+	}
+
+	/**
 	 * Schreibt eine Datei mit dem übergebenen Inhalt 
 	 * pro String eine Zeile
 	 */
-	public static File writeFile (ArrayList<String> zeilen, String dateiname, String extension) {
-		File file = FileUtil.createFile(dateiname, extension);
+	public static File writeCSVFile (ArrayList<String> zeilen, String dateiname) {
+		File file = FileUtil.createCSVFile(dateiname);
 		FileWriter fileWriter = FileUtil.createFileWriter(file);
 		for (String zeile : zeilen) {
 			try {
@@ -107,14 +114,14 @@ public class FileUtil {
 	}
 
 	/**
-	 * ermittelt den kompletten Pfad zur angegebenen Datei 
+	 * ermittelt den kompletten Pfad zur angegebenen csv-Datei 
 	 */
-	public static File createFile (String dateiname, String extension) {
+	public static File createCSVFile (String dateiname) {
 		File file = null; 
 		String filename = "";
 		try {
 			filename =  getLogPfad() + dateiname;
-			file = new File (filename + "." + extension);
+			file = new File (filename + ".csv");
 			
 		} catch(Exception e) {
 			Util.log.error("das File ist vermutlich geöffnet:" + filename);

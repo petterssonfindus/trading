@@ -16,6 +16,7 @@ import com.algotrading.indikator.Indikatoren;
 import com.algotrading.signal.Signal;
 import com.algotrading.signal.SignalBeschreibung;
 import com.algotrading.signal.Signalsuche;
+import com.algotrading.util.FileUtil;
 import com.algotrading.util.Parameter;
 import com.algotrading.util.Util;
 import com.algotrading.util.Zeitraum;
@@ -324,67 +325,22 @@ public class Aktie extends Parameter {
 	 * schreibt eine neue Datei mit allen Kursen, Indikatoren
 	 */
 	public void writeFileIndikatoren () {
-		try {
-			String dateiname = "kurse" + this.name + Long.toString(System.currentTimeMillis());
-			File file = new File(dateiname + ".csv");
- 
-			boolean createFileResult = file.createNewFile();
-			
-			if(!createFileResult) {
-				// Die Datei konnte nicht erstellt werden. Evtl. gibt es diese Datei schon?
-				log.info("Die Datei konnte nicht erstellt werden!");
-			}
-			
-			FileWriter fileWriter = new FileWriter(file);
-			writeIndikatoren(fileWriter);
-			
-			// Zeilenumbruch an dem Ende der Datei ausgeben
-			fileWriter.write(Util.getLineSeparator());
-			
-			// Writer schließen
-			fileWriter.close();
-			log.info("Datei geschrieben: " + file.getAbsolutePath() );
-			
-		} catch(Exception e) {
-			
-			// Ausgabe des genauen Fehler Stapels
-			e.printStackTrace();
-			
-		}
+		String dateiname = "kurse" + this.name + Long.toString(System.currentTimeMillis());
+		ArrayList<String> zeilen = this.writeIndikatoren();
+		FileUtil.writeCSVFile(zeilen, dateiname);
+		log.info("Datei geschrieben: " + dateiname );
 	}
 	/**
 	 * schreibt eine neue Datei mit allen Signalen dieser Kursreihe
 	 */
 	public void writeFileSignale () {
-		try {
-			String dateiname = "signale" + this.name + Long.toString(System.currentTimeMillis());
-			File file = new File(dateiname + ".csv");
- 
-			boolean createFileResult = file.createNewFile();
-			
-			if(!createFileResult) {
-				// Die Datei konnte nicht erstellt werden. Evtl. gibt es diese Datei schon?
-				log.info("Die Datei konnte nicht erstellt werden!");
-			}
-			
-			FileWriter fileWriter = new FileWriter(file);
-			writeSignale(fileWriter);
-			
-			// Zeilenumbruch an dem Ende der Datei ausgeben
-			fileWriter.write(Util.getLineSeparator());
-			
-			// Writer schließen
-			fileWriter.close();
-			log.info("Datei geschrieben: " + file.getAbsolutePath() );
-		} catch(Exception e) {
-			// Ausgabe des genauen Fehler Stapels
-			e.printStackTrace();
-		}
+		String dateiname = "signale" + this.name + Long.toString(System.currentTimeMillis());
+		ArrayList<String> zeilen = this.writeIndikatoren();
+		FileUtil.writeCSVFile(zeilen, dateiname);
+		log.info("Datei geschrieben: " + dateiname );
 	}
 	/**
-	 * 
-	 * @param tk
-	 * @return
+	 * ermittelt den Tageskurs des Vortages des gegebenen Kurses
 	 */
 	public Kurs ermittleTageskursVortag (Kurs tk) {
 		if (tk == null) log.error("Inputvariable Tageskurs ist null");
@@ -491,46 +447,37 @@ public class Aktie extends Parameter {
 	public void setZeitraumKurseAusDB() {
 		this.zeitraumKurse = DBManager.getZeitraumVorhandeneKurse(this);
 	}
-
+	
 	/**
-	 * schreibt alle Kurse, Differenzen und Indikatoren in den Writer
-	 * @param writer
+	 * schreibt alle Kurse, und Indikatoren als Zeilen 
 	 */
-	private void writeIndikatoren (FileWriter writer) {
-		try {
-			writer.write("datum;close;Talsumme;Bergsumme;LetzterTalKurs;LetzterBergKurs;" + 
-					"GD10Tage;GD30Tage;GD100Tage;" +
-					"Vola10;Vola30;Vola100;" + 
-					"RSI;" ); 
-			writer.write(Util.getLineSeparator());
-			for (int i = 0 ; i < kurse.size(); i++) {
-				writer.write(kurse.get(i).toString());
-				writer.write(Util.getLineSeparator());
-			}
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+	private ArrayList<String> writeIndikatoren () {
+		ArrayList<String> zeilen = new ArrayList<String>();
+	
+		zeilen.add("datum;close;Talsumme;Bergsumme;LetzterTalKurs;LetzterBergKurs;" + 
+				"GD10Tage;GD30Tage;GD100Tage;" +
+				"Vola10;Vola30;Vola100;" + 
+				"RSI;" ); 
+		zeilen.add(Util.getLineSeparator());
+		for (int i = 0 ; i < kurse.size(); i++) {
+			zeilen.add(kurse.get(i).toString());
+			zeilen.add(Util.getLineSeparator());
 		}
+		return zeilen; 	
 	}
 	/**
-	 * schreibt ein Signal in den Writer
-	 * @param writer
+	 * schreibt die Signale der Aktie als Zeilen 
 	 */
-	private void writeSignale (FileWriter writer) {
-		try {
-			writer.write("Name ; Datum ; KaufVerkauf; Typ; Stärke");
-			writer.write(Util.getLineSeparator());
-			// mit allen Kursen mit allen Signalen
-			ArrayList<Signal> signale = getSignale();
-			for (int i = 0 ; i < signale.size() ; i++) {
-					writer.write(signale.get(i).toString());
-					writer.write(Util.getLineSeparator());
-			}
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+	private ArrayList<String> writeSignale () {
+		ArrayList<String> zeilen = new ArrayList<String>();
+		zeilen.add("Name ; Datum ; KaufVerkauf; Typ; Stärke");
+		zeilen.add(Util.getLineSeparator());
+		// mit allen Kursen mit allen Signalen
+		ArrayList<Signal> signale = getSignale();
+		for (int i = 0 ; i < signale.size() ; i++) {
+			zeilen.add(signale.get(i).toString());
+			zeilen.add(Util.getLineSeparator());
 		}
+		return zeilen; 
 	}
-
-
 }

@@ -16,7 +16,7 @@ import com.algotrading.util.Zeitraum;
 import com.algotrading.aktie.Aktie;
 
 /**
- * Fährt Depot-Simulationen durch
+ * Führt Depot-Simulationen durch
  * Speichert die Ergebnisse als .csv
  * @author oskar
  *
@@ -26,7 +26,7 @@ public class Simulator {
 
 	ArrayList<Depot> depots = new ArrayList<Depot>();
 	/**
-	 * Fährt eine Reihe von Simulationen durch
+	 * Führt eine Reihe von Simulationen durch
 	 * @param wertpapier
 	 * @param beginn
 	 * @param ende

@@ -1,6 +1,6 @@
 package com.algotrading.indikator;
 /**
- * Kämmert sich um die Berechnung von Durchschnitten
+ * Kümmert sich um die Berechnung von Durchschnitten
  * @author oskar
  *
  */

@@ -80,8 +80,8 @@ import com.algotrading.util.Util;
 			}
 			// oder es wird ein txt-File geschrieben 
 			else {
-				// schreibt das Ergebnis in eine Datei
-				File file = FileUtil.writeFile(stringKurse, name + letzterHandelstag.getTimeInMillis(), "txt");
+				// schreibt das Ergebnis in eine csv-Datei
+				File file = FileUtil.writeCSVFile(stringKurse, name + letzterHandelstag.getTimeInMillis());
 				result = file.getName();
 			}
 		}

@@ -195,6 +195,13 @@ public class Util {
 		int result = (int) (dauer / (1000 * 60 * 60 * 24));
 		return result; 
 	}
+	/**
+	 * Berechnet die Rendite eines Kapitals das x Tage lang liegt
+	 */
+	public static float rechneRendite (float kapitalBeginn, float kapitalEnde, int tage) {
+		if ((kapitalBeginn == 0) || (kapitalEnde == 0) || tage < 1) log.error("Fehler in rechneRendite() Inputparameter ");
+		return ((kapitalEnde - kapitalBeginn) / kapitalBeginn) * (250f / tage) ; 
+	}
 	
 	/**
 	 * Addiert zu einem Datum x Tage hinzu 
