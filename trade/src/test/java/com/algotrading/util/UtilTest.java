@@ -16,10 +16,10 @@ public class UtilTest extends TestCase {
 	public void testUnixTime () {
 		long x = 1517094000L;
 		long x2 = 567817200L;
-		GregorianCalendar y = Util.unixTimeToGregorianCalendar(x);
-		GregorianCalendar y2 = Util.unixTimeToGregorianCalendar(x2);
-		String d1 = Util.formatDate(y);
-		String d2 = Util.formatDate(y2);
+		GregorianCalendar y = DateUtil.unixTimeToGregorianCalendar(x);
+		GregorianCalendar y2 = DateUtil.unixTimeToGregorianCalendar(x2);
+		String d1 = DateUtil.formatDate(y);
+		String d2 = DateUtil.formatDate(y2);
 		System.out.println("Zeit aus " + x + " ist " + d1);
 		System.out.println("Zeit aus " + x2 + " ist " + d2);
 		assertEquals("2018-01-28", d1);
@@ -29,10 +29,10 @@ public class UtilTest extends TestCase {
 	public void testUnixTimeTransform () {
 		long x = 1000 * 1517094000L;
 		long x2 = 1000 * 567817200L;
-		GregorianCalendar y = Util.toGregorianCalendar(x);
-		GregorianCalendar y2 = Util.toGregorianCalendar(x2);
-		String d1 = Util.formatDate(y);
-		String d2 = Util.formatDate(y2);
+		GregorianCalendar y = DateUtil.toGregorianCalendar(x);
+		GregorianCalendar y2 = DateUtil.toGregorianCalendar(x2);
+		String d1 = DateUtil.formatDate(y);
+		String d2 = DateUtil.formatDate(y2);
 		System.out.println("Zeit aus " + x + " ist " + d1);
 		System.out.println("Zeit aus " + x2 + " ist " + d2);
 		assertEquals("2018-01-28", d1);
@@ -45,14 +45,14 @@ public class UtilTest extends TestCase {
 	}
 	
 	public void testGetHeute () {
-		GregorianCalendar heute = Util.getHeute();
+		GregorianCalendar heute = DateUtil.getHeute();
 		assertNotNull(heute);
-		log.info("Heute: " + Util.formatDate(heute));
-		System.out.println("Heute: " + Util.formatDate(heute));
+		log.info("Heute: " + DateUtil.formatDate(heute));
+		System.out.println("Heute: " + DateUtil.formatDate(heute));
 	}
 	
 	public void testGetLetzterHandelstag() {
-		Util.getLetzterHandelstag();
+		DateUtil.getLetzterHandelstag();
 	}
 	
 	public void testZeitraum () {
@@ -96,18 +96,18 @@ public class UtilTest extends TestCase {
 	
 	public void testDatumFormat() {
 		GregorianCalendar beginn = new GregorianCalendar(2017,11,2);
-		assertTrue(Util.formatDate(beginn).equalsIgnoreCase("2017-12-02"));
+		assertTrue(DateUtil.formatDate(beginn).equalsIgnoreCase("2017-12-02"));
 		GregorianCalendar ende = new GregorianCalendar(2018,0,2);
-		assertTrue(Util.formatDate(ende).equalsIgnoreCase("2018-01-02"));
-		log.info("Beginn: " + Util.formatDate(beginn) + " Ende: "+ Util.formatDate(ende));
+		assertTrue(DateUtil.formatDate(ende).equalsIgnoreCase("2018-01-02"));
+		log.info("Beginn: " + DateUtil.formatDate(beginn) + " Ende: "+ DateUtil.formatDate(ende));
 	}
 	
 	public void testDatumFormatTrenner() {
 		GregorianCalendar beginn = new GregorianCalendar(2017,11,2);
-		String test1 = Util.formatDate(beginn, ".");
+		String test1 = DateUtil.formatDate(beginn, ".");
 		assertTrue(test1.equalsIgnoreCase("2017.12.02"));
 		GregorianCalendar ende = new GregorianCalendar(2018,0,2);
-		String test2 = Util.formatDate(ende, ":");
+		String test2 = DateUtil.formatDate(ende, ":");
 		assertTrue(test2.equalsIgnoreCase("2018:01:02"));
 		log.info("Beginn: " + test1 + " Ende: "+ test2);
 		
@@ -115,24 +115,24 @@ public class UtilTest extends TestCase {
 	
 	public void testDatumFormatTrennerJahr() {
 		GregorianCalendar beginn = new GregorianCalendar(2017,11,2);
-		String test1 = Util.formatDate(beginn, ".", true);
+		String test1 = DateUtil.formatDate(beginn, ".", true);
 		assertTrue(test1.equalsIgnoreCase("2017.12.02"));
-		String test2 = Util.formatDate(beginn, ".", false);
+		String test2 = DateUtil.formatDate(beginn, ".", false);
 		assertTrue(test2.equalsIgnoreCase("02.12.2017"));
 		
 	}
 	
 	public void testParseDatumJJJJ_MM_TT () {
 		String testDatum = "2017-12-02";
-		GregorianCalendar datum = Util.parseDatum(testDatum);
+		GregorianCalendar datum = DateUtil.parseDatum(testDatum);
 		assertNotNull(datum);
 	}
 	
 	public void testParseDatumTT_MM_JJJJ () {
 		String testDatum = "04.01.2010";
-		GregorianCalendar datum = Util.parseDatum(testDatum);
+		GregorianCalendar datum = DateUtil.parseDatum(testDatum);
 		assertNotNull(datum);
-		String test = Util.formatDate(datum, "-", true);
+		String test = DateUtil.formatDate(datum, "-", true);
 		assertEquals("2010-01-04", test);
 	}
 	
@@ -156,25 +156,25 @@ public class UtilTest extends TestCase {
 		GregorianCalendar datum1 = new GregorianCalendar(2018,0,1);
 		GregorianCalendar datum2 = new GregorianCalendar(2017,11,3);
 		GregorianCalendar datum3 = new GregorianCalendar(2017,11,31);
-		assertEquals(31, Util.anzahlTage(beginn, ende));
-		assertEquals(30, Util.anzahlTage(beginn, datum1));
-		assertEquals(1, Util.anzahlTage(beginn, datum2));
-		assertEquals(29, Util.anzahlTage(beginn, datum3));
+		assertEquals(31, DateUtil.anzahlTage(beginn, ende));
+		assertEquals(30, DateUtil.anzahlTage(beginn, datum1));
+		assertEquals(1, DateUtil.anzahlTage(beginn, datum2));
+		assertEquals(29, DateUtil.anzahlTage(beginn, datum3));
 	}
 	
 	public void testAddTage() {
 		GregorianCalendar testDatum;
 		GregorianCalendar beginn = new GregorianCalendar(2017,11,2);
-		testDatum = Util.addTage(beginn, 1);
-		assertEquals(Util.formatDate(testDatum), "2017-12-03");
-		testDatum = Util.addTage(beginn, 10);
-		assertEquals(Util.formatDate(testDatum), "2017-12-12");
-		testDatum = Util.addTage(beginn, 30);
-		assertEquals(Util.formatDate(testDatum), "2018-01-01");
-		testDatum = Util.addTage(beginn, 60);
-		assertEquals(Util.formatDate(testDatum), "2018-01-31");
-		testDatum = Util.addTage(beginn, 365);
-		assertEquals(Util.formatDate(testDatum), "2018-12-02");
+		testDatum = DateUtil.addTage(beginn, 1);
+		assertEquals(DateUtil.formatDate(testDatum), "2017-12-03");
+		testDatum = DateUtil.addTage(beginn, 10);
+		assertEquals(DateUtil.formatDate(testDatum), "2017-12-12");
+		testDatum = DateUtil.addTage(beginn, 30);
+		assertEquals(DateUtil.formatDate(testDatum), "2018-01-01");
+		testDatum = DateUtil.addTage(beginn, 60);
+		assertEquals(DateUtil.formatDate(testDatum), "2018-01-31");
+		testDatum = DateUtil.addTage(beginn, 365);
+		assertEquals(DateUtil.formatDate(testDatum), "2018-12-02");
 		
 	}
 	
@@ -186,13 +186,13 @@ public class UtilTest extends TestCase {
 		GregorianCalendar datum3 = new GregorianCalendar(2017,11,31);
 		GregorianCalendar datum4 = new GregorianCalendar(2016,11,31);
 		GregorianCalendar datum5 = new GregorianCalendar(2019,11,31);
-		assertTrue(Util.istInZeitraum(datum1, beginn, ende));
-		assertTrue(Util.istInZeitraum(datum2, beginn, ende));
-		assertTrue(Util.istInZeitraum(datum3, beginn, ende));
-		assertTrue(Util.istInZeitraum(beginn, beginn, ende));
-		assertTrue(Util.istInZeitraum(ende, beginn, ende));
-		assertFalse(Util.istInZeitraum(datum4, beginn, ende));
-		assertFalse(Util.istInZeitraum(datum5, beginn, ende));
+		assertTrue(DateUtil.istInZeitraum(datum1, beginn, ende));
+		assertTrue(DateUtil.istInZeitraum(datum2, beginn, ende));
+		assertTrue(DateUtil.istInZeitraum(datum3, beginn, ende));
+		assertTrue(DateUtil.istInZeitraum(beginn, beginn, ende));
+		assertTrue(DateUtil.istInZeitraum(ende, beginn, ende));
+		assertFalse(DateUtil.istInZeitraum(datum4, beginn, ende));
+		assertFalse(DateUtil.istInZeitraum(datum5, beginn, ende));
 	}
 	
 	public void testUserDirectory () {
@@ -205,8 +205,8 @@ public class UtilTest extends TestCase {
 	
 	public void testToGregorianCalendar() {
 		Date date = new Date(1000000000); 
-		GregorianCalendar test = Util.toGregorianCalendar(date);
-		assertEquals("1970-01-12", Util.formatDate(test));
+		GregorianCalendar test = DateUtil.toGregorianCalendar(date);
+		assertEquals("1970-01-12", DateUtil.formatDate(test));
 				
 	}
 	

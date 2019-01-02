@@ -24,6 +24,7 @@ public class FileUtil {
 	
 	/**
 	 * Liest anhand eines Files den Inhalt zeilenweise 
+	 * Zum Einlesen der Kurse aus verschiedenen Quellen 
 	 */
 	public static ArrayList<String> readContent (File file) {
 		ArrayList<String> result = new ArrayList<String>();
@@ -51,10 +52,10 @@ public class FileUtil {
 		
 	}
 	/**
-	 * Aus einem Filenamen im Standard-Pfad ein bestehendes File öffnen 
+	 * Aus einem Filenamen im Kurs-Pfad ein bestehendes File öffnen 
 	 */
 	public static File openFile (String filename) {
-		String pfad = getLogPfad() + filename ;
+		String pfad = getPfadKurs() + filename ;
 		File file = new File(pfad);
 		return file; 
 		
@@ -63,17 +64,23 @@ public class FileUtil {
 	/**
 	 * Der Pfad zum Log-Verzeichnis 
 	 */
-	public static String getLogPfad () {
+	private static String getPfadLog () {
 		return "C:\\Users\\XK02200\\Documents\\data\\programmierung\\gittrade\\trade\\log\\";
 	}
 	
 	/**
 	 * Der Pfad zum csv-Verzeichnis 
 	 */
-	public static String getCSVPfad () {
+	private static String getPfadCSV () {
 		return "C:\\Users\\XK02200\\Documents\\data\\programmierung\\gittrade\\trade\\csv\\";
 	}
 
+	/**
+	 * Der Pfad zum Kurs-Verzeichnis für die Datei-Speicherung von Kursdaten 
+	 */
+	private static String getPfadKurs () {
+		return "C:\\Users\\XK02200\\Documents\\data\\programmierung\\gittrade\\trade\\kurs\\";
+	}
 	/**
 	 * Schreibt eine Datei mit dem übergebenen Inhalt 
 	 * pro String eine Zeile
@@ -120,7 +127,7 @@ public class FileUtil {
 		File file = null; 
 		String filename = "";
 		try {
-			filename =  getLogPfad() + dateiname;
+			filename =  getPfadCSV() + dateiname;
 			file = new File (filename + ".csv");
 			
 		} catch(Exception e) {

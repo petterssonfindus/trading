@@ -5,6 +5,7 @@ import java.util.GregorianCalendar;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import com.algotrading.util.DateUtil;
 import com.algotrading.util.Util;
 import com.algotrading.aktie.Aktie;
 import com.algotrading.aktie.Aktien;
@@ -51,7 +52,7 @@ public class Order {
 		Aktie kursreihe = Aktien.getInstance().getAktie(wertpapier);
 		// das Datum der Order stammt aus dem aktuellen Datum des Depot
 		order.datum = depot.heute;
-		order.datumString = Util.formatDate(order.datum);
+		order.datumString = DateUtil.formatDate(order.datum);
 		order.kaufVerkauf = kaufVerkauf;
 		order.stueckzahl = stueckzahl;
 		order.wertpapier = wertpapier;
@@ -79,16 +80,16 @@ public class Order {
 	}
 	
 	public String toString () {
-		String datum = Util.formatDate(this.datum);
-		return this.depot.name + Util.separator + 
-				this.wertpapier + Util.separator + 
-				this.kaufVerkaufToString() + Util.separator + 
-				datum + Util.separator + 
-				Util.toString(this.stueckzahl) + Util.separator + 
-				Util.toString(this.kurs) + Util.separator + 
-				Util.toString(this.abrechnungsbetrag) + Util.separator +
-				Util.toString(depotgeld) + Util.separator +
-				Util.toString(this.trade.dauer) + Util.separator + 
+		String datum = DateUtil.formatDate(this.datum);
+		return this.depot.name + Util.separatorCSV + 
+				this.wertpapier + Util.separatorCSV + 
+				this.kaufVerkaufToString() + Util.separatorCSV + 
+				datum + Util.separatorCSV + 
+				Util.toString(this.stueckzahl) + Util.separatorCSV + 
+				Util.toString(this.kurs) + Util.separatorCSV + 
+				Util.toString(this.abrechnungsbetrag) + Util.separatorCSV +
+				Util.toString(depotgeld) + Util.separatorCSV +
+				Util.toString(this.trade.dauer) + Util.separatorCSV + 
 				Util.toString(trade.erfolg);
 		
 	}

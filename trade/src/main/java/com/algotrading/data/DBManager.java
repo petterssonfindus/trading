@@ -4,8 +4,6 @@
 package com.algotrading.data;
 
 import java.sql.*;
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.GregorianCalendar;
 import java.util.HashMap;
@@ -13,7 +11,7 @@ import java.util.HashMap;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import com.algotrading.util.Util;
+import com.algotrading.util.DateUtil;
 import com.algotrading.util.Zeitraum;
 import com.algotrading.aktie.Aktie;
 import com.algotrading.aktie.Aktien;
@@ -139,7 +137,7 @@ public class DBManager {
 	 */
 	public static boolean addKurs(Kurs kurs, Connection connection) {
 		String name = kurs.wertpapier;
-		String datum = addApostroph(formatSQLDate(kurs.datum), false);
+		String datum = addApostroph(DateUtil.formatSQLDate(kurs.datum), false);
 		String close = addApostroph(kurs.getClose(),true);
 		String open = addApostroph(Float.toString(kurs.open), true);
 		String high = addApostroph(Float.toString(kurs.high), true);
@@ -208,7 +206,7 @@ public class DBManager {
 		for (Kurs kurs : kurse) {
 			if (zaehler > 2) {
 				if ((kurs.getKurs() * (1+schwelle)) < vortageskurs.getKurs() || (kurs.getKurs() * (1-schwelle)) > vortageskurs.getKurs()) {
-					log.error("Kurs " + name + " " + Util.formatDate(kurs.datum) + " - " + kurs.getKurs() + " - " + vortageskurs.getKurs());
+					log.error("Kurs " + name + " " + DateUtil.formatDate(kurs.datum) + " - " + kurs.getKurs() + " - " + vortageskurs.getKurs());
 				}
 			}
 			vortageskurs = kurs; 
@@ -240,21 +238,21 @@ public class DBManager {
 			int i = 1; // i iteriert äber die Kurse der Aktie
 			do {
 				if (i >= aktieKurse.size()) {
-					System.out.println("Kurs fehlt: " + name + " " + i + " last: " + Util.formatDate(kurs2.datum));
+					System.out.println("Kurs fehlt: " + name + " " + i + " last: " + DateUtil.formatDate(kurs2.datum));
 				}
 				kurs2 = aktieKurse.get(i);
 				dow2 = dowKurse.get(i + abstand);
 				
-				if ( ! Util.istGleicherKalendertag(kurs2.datum, dow2.datum)) {
+				if ( ! DateUtil.istGleicherKalendertag(kurs2.datum, dow2.datum)) {
 					System.out.println("fehlender Kurs " + aktie.name + " " + 
-							Util.formatDate(dow2.datum) + " " + Util.formatDate(kurs2.datum));
+							DateUtil.formatDate(dow2.datum) + " " + DateUtil.formatDate(kurs2.datum));
 					return; 
 				}
 				i ++;
 			}
 			while (i < aktieKurse.size() - 10) ;
 			System.out.println("Aktienkurse geprüft: " + name + 
-					" von " + Util.formatDate(kurs1.datum) + " bis " + Util.formatDate(kurs2.datum));
+					" von " + DateUtil.formatDate(kurs1.datum) + " bis " + DateUtil.formatDate(kurs2.datum));
 		}
 		else {	// Aktienkurs ist älter als 1. DowJones-Kurs
 			// sucht den Aktien-Kurs zum 1. Dowkurs
@@ -264,27 +262,27 @@ public class DBManager {
 			int i = 1; // i iteriert über die Kurse der Aktie
 			do {
 				if (i >= dowKurse.size()) {
-					System.out.println("Kurs fehlt: " + name + " " + i + " last: " + Util.formatDate(kurs2.datum));
+					System.out.println("Kurs fehlt: " + name + " " + i + " last: " + DateUtil.formatDate(kurs2.datum));
 				}
 				kurs2 = aktieKurse.get(i + abstand);
 				dow2 = dowKurse.get(i);
 				
-				if ( ! Util.istGleicherKalendertag(kurs2.datum, dow2.datum)) {
+				if ( ! DateUtil.istGleicherKalendertag(kurs2.datum, dow2.datum)) {
 					System.out.println("fehlender Kurs " + aktie.name + " " + 
-							Util.formatDate(dow2.datum) + " " + Util.formatDate(kurs2.datum));
+							DateUtil.formatDate(dow2.datum) + " " + DateUtil.formatDate(kurs2.datum));
 					return; 
 				}
 				i ++;
 			}
 			while (i < dowKurse.size() - 10) ;
 			System.out.println("Aktienkurse geprüft: " + name + 
-					" von " + Util.formatDate(kurs1.datum) + " bis " + Util.formatDate(kurs2.datum));
+					" von " + DateUtil.formatDate(kurs1.datum) + " bis " + DateUtil.formatDate(kurs2.datum));
 
 		}
 		// 
 		
 		if (dow1 == null) {	// Kurs im Dow-Jones-Kursreihe nicht gefunden. 
-			log.error("Referenzkurs im xxxdja nicht gefunden: " + Util.formatDate(kurs1.datum));
+			log.error("Referenzkurs im xxxdja nicht gefunden: " + DateUtil.formatDate(kurs1.datum));
 		}
 		else {
 			// geht durch alle Kurse der zu präfenden Aktie 
@@ -332,7 +330,7 @@ public class DBManager {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		GregorianCalendar result = Util.parseDatum(responseString);
+		GregorianCalendar result = DateUtil.parseDatum(responseString);
 		return result; 
 	}
 	
@@ -385,8 +383,8 @@ public class DBManager {
 	        	Integer quelle = response.getInt("quelle");
 	        	Aktie aktie = new Aktie(name, firmenname, indexname, (byte) 0); 
 	        	aktie.setQuelle(quelle);
-	        	GregorianCalendar beginn = Util.toGregorianCalendar(response.getDate("beginn"));
-	        	GregorianCalendar ende = Util.toGregorianCalendar(response.getDate("ende"));
+	        	GregorianCalendar beginn = DateUtil.toGregorianCalendar(response.getDate("beginn"));
+	        	GregorianCalendar ende = DateUtil.toGregorianCalendar(response.getDate("ende"));
 	        	Zeitraum zeitraum = new Zeitraum(beginn, ende);
 	        	aktie.setZeitraumKurse(zeitraum);
 	        	aktien.add(aktie);
@@ -416,7 +414,7 @@ public class DBManager {
 	public static ArrayList<Kurs> getKursreihe (String name, GregorianCalendar beginn) {
 		if (beginn == null) return null;  // #TODO Exception werfen 
 
-		String select = "SELECT * FROM " + name + " WHERE `datum` >= '" + Util.formatDate(beginn) + "'";
+		String select = "SELECT * FROM " + name + " WHERE `datum` >= '" + DateUtil.formatDate(beginn) + "'";
 		// den DB-SELECT Ausführen und eine Kursreihe erzeugen mit enthaltenen Wertpapier-Namen
 		ArrayList<Kurs> kursreihe = getKursreiheSELECT(select, name);
 		return kursreihe; 
@@ -468,7 +466,7 @@ public class DBManager {
 	        	tageskurs.low = response.getFloat("low");
 	        	tageskurs.open = response.getFloat("open");
 	        	tageskurs.volume = response.getInt("volume");
-	        	tageskurs.setDatum( Util.toGregorianCalendar(response.getDate("datum")));
+	        	tageskurs.setDatum( DateUtil.toGregorianCalendar(response.getDate("datum")));
 	        	kursreihe.add(tageskurs);
 	        }
 		} catch (SQLException e) {
@@ -488,7 +486,7 @@ public class DBManager {
 		try {
 			response.next();
             kurs.close = response.getFloat("close");
-            kurs.setDatum(Util.toGregorianCalendar(response.getDate("datum")));
+            kurs.setDatum(DateUtil.toGregorianCalendar(response.getDate("datum")));
 
 		} catch (SQLException e) {
 			e.printStackTrace();
@@ -516,27 +514,6 @@ public class DBManager {
 			result = " , " + result;
 		}
 		return result;
-	}
-
-	/**
-	 * macht aus einem GregorianCal-Datum ein String, der für SQL-Abfragen genutzt wird
-	 * 
-	 * @param date das Datum, das umgewandelt werden soll
-	 * @return ein String oder der Wert 'NULL'
-	 */
-	public static String formatSQLDate(GregorianCalendar cal) {
-		if (cal == null)
-			return "NULL";
-		else {
-			String dateString;
-			// aus dem Caldendar ein Datum erzeugen
-			java.sql.Date date = new java.sql.Date (cal.getTimeInMillis());
-			// Datumsformat festlegen
-			DateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
-			// das Datum in dem Format als String ausgeben
-			dateString = formatter.format(date);
-			return dateString;
-		}
 	}
 
 }

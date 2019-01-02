@@ -13,6 +13,7 @@ import org.apache.logging.log4j.Logger;
 
 import com.algotrading.indikator.IndikatorBeschreibung;
 import com.algotrading.signal.Signal;
+import com.algotrading.util.DateUtil;
 import com.algotrading.util.Util;
 import com.algotrading.aktie.Aktie;
 import com.algotrading.aktie.Aktien;
@@ -87,7 +88,7 @@ public class Depot {
 		for (Aktie aktie : aktien ) {
 			aktie.rechneSignale();
 		}
-		log.info("starte Simulation von bis: " + Util.formatDate(beginn) + " - " + Util.formatDate(ende));
+		log.info("starte Simulation von bis: " + DateUtil.formatDate(beginn) + " - " + DateUtil.formatDate(ende));
 		this.heute = beginn; 
 		int tagZaehler = 0;
 		// stellt für alle Aktien den Kurs zum Beginn ein 
@@ -95,7 +96,7 @@ public class Depot {
 			aktie.setStartkurs(heute);
 		}
 		// der Ablauf der Simulation für alle Tage innerhalb des Zeitraums
-		while (Util.istInZeitraum(this.heute, beginn, ende)) {
+		while (DateUtil.istInZeitraum(this.heute, beginn, ende)) {
 			tagZaehler ++;
 			if (tagZaehler > 10) {  // die ersten Tage werden ignoriert
 				// ein Handelstag läuft ab und wird als Tages-Kurs festgehalten 
@@ -163,7 +164,7 @@ public class Depot {
 			}
 		}
 		kursDepot.close = this.bewerteDepotAktuell();
-		log.debug("Handelstag: " + Util.formatDate(this.heute) + " Signale: " + signale.size() + " Order: " + anzahlOrder + 
+		log.debug("Handelstag: " + DateUtil.formatDate(this.heute) + " Signale: " + signale.size() + " Order: " + anzahlOrder + 
 				" Wert: " + kursDepot.close);
 		return kursDepot; 
 	}
@@ -179,7 +180,7 @@ public class Depot {
 			kurse.add(aktie.nextKurs());
 		}
 		this.heute = kurse.get(0).datum;
-		log.debug("nextDay: " + Util.formatDate(this.heute));
+		log.debug("nextDay: " + DateUtil.formatDate(this.heute));
 		return kurse; 
 	}
 	
@@ -429,15 +430,15 @@ public class Depot {
 	 * @return
 	 */
 	private String toStringHandelstagHeader () {
-		String result = "Datum" + Util.separator + 
-				"Depotwert"  + Util.separator;
+		String result = "Datum" + Util.separatorCSV + 
+				"Depotwert"  + Util.separatorCSV;
 		for (Aktie aktie : this.aktien) {
-			result = result.concat(aktie.name + Util.separator);
+			result = result.concat(aktie.name + Util.separatorCSV);
 			for (IndikatorBeschreibung indikator : aktie.getIndikatorBeschreibungen()) {
-				result = result.concat(indikator.toString() + Util.separator);
+				result = result.concat(indikator.toString() + Util.separatorCSV);
 			}
 		}
-		result = result.concat("Signal1" + Util.separator + "Signal2" + Util.separator + "Signal3" + 
+		result = result.concat("Signal1" + Util.separatorCSV + "Signal2" + Util.separatorCSV + "Signal3" + 
 				Util.getLineSeparator());
 		return result; 
 	}
@@ -451,26 +452,26 @@ public class Depot {
 	private String toStringHandelstag(Kurs depotKurs) {
 		StringBuilder result = new StringBuilder();
 		// zu Beginn das Datum einstellen 
-		result.append(Util.formatDate(this.heute) + Util.separator);
+		result.append(DateUtil.formatDate(this.heute) + Util.separatorCSV);
 		
-		result.append(depotKurs.getKurs() + Util.separator);
+		result.append(depotKurs.getKurs() + Util.separatorCSV);
 		// der Kurs jeder Aktie
 		for (Aktie aktie : this.aktien) {
 			Kurs kurs = aktie.getAktuellerKurs();
 
-			result.append(aktie.getAktuellerKurs().getKurs() + Util.separator);
+			result.append(aktie.getAktuellerKurs().getKurs() + Util.separatorCSV);
 			// fär jede Aktie die Indikatoren
 			for (IndikatorBeschreibung indikator : aktie.getIndikatorBeschreibungen()) {
 				// die Indikatoren-Wert am Kurs auslesen
 				float wert = kurs.getIndikatorWert(indikator);
-				result.append(wert + Util.separator);
+				result.append(wert + Util.separatorCSV);
 			}
 		}
 		// fär jede Aktie die Signale 
 		for (Aktie aktie : this.aktien) {
 			Kurs kurs = aktie.getAktuellerKurs();
 			for (Signal signal : kurs.getSignale()) {
-				result.append(kurs.wertpapier + " _ " + signal.getKaufVerkauf() + " _ " + signal.getSignalBeschreibung().getSignalTyp() + Util.separator);
+				result.append(kurs.wertpapier + " _ " + signal.getKaufVerkauf() + " _ " + signal.getSignalBeschreibung().getSignalTyp() + Util.separatorCSV);
 			}
 		}
 		result.append(Util.getLineSeparator());

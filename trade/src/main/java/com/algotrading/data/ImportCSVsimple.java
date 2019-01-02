@@ -10,7 +10,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import com.algotrading.aktie.Kurs;
-
+import com.algotrading.util.DateUtil;
 import com.algotrading.util.Util;
 /**
  * Importiert CSV-Dateien mit Kursdaten 
@@ -109,7 +109,7 @@ public class ImportCSVsimple {
                 if ( ! zeile[1].contains("null")) {
                 	Kurs tageskurs = new Kurs();
                 	tageskurs.wertpapier = kuerzel;
-                	tageskurs.datum = Util.parseDatum(zeile[0]);
+                	tageskurs.datum = DateUtil.parseDatum(zeile[0]);
                 	tageskurs.open = Float.parseFloat(zeile[1]);
                 	tageskurs.high = Float.parseFloat(zeile[2]);
                 	tageskurs.low = Float.parseFloat(zeile[3]);

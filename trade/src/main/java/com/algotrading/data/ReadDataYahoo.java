@@ -19,7 +19,7 @@ import org.apache.logging.log4j.Logger;
 import com.algotrading.aktie.Aktie;
 import com.algotrading.aktie.Aktien;
 import com.algotrading.aktie.Kurs;
-import com.algotrading.util.Util;
+import com.algotrading.util.DateUtil;
 
 public class ReadDataYahoo {
 	private static final Logger log = LogManager.getLogger(ReadDataYahoo.class);
@@ -85,15 +85,15 @@ public class ReadDataYahoo {
 		GregorianCalendar letzterKurs = DBManager.getLastKurs(aktie);
 		// bei einer ganz neuen Aktie gibt es keine Kurse
 		
-		GregorianCalendar letzterHandelstag = Util.getLetzterHandelstag();
+		GregorianCalendar letzterHandelstag = DateUtil.getLetzterHandelstag();
 		// der nächste erwartete Kurs wird einfach 1 Tag hoch gezählt. Das stimmt nicht genau, spielt aber keine Rolle. 
-		GregorianCalendar nextKurs = Util.addTage(letzterKurs, 1);
+		GregorianCalendar nextKurs = DateUtil.addTage(letzterKurs, 1);
 		// wenn es noch keine Kurse gibt, muss das Datum manuell bestimmt werden. 
 		if (nextKurs == null) {
 			nextKurs = new GregorianCalendar(1980, 1, 1);
 		}
-		int diff = Util.anzahlTage(nextKurs, letzterHandelstag);
-		System.out.println(name + ": Anfrage von: " + Util.formatDate(nextKurs) + " bis: " + Util.formatDate(letzterHandelstag) + " Diff " + diff);
+		int diff = DateUtil.anzahlTage(nextKurs, letzterHandelstag);
+		System.out.println(name + ": Anfrage von: " + DateUtil.formatDate(nextKurs) + " bis: " + DateUtil.formatDate(letzterHandelstag) + " Diff " + diff);
 		// wenn der letzte Kurs vor dem letzten Handelstag liegt
 		if (diff >= 1) {	
 			// die Kurse werden geholt und in ein String-Array gesteckt.
@@ -104,7 +104,7 @@ public class ReadDataYahoo {
 			DBManager.schreibeKurse(importKursreihe);
 		}
 		else {
-			System.out.println(name + " letzter Kurs: " + Util.formatDate(letzterKurs));
+			System.out.println(name + " letzter Kurs: " + DateUtil.formatDate(letzterKurs));
 		}
 	}
 	
@@ -119,7 +119,7 @@ public class ReadDataYahoo {
 			String[] zeile = line.split(splitBy);
         	Kurs tageskurs = new Kurs();
         	tageskurs.wertpapier = name;	// in jedem Kurs ist der Wertpapiername enthalten 
-        	tageskurs.datum = Util.parseDatum(zeile[0]);
+        	tageskurs.datum = DateUtil.parseDatum(zeile[0]);
         	try {
 				tageskurs.open = Float.parseFloat(zeile[1]);
 				tageskurs.high = Float.parseFloat(zeile[2]);
@@ -155,7 +155,7 @@ public class ReadDataYahoo {
 		ArrayList<String> result = null; 
 		
 		if (ende.before(beginn)) {
-			System.out.println("Ende " + Util.formatDate(ende) + " liegt vor Beginn" + Util.formatDate(beginn));
+			System.out.println("Ende " + DateUtil.formatDate(ende) + " liegt vor Beginn" + DateUtil.formatDate(beginn));
 		}
 /*
 			try {
@@ -233,8 +233,8 @@ public class ReadDataYahoo {
 	private static String getYahooURL (String name, GregorianCalendar beginn, GregorianCalendar ende) {
 //		https://query1.finance.yahoo.com/v7/finance/download/AMZN?period1=567817200&period2=1517094000&interval=1d&events=history&crumb=J0UqI6PCmkS
 		URI uri = null;
-		String period1 = Long.toString(Util.toTimeInUnixSeconds(beginn));
-		String period2 = Long.toString(Util.toTimeInUnixSeconds(ende));
+		String period1 = Long.toString(DateUtil.toTimeInUnixSeconds(beginn));
+		String period2 = Long.toString(DateUtil.toTimeInUnixSeconds(ende));
 		try {
 			uri = new URIBuilder()
 			        .setScheme("https")

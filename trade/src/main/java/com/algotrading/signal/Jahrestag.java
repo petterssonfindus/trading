@@ -6,7 +6,7 @@ import java.util.GregorianCalendar;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import com.algotrading.util.Util;
+import com.algotrading.util.DateUtil;
 import com.algotrading.util.Zeitraum;
 import com.algotrading.aktie.Aktie;
 import com.algotrading.aktie.Kurs;
@@ -53,7 +53,7 @@ public class Jahrestag implements SignalAlgorithmus {
 		int year = datum.get(Calendar.YEAR);
 		if (dayofyear > jahrestag && year > jahreszahl) {
 			log.debug("Jahrestag eingetreten: " + tageskurs.wertpapier + " " + 
-					jahrestag + " " + kaufverkauf + " " + Util.formatDate(datum));
+					jahrestag + " " + kaufverkauf + " " + DateUtil.formatDate(datum));
 			Signal.create(sB, tageskurs, (byte) kaufverkauf, 0);
 			jahreszahl = datum.get(Calendar.YEAR);
 			result = true; 

@@ -21,6 +21,11 @@ public class Signalsuche {
 	//Zuordnung zwischen Signaltyp und Berechnung-Algorythmus
 	private static HashMap<Short, SignalAlgorithmus> signalAlgorithmen = initialisiereAlgorythmen();
 	
+	/**
+	 * Hier müssen alle Implementierungen bekannt gegeben werden. 
+	 * Damit sie über die Konstante gefunden werden. 
+	 * TODO: Nicht optimal in der Signalsuche die Registrierung zu machen. 
+	 */
 	private static HashMap<Short, SignalAlgorithmus> initialisiereAlgorythmen () {
 		HashMap<Short, SignalAlgorithmus> result = new HashMap<Short, SignalAlgorithmus>();
 		// die Implementierungen der Signal-Algorithmen einhängen 
@@ -31,6 +36,8 @@ public class Signalsuche {
 		result.put(Signal.SteigenderBerg, new SteigendeBergeFallendeTaeler());
 		result.put(Signal.FallendesTal, new SteigendeBergeFallendeTaeler());
 		result.put(Signal.SteigendesTal, new SteigendeBergeFallendeTaeler());
+		result.put(Signal.MinMax, new MinMax());
+		
 		return result; 
 	}
 	
@@ -38,7 +45,6 @@ public class Signalsuche {
 	 * steuert die Berechnung von allen Signalen einer Aktie auf Basis der vorhandene SignalBeschreibungen 
 	 * Die Signalsuche wird in Test-Cases separat/einzeln beauftragt. 
 	 * Die Indikatoren müssen bereits berechnet worden sein und hängen am Kurs. 
-	 * @param aktie
 	 */
 	public static void rechneSignale (Aktie aktie) {
 		ArrayList<SignalBeschreibung> signalbeschreibungen = aktie.getSignalbeschreibungen();

@@ -1,8 +1,5 @@
 package com.algotrading.aktie;
 
-import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.GregorianCalendar;
 
@@ -16,6 +13,7 @@ import com.algotrading.indikator.Indikatoren;
 import com.algotrading.signal.Signal;
 import com.algotrading.signal.SignalBeschreibung;
 import com.algotrading.signal.Signalsuche;
+import com.algotrading.util.DateUtil;
 import com.algotrading.util.FileUtil;
 import com.algotrading.util.Parameter;
 import com.algotrading.util.Util;
@@ -123,7 +121,7 @@ public class Aktie extends Parameter {
 	public Kurs getKurs (GregorianCalendar datum) {
 		ArrayList<Kurs> kurse = this.getBoersenkurse();
 		for (Kurs kurs : kurse) {
-			if (Util.istGleicherKalendertag(datum, kurs.datum)) {
+			if (DateUtil.istGleicherKalendertag(datum, kurs.datum)) {
 				return kurs; 
 			}
 		}
@@ -156,7 +154,7 @@ public class Aktie extends Parameter {
 	private ArrayList<Kurs> sucheBoersenkurse (Zeitraum zeitraum) {
 		ArrayList<Kurs> kurse = new ArrayList<Kurs>();
 		for (Kurs kurs : this.getBoersenkurse()) {
-			if (Util.istInZeitraum(kurs.datum, zeitraum)) {
+			if (DateUtil.istInZeitraum(kurs.datum, zeitraum)) {
 				kurse.add(kurs);
 			}
 		}
@@ -186,7 +184,7 @@ public class Aktie extends Parameter {
 		int x = this.kurse.indexOf(this.aktuellerKurs);
 		if (x > this.kurse.size()-2) {
 			log.error("Kursreihe zu Ende " + 
-				this.aktuellerKurs.wertpapier + Util.formatDate(this.aktuellerKurs.datum));
+				this.aktuellerKurs.wertpapier + DateUtil.formatDate(this.aktuellerKurs.datum));
 			return this.aktuellerKurs;
 		}
 		Kurs kurs = this.kurse.get(x + 1);
@@ -283,11 +281,9 @@ public class Aktie extends Parameter {
 	/**
 	 * Eine neue SignalBeschreibung, die anschließend berechnet wird
 	 * Die Berechnung darf noch nicht durchgeführt sein. 
-	 * @param typ
-	 * @return
 	 */
 	public void addSignalBeschreibung (SignalBeschreibung signalBeschreibung) {
-		if (this.signaleSindBerechnet) log.error("neues Signal, Berechnung bereits durchgefährt");
+		if (this.signaleSindBerechnet) log.error("neues Signal, Berechnung bereits durchgeführt");
 		this.signalbeschreibungen.add(signalBeschreibung);
 	}
 	
@@ -335,7 +331,7 @@ public class Aktie extends Parameter {
 	 */
 	public void writeFileSignale () {
 		String dateiname = "signale" + this.name + Long.toString(System.currentTimeMillis());
-		ArrayList<String> zeilen = this.writeIndikatoren();
+		ArrayList<String> zeilen = this.writeSignale();
 		FileUtil.writeCSVFile(zeilen, dateiname);
 		log.info("Datei geschrieben: " + dateiname );
 	}
@@ -371,7 +367,7 @@ public class Aktie extends Parameter {
 				return kurs;
 			}
 		}
-		log.info("Tageskurs nicht gefunden: " + Util.formatDate(datum));
+		log.info("Tageskurs nicht gefunden: " + DateUtil.formatDate(datum));
 		return null;
 	}
 	
@@ -449,34 +445,39 @@ public class Aktie extends Parameter {
 	}
 	
 	/**
-	 * schreibt alle Kurse, und Indikatoren als Zeilen 
+	 * schreibt pro Tag alle Kurse, und Indikatoren als Zeilen 
 	 */
 	private ArrayList<String> writeIndikatoren () {
 		ArrayList<String> zeilen = new ArrayList<String>();
-	
-		zeilen.add("datum;close;Talsumme;Bergsumme;LetzterTalKurs;LetzterBergKurs;" + 
-				"GD10Tage;GD30Tage;GD100Tage;" +
-				"Vola10;Vola30;Vola100;" + 
-				"RSI;" ); 
-		zeilen.add(Util.getLineSeparator());
+		// Header-Zeile
+		zeilen.add("Datum ; Close ; " + toStringIndikatoren());
+		
 		for (int i = 0 ; i < kurse.size(); i++) {
 			zeilen.add(kurse.get(i).toString());
-			zeilen.add(Util.getLineSeparator());
 		}
 		return zeilen; 	
 	}
+	/**
+	 * ein Header als Liste der Indikatoren, die an einer Aktie vorhanden sind
+	 */
+	private String toStringIndikatoren () {
+		String result = "";
+		for (IndikatorBeschreibung iB : this.indikatorBeschreibungen) {
+			result = result.concat(Short.toString(iB.getTyp()));
+		}
+		return result; 
+	}
+	
 	/**
 	 * schreibt die Signale der Aktie als Zeilen 
 	 */
 	private ArrayList<String> writeSignale () {
 		ArrayList<String> zeilen = new ArrayList<String>();
 		zeilen.add("Name ; Datum ; KaufVerkauf; Typ; Stärke");
-		zeilen.add(Util.getLineSeparator());
 		// mit allen Kursen mit allen Signalen
 		ArrayList<Signal> signale = getSignale();
 		for (int i = 0 ; i < signale.size() ; i++) {
 			zeilen.add(signale.get(i).toString());
-			zeilen.add(Util.getLineSeparator());
 		}
 		return zeilen; 
 	}

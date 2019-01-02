@@ -12,7 +12,7 @@ import com.algotrading.aktie.Kurs;
 
 import com.algotrading.indikator.Indikatoren;
 import com.algotrading.signal.Signal;
-import com.algotrading.util.Util;
+import com.algotrading.util.DateUtil;
 import com.algotrading.util.Zeitraum;
 
 import junit.framework.TestCase;
@@ -107,7 +107,7 @@ public class DBManagerTest extends TestCase {
 	public void testGetLastKurs () {
 		GregorianCalendar test = DBManager.getLastKurs(Aktien.getInstance().getAktie("testaktie"));
 		assertNotNull(test);
-		assertEquals("2018-02-09", Util.formatDate(test));
+		assertEquals("2018-02-09", DateUtil.formatDate(test));
 	}
 	
 	

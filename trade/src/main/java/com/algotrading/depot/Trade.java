@@ -6,6 +6,7 @@ import java.util.GregorianCalendar;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import com.algotrading.util.DateUtil;
 import com.algotrading.util.Util;
 
 	/**
@@ -72,7 +73,7 @@ public class Trade {
 		this.status = getStatus();
 		// Dauer anpassen 
 		this.ende = order.datum;
-		this.dauer = Util.anzahlTage(beginn, ende);
+		this.dauer = DateUtil.anzahlTage(beginn, ende);
 		
 		// die letzte Order schlieät den Trade 
 		if (this.status == Trade.STATUS_GESCHLOSSEN) {
@@ -125,12 +126,12 @@ public class Trade {
 	}
 	
 	public String toString() {
-		String result = this.wertpapier + Util.separator + 
-			this.getStatusAsString() + Util.separator + 
-			this.orders.size() + Util.separator + 
-			Util.formatDate(beginn) + Util.separator + 
-			Util.formatDate(ende) + Util.separator + 
-			Integer.toString(dauer) + Util.separator + 
+		String result = this.wertpapier + Util.separatorCSV + 
+			this.getStatusAsString() + Util.separatorCSV + 
+			this.orders.size() + Util.separatorCSV + 
+			DateUtil.formatDate(beginn) + Util.separatorCSV + 
+			DateUtil.formatDate(ende) + Util.separatorCSV + 
+			Integer.toString(dauer) + Util.separatorCSV + 
 			Util.toString(erfolg);
 		return result; 
 	}

@@ -7,6 +7,8 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import junit.framework.TestCase;
+
+import com.algotrading.util.DateUtil;
 import com.algotrading.util.Util;
 import com.algotrading.util.Zeitraum;
 
@@ -19,7 +21,7 @@ public class TestErmittleZeitraum extends TestCase {
 
 		ArrayList<Zeitraum> zeitraeume = Simulator.ermittleZeitraum(beginn, ende, 180, 30);
 		assertEquals(zeitraeume.size(), 7);
-		assertEquals(Util.formatDate(zeitraeume.get(0).ende), "2017-06-30");
+		assertEquals(DateUtil.formatDate(zeitraeume.get(0).ende), "2017-06-30");
 		
 		for (Zeitraum zeitraum : zeitraeume) {
 			log.info(zeitraum.toString());

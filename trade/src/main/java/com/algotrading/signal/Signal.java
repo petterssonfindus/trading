@@ -4,6 +4,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import com.algotrading.depot.Order;
+import com.algotrading.util.DateUtil;
 import com.algotrading.util.Util;
 import com.algotrading.aktie.Kurs;
 
@@ -103,10 +104,10 @@ public class Signal {
 	
 	public String toString () {
 		String result; 
-		result = this.tageskurs.wertpapier + Util.separator +
-			Util.formatDate(this.tageskurs.datum) + Util.separator + 
-			this.kaufVerkaufToString() + Util.separator + 
-			this.signalBeschreibung.getSignalTyp() + Util.separator + 
+		result = this.tageskurs.wertpapier + Util.separatorCSV +
+			DateUtil.formatDate(this.tageskurs.datum) + Util.separatorCSV + 
+			this.kaufVerkaufToString() + Util.separatorCSV + 
+			this.signalBeschreibung.getSignalTyp() + Util.separatorCSV + 
 			Util.toString(this.staerke);
 		return result;
 	}

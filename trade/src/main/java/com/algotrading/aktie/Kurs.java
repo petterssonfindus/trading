@@ -7,13 +7,14 @@ import java.util.HashMap;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import com.algotrading.data.DBManager;
 import com.algotrading.indikator.IndikatorBeschreibung;
 import com.algotrading.signal.Signal;
 import com.algotrading.signal.SignalBeschreibung;
+import com.algotrading.util.DateUtil;
 import com.algotrading.util.Util;
 /**
- * ein Tageskurs enthält Kursdaten, Indikatoren, und Signale
+ * ein Kurs gilt an einem Tag. 
+ * Er enthält Kursdaten, Indikatoren, und Signale
  * Dummer Datenbehälter
  * Kursdaten stammen aus der Datenbank, Indikatoren und Signale werden berechnet. 
  * @author oskar
@@ -94,16 +95,17 @@ public class Kurs {
 	
 	/**
 	 * ermittelt den Wert eines bestimmten Indikators dieses Kurses. 
+	 * null - wenn Indikator an diesem Kurs nicht vorhanden
 	 * @param indikator die Indikator-Beschreibung 
 	 * @return der float-Wert zu diesem Kurs
 	 */
-	public float getIndikatorWert (IndikatorBeschreibung indikator) {
+	public Float getIndikatorWert (IndikatorBeschreibung indikator) {
 		if (this.indikatoren.containsKey(indikator)) {
 			return this.indikatoren.get(indikator);
 		}
 		else {
-			log.error("Kurs enthält den gewünschten Indikator nicht");
-			return 0;
+//			log.error("Kurs enthält den gewünschten Indikator nicht");
+			return null;
 		}
 	}
 	
@@ -134,16 +136,20 @@ public class Kurs {
 		this.datum = datum; 
 	}
 	
+	/**
+	 * erzeugt einen String ohne Line-Separator
+	 * Datum ; Close-Kurs ;  n-Indikatoren
+	 */
 	public String toString() {
-		return DBManager.formatSQLDate(datum) + Util.separator + 
-				Util.toString(close) + Util.separator + 
+		return DateUtil.formatDate(datum, "-", true) + Util.separatorCSV + 
+				Util.toString(close) + Util.separatorCSV + 
 				indikatorenToString();
 	}
 	
 	private String indikatorenToString() {
 		String result = ""; 
 		for (Float wert : this.indikatoren.values()) {
-			result.concat(Util.toString(wert) + Util.separator);
+			result = result.concat(Util.toString(wert) + Util.separatorCSV);
 		}
 		return result; 
 	}

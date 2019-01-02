@@ -13,14 +13,14 @@ public class Zeitraum {
 	
 	public boolean equals (Object input) {
 		Zeitraum inputZS = (Zeitraum) input; 
-		if (Util.istGleicherKalendertag(inputZS.beginn, this.beginn) && Util.istGleicherKalendertag(inputZS.ende, this.ende)) {
+		if (DateUtil.istGleicherKalendertag(inputZS.beginn, this.beginn) && DateUtil.istGleicherKalendertag(inputZS.ende, this.ende)) {
 			return true;
 		}
 		return false;
 	}
 	
 	public String toString () {
-		return ("Beginn: " + Util.formatDate(beginn) + " Ende: " + Util.formatDate(ende));
+		return ("Beginn: " + DateUtil.formatDate(beginn) + " Ende: " + DateUtil.formatDate(ende));
 	}
 }
 	

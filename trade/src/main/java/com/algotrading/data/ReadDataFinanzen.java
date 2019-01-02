@@ -22,6 +22,7 @@ import org.apache.logging.log4j.Logger;
 import com.algotrading.aktie.Aktie;
 import com.algotrading.aktie.Aktien;
 import com.algotrading.aktie.Kurs;
+import com.algotrading.util.DateUtil;
 import com.algotrading.util.FileUtil;
 import com.algotrading.util.Util;
 
@@ -58,15 +59,15 @@ import com.algotrading.util.Util;
 		GregorianCalendar letzterKurs = DBManager.getLastKurs(aktie);
 		// bei einer ganz neuen Aktie gibt es keine Kurse
 		
-		GregorianCalendar letzterHandelstag = Util.getLetzterHandelstag();
+		GregorianCalendar letzterHandelstag = DateUtil.getLetzterHandelstag();
 		// der nächste erwartete Kurs wird einfach 1 Tag hoch gezählt. Das stimmt nicht genau, spielt aber keine Rolle. 
-		GregorianCalendar nextKurs = Util.addTage(letzterKurs, 1);
+		GregorianCalendar nextKurs = DateUtil.addTage(letzterKurs, 1);
 		// wenn es noch keine Kurse gibt, muss das Datum manuell bestimmt werden. 
 		if (nextKurs == null) {
 			nextKurs = new GregorianCalendar(1998, 01, 01);
 		}
-		int diff = Util.anzahlTage(nextKurs, letzterHandelstag);
-		System.out.println(name + ": Anfrage von: " + Util.formatDate(nextKurs) + " bis: " + Util.formatDate(letzterHandelstag) + " Diff " + diff);
+		int diff = DateUtil.anzahlTage(nextKurs, letzterHandelstag);
+		System.out.println(name + ": Anfrage von: " + DateUtil.formatDate(nextKurs) + " bis: " + DateUtil.formatDate(letzterHandelstag) + " Diff " + diff);
 		// wenn der letzte Kurs vor dem letzten Handelstag liegt
 		if (diff >= 1) {	
 			// die Kurse werden geholt und in ein String-Array gesteckt.
@@ -86,7 +87,7 @@ import com.algotrading.util.Util;
 			}
 		}
 		else {
-			System.out.println(name + " letzter Kurs: " + Util.formatDate(letzterKurs));
+			System.out.println(name + " letzter Kurs: " + DateUtil.formatDate(letzterKurs));
 		}
 		return result; 
 	}
@@ -144,7 +145,7 @@ import com.algotrading.util.Util;
 			zaehler ++; // nächste Zeile <tr> oder </table> 
 	    	Kurs tageskurs = new Kurs();
 	    	tageskurs.wertpapier = name;	// in jedem Kurs ist der Wertpapiername enthalten 
-	    	tageskurs.datum = Util.parseDatum(datum);
+	    	tageskurs.datum = DateUtil.parseDatum(datum);
 	    	try {
 				tageskurs.open = Util.parseFloat(eroeffnung);
 				tageskurs.high = Util.parseFloat(hoch);
@@ -195,7 +196,7 @@ import com.algotrading.util.Util;
 		OutputStreamWriter writer = null;
 		
 		if (ende.before(beginn)) {
-			System.out.println("Ende " + Util.formatDate(ende) + " liegt vor Beginn" + Util.formatDate(beginn));
+			System.out.println("Ende " + DateUtil.formatDate(ende) + " liegt vor Beginn" + DateUtil.formatDate(beginn));
 		}
 		// die URL zusammen bauen 
 		try {
@@ -272,8 +273,8 @@ import com.algotrading.util.Util;
 	private static String getFinanzenURL (String name, GregorianCalendar beginn, GregorianCalendar ende) {
 //  https://www.finanzen.net/Ajax/IndicesController_HistoricPriceList/VDAX_NEW/19.11.2014_19.12.2018/false
 		URI uri = null;
-		String von = Util.formatDate(beginn, ".", false);
-		String bis = Util.formatDate(ende, ".", false);
+		String von = DateUtil.formatDate(beginn, ".", false);
+		String bis = DateUtil.formatDate(ende, ".", false);
 		try {
 			uri = new URIBuilder()
 			        .setScheme("https")

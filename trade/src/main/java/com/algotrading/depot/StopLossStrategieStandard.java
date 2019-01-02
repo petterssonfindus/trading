@@ -5,9 +5,9 @@ import java.util.concurrent.ConcurrentHashMap;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import com.algotrading.util.Util;
 import com.algotrading.aktie.Aktie;
 import com.algotrading.aktie.Aktien;
+import com.algotrading.util.DateUtil;
 
 /**
  * Implementiert eine StopLoss-Strategie im Standardfall
@@ -37,7 +37,7 @@ public class StopLossStrategieStandard extends TagesStrategie {
 					}
 					// wenn der aktuelle Kurs unter den durschnittl. Einstandskurs fällt, wird verkauft 
 					float grenze = einstandsKurs * (1 - verlust);
-					log.trace(Util.formatDate(depot.heute) + "StopLoss Grenze: " + grenze + " aktKurs: " + aktuellerKurs);
+					log.trace(DateUtil.formatDate(depot.heute) + "StopLoss Grenze: " + grenze + " aktKurs: " + aktuellerKurs);
 					if (aktuellerKurs < grenze) {
 						log.debug("StopLoss verkauft: " + verlust + "% " + grenze + " -aktuell: " + einstandsKurs);
 						order = depot.verkaufe(aktie);

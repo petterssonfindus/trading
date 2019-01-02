@@ -5,7 +5,7 @@ import org.apache.logging.log4j.Logger;
 
 import com.algotrading.depot.Order;
 import com.algotrading.indikator.IndikatorBeschreibung;
-import com.algotrading.util.Util;
+import com.algotrading.util.DateUtil;
 import com.algotrading.util.Zeitraum;
 import com.algotrading.aktie.Aktie;
 import com.algotrading.aktie.Kurs;
@@ -55,7 +55,7 @@ public class GDDurchbruch implements SignalAlgorithmus {
 		boolean result = false; 
 		Float gd = tageskurs.getIndikatorWert(iB);
 		Float gdvt = vortageskurs.getIndikatorWert(iB);
-		log.trace("GD-Signal Steigung: " + Util.formatDate(tageskurs.datum) + " - " + vortageskurs.getKurs() + " GDVt: " + gdvt + 
+		log.trace("GD-Signal Steigung: " + DateUtil.formatDate(tageskurs.datum) + " - " + vortageskurs.getKurs() + " GDVt: " + gdvt + 
 				" Kurs: " + tageskurs.getKurs() + " GD: " + gd);
 		Signal signal = null; 
 		// wenn am Vortag der Kurs unter dem GD war, und heute der Kurs über dem GD ist 
@@ -64,7 +64,7 @@ public class GDDurchbruch implements SignalAlgorithmus {
 			signal = Signal.create(sB, tageskurs, Order.KAUF, 0);
 			result = true; 
 			signal.staerke = (tageskurs.getKurs() - gd) / gd;
-			log.debug("GD-Steigung erkannt: " + Util.formatDate(tageskurs.datum) + " VTKurs " + vortageskurs.getKurs() + " GDVt: " + gdvt + 
+			log.debug("GD-Steigung erkannt: " + DateUtil.formatDate(tageskurs.datum) + " VTKurs " + vortageskurs.getKurs() + " GDVt: " + gdvt + 
 					" Kurs: " + tageskurs.getKurs() + " GD: " + gd);
 		} 
 		return result; 
@@ -85,7 +85,7 @@ public class GDDurchbruch implements SignalAlgorithmus {
 			signal = Signal.create(sB, tageskurs, Order.VERKAUF, 0);
 			result = true;
 			signal.staerke = (gd - tageskurs.getKurs()) / gd;
-			log.debug("GD-Sinkflug: " + Util.formatDate(tageskurs.datum) + " VTKurs " + vortageskurs.getKurs() + " GDVt: " + gdvt + 
+			log.debug("GD-Sinkflug: " + DateUtil.formatDate(tageskurs.datum) + " VTKurs " + vortageskurs.getKurs() + " GDVt: " + gdvt + 
 					" Kurs: " + tageskurs.getKurs() + " GD: " + gd);
 		} 
 		return result; 

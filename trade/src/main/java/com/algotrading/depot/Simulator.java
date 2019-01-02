@@ -11,6 +11,7 @@ import org.apache.logging.log4j.Logger;
 
 import com.algotrading.indikator.IndikatorBeschreibung;
 import com.algotrading.signal.SignalBeschreibung;
+import com.algotrading.util.DateUtil;
 import com.algotrading.util.Util;
 import com.algotrading.util.Zeitraum;
 import com.algotrading.aktie.Aktie;
@@ -82,8 +83,8 @@ public class Simulator {
 			}
 			
 			// die Ergebnisse der DepotStrategie werden protokolliert 
-			log.info(Util.formatDate(zeitraum.beginn) + 
-					Util.separator + Util.formatDate(zeitraum.ende) + 
+			log.info(DateUtil.formatDate(zeitraum.beginn) + 
+					Util.separatorCSV + DateUtil.formatDate(zeitraum.ende) + 
 					depot.strategieBewertung.toString());
 			FileWriter fileWriter = openInputOutput();
 			writeInputParameter(fileWriter, zeitraum, aktien, indikatoren, signalBeschreibungen, signalStrategie, tagesStrategie);
@@ -139,15 +140,15 @@ public class Simulator {
 			SignalStrategie signalStrategie, 
 			TagesStrategie tagesStrategie ) {
 		String zeile = ""; 
-		zeile = zeile.concat(Util.formatDate(zeitraum.beginn) + Util.separator);
-		zeile = zeile.concat(Util.formatDate(zeitraum.ende) + Util.separator);
-		zeile = zeile.concat(Integer.toString(aktien.size()) + Util.separator);
-		zeile = zeile.concat(indikatoren.toString() + Util.separator);
-		zeile = zeile.concat(signalBeschreibungen.toString() + Util.separator);
-		zeile = zeile.concat(signalStrategie.toString() + Util.separator);
+		zeile = zeile.concat(DateUtil.formatDate(zeitraum.beginn) + Util.separatorCSV);
+		zeile = zeile.concat(DateUtil.formatDate(zeitraum.ende) + Util.separatorCSV);
+		zeile = zeile.concat(Integer.toString(aktien.size()) + Util.separatorCSV);
+		zeile = zeile.concat(indikatoren.toString() + Util.separatorCSV);
+		zeile = zeile.concat(signalBeschreibungen.toString() + Util.separatorCSV);
+		zeile = zeile.concat(signalStrategie.toString() + Util.separatorCSV);
 		// falls eine tagesstrategie vorhanden ist 
 		if (tagesStrategie != null) {
-			zeile = zeile.concat(tagesStrategie.toString() + Util.separator);
+			zeile = zeile.concat(tagesStrategie.toString() + Util.separatorCSV);
 		}
 		zeile = zeile.concat(Util.getLineSeparator());
 		try {
@@ -161,8 +162,8 @@ public class Simulator {
 	
 	private static void writeErgebnis (FileWriter fileWriter, Zeitraum zeitraum, Depot depot) {
 		try {
-			fileWriter.append(Util.formatDate(zeitraum.beginn) + 
-					Util.separator + Util.formatDate(zeitraum.ende) + 
+			fileWriter.append(DateUtil.formatDate(zeitraum.beginn) + 
+					Util.separatorCSV + DateUtil.formatDate(zeitraum.ende) + 
 					depot.strategieBewertung.toString() + 
 					Util.getLineSeparator()
 					);
@@ -196,11 +197,11 @@ public class Simulator {
 		else {
 			do {
 				// vom Beginn bis zum Ende liegt die Dauer 
-				neuesEnde = Util.addTage(neuerBeginn, dauer); 
+				neuesEnde = DateUtil.addTage(neuerBeginn, dauer); 
 				if (neuesEnde.before(ende)) {
 					result.add(new Zeitraum(neuerBeginn,neuesEnde));
 				}
-				neuerBeginn = Util.addTage(neuerBeginn, rhythmus);
+				neuerBeginn = DateUtil.addTage(neuerBeginn, rhythmus);
 			}
 			while (neuerBeginn.before(ende));
 			

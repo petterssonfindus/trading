@@ -109,15 +109,15 @@ public class Strategiebewertung {
 	}
 	
 	public String toString () {
-		return "Anzahl: " + this.anzahlPositiv + Util.separator + 
-				this.anzahlNegativ + Util.separator + 
-				this.trefferquote + Util.separator + 
-				this.trenddauerpositiv + Util.separator + 
-				this.trenddauernegativ + Util.separator + 
-				this.quotedauer + Util.separator + 
-				this.gewinnPositivD + Util.separator + 
-				this.gewinnNegativD + Util.separator + 
-				this.gewinnSaldo + Util.separator + 
+		return "Anzahl: " + this.anzahlPositiv + Util.separatorCSV + 
+				this.anzahlNegativ + Util.separatorCSV + 
+				this.trefferquote + Util.separatorCSV + 
+				this.trenddauerpositiv + Util.separatorCSV + 
+				this.trenddauernegativ + Util.separatorCSV + 
+				this.quotedauer + Util.separatorCSV + 
+				this.gewinnPositivD + Util.separatorCSV + 
+				this.gewinnNegativD + Util.separatorCSV + 
+				this.gewinnSaldo + Util.separatorCSV + 
 				this.buyAndHold;
 	}
 
