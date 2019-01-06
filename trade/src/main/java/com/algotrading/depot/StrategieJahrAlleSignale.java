@@ -16,7 +16,7 @@ public class StrategieJahrAlleSignale extends SignalStrategie {
 	 */
 	@Override
 	public Order entscheideSignal(Signal signal, Depot depot) {
-		Kurs kurs = signal.getTageskurs();
+		Kurs kurs = signal.getKurs();
 		String wertpapier = kurs.wertpapier;
 		Order order = null; 
 		
@@ -24,7 +24,7 @@ public class StrategieJahrAlleSignale extends SignalStrategie {
 			
 			if (signal.getKaufVerkauf() == Order.KAUF) {
 				// Speichert an der Aktie äber einen Parameter die Phase
-				signal.getTageskurs().getAktie().addParameter("phase", 1);
+				signal.getKurs().getAktie().addParameter("phase", 1);
 				log.debug("JahrestagSignal Kauf: " + signal.toString() );
 				order = depot.kaufe(depot.geld, kurs.getAktie());
 			}
@@ -34,7 +34,7 @@ public class StrategieJahrAlleSignale extends SignalStrategie {
 				// Order wird nur dann ausgefährt, wenn ein Bestand vorhanden ist
 				order = depot.verkaufeGesamtbestand();
 				// Speichert an der Aktie äber einen Parameter die Phase
-				signal.getTageskurs().getAktie().addParameter("phase", 0);
+				signal.getKurs().getAktie().addParameter("phase", 0);
 				if (order != null) {
 					log.debug("JahrestagSignal Verkauf: " + signal.toString() + " Order: "+ order.toString() );
 				}
@@ -44,7 +44,7 @@ public class StrategieJahrAlleSignale extends SignalStrategie {
 				// ein Kauf erfolgt nur, wenn sich die Aktien nicht in der Phase 0 (Verkauf) befindet
 			
 			if (signal.getKaufVerkauf() == Order.KAUF) {
-				Object object = signal.getTageskurs().getAktie().getParameter("phase");
+				Object object = signal.getKurs().getAktie().getParameter("phase");
 				int phase = 0; 
 				if (object != null) {
 					phase = (int) object;

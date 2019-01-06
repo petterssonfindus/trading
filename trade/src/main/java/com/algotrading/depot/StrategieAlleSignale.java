@@ -16,7 +16,7 @@ public class StrategieAlleSignale extends SignalStrategie {
 	 */
 	@Override
 	public Order entscheideSignal(Signal signal, Depot depot) {
-		Kurs kurs = signal.getTageskurs();
+		Kurs kurs = signal.getKurs();
 		String wertpapier = kurs.wertpapier;
 		Order order = null; 
 		

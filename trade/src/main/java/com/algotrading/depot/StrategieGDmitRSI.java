@@ -41,7 +41,7 @@ public class StrategieGDmitRSI extends SignalStrategie {
 		}
 		// wenn sich beide Indikatoren in der Kaufzone befinden, wird gekauft 
 		if (this.GDDurchbruch && this.RSIKauf) {
-			order = depot.kaufe(depot.anfangsbestand / 3, signal.getTageskurs().wertpapier);
+			order = depot.kaufe(depot.anfangsbestand / 3, signal.getKurs().wertpapier);
 			// Abwarten, bis zum nächsten Doppelsignal
 			this.GDDurchbruch = false; 
 			this.RSIKauf = false; 

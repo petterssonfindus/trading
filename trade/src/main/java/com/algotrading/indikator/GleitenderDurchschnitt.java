@@ -15,7 +15,7 @@ public class GleitenderDurchschnitt implements IndikatorAlgorithmus {
 
 	/**
 	 * Summe aller Tageskurse der letzten x Tage / Anzahl 
-	 * incluse aktueller Tageskurs 
+	 * incluse aktueller Kurs 
 	 * Parameter: dauer - die Zeitdauer, die berücksichtigt wird
 	 * 			  berechnungsart (optional) - 0 = der Durchschnittswert (default) 
 	 * 								1 = die Differenz zum aktuellen Kurs 

@@ -107,7 +107,6 @@ import com.algotrading.util.Util;
 	private static ImportKursreihe transformFinanzenWSToKursreihe (ArrayList<String> response, String name) {
 		ImportKursreihe kursreihe = new ImportKursreihe(name);
 		ArrayList<Kurs> kurse = kursreihe.kurse;
-		Kurs kurs = null; 
 		String line = "";
 		int zaehler = 1; 
 		line = response.get(zaehler);
@@ -143,16 +142,16 @@ import com.algotrading.util.Util;
 			String tief = holeWertZwischenKlammern(response.get(zaehler));
 			zaehler ++; // nächste Zeile </tr>
 			zaehler ++; // nächste Zeile <tr> oder </table> 
-	    	Kurs tageskurs = new Kurs();
-	    	tageskurs.wertpapier = name;	// in jedem Kurs ist der Wertpapiername enthalten 
-	    	tageskurs.datum = DateUtil.parseDatum(datum);
+	    	Kurs kurs = new Kurs();
+	    	kurs.wertpapier = name;	// in jedem Kurs ist der Wertpapiername enthalten 
+	    	kurs.datum = DateUtil.parseDatum(datum);
 	    	try {
-				tageskurs.open = Util.parseFloat(eroeffnung);
-				tageskurs.high = Util.parseFloat(hoch);
-				tageskurs.low = Util.parseFloat(tief);
-				tageskurs.close = Util.parseFloat(schluss);
+				kurs.open = Util.parseFloat(eroeffnung);
+				kurs.high = Util.parseFloat(hoch);
+				kurs.low = Util.parseFloat(tief);
+				kurs.close = Util.parseFloat(schluss);
 	
-	        	kurse.add(tageskurs);
+	        	kurse.add(kurs);
 	        // wenn beim Parsen etwas schief geht, wird der Kurs nicht eingetragen. 
 	    	} catch (NumberFormatException e1) {
 	    		log.error("FormatException: " + datum + " - " + schluss + " - " + eroeffnung

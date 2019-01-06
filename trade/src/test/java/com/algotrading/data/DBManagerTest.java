@@ -25,7 +25,7 @@ public class DBManagerTest extends TestCase {
 /*	
 	public void testAddTageskurs() {
 		GregorianCalendar datum1 = new GregorianCalendar(2017,1,1);
-		Tageskurs kurs = new Tageskurs();
+		Kurs kurs = new Kurs();
 		kurs.close = 111.22f;
 		kurs.name = "appl";
 		kurs.datum = datum1;
@@ -37,9 +37,9 @@ public class DBManagerTest extends TestCase {
 /*	
 	public void testGetTageskurs() {
 		GregorianCalendar cal = new GregorianCalendar(2018,01,01);
-		Tageskurs kurs = DBManager.getTageskurs("appl", cal);
+		Kurs kurs = DBManager.getTageskurs("appl", cal);
 		assertNotNull(kurs);
-		log.info("Tageskurs: " + kurs.toString());
+		log.info("Kurs: " + kurs.toString());
 		
 	}
 */
@@ -53,7 +53,7 @@ public class DBManagerTest extends TestCase {
 		Statistik.rechneIndikatoren(kursreihe);
 		Signal.rechneSignale(kursreihe);
 		
-		Tageskurs tageskurs = kursreihe.kurse.get(1);
+		Kurs tageskurs = kursreihe.kurse.get(1);
 		assertNotNull(tageskurs);
 		kursreihe.writeFile();
 //		DBManager.schreibeTageskurse(kursreihe);

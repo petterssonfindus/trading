@@ -131,7 +131,7 @@ public class DBManager {
 
 	/**
 	 * fügt einen neuen Kurs in eine bestehende Tabelle
-	 * Im Tageskurs sind nur Datum und die Kursreihe relevant 
+	 * Im Kurs sind nur Datum und die Kursreihe relevant 
 	 * Sortierung spielt keine Rolle.
 	 * # TODO Fehlerbehandlung, wenn Kurs bereits vorhanden. 
 	 */
@@ -157,7 +157,7 @@ public class DBManager {
 			anweisung = (Statement) connection.createStatement();
 			anweisung.execute(insert);
 		} catch (SQLException e) {
-			log.error("Fehler beim Schreiben von Tageskurs " + kurs.wertpapier + kurs.toString() );
+			log.error("Fehler beim Schreiben von Kurs " + kurs.wertpapier + kurs.toString() );
 			log.error(insert);
 			return false;
 		}
@@ -170,7 +170,7 @@ public class DBManager {
 	 * @param cal
 	 * @return
 	 */
-	public static Kurs getTageskurs (String name, GregorianCalendar cal) {
+	public static Kurs getKurs (String name, GregorianCalendar cal) {
 		// SELECT * FROM `appl` WHERE `datum` = '2018-01-02' 
 		String select = "SELECT * FROM `" + name + "` WHERE `datum` = '2018-01-02'";
 		
@@ -187,7 +187,7 @@ public class DBManager {
 			e.printStackTrace();
 			return null;
 		}
-        Kurs kurs = createTageskursAusDBSelect(response);
+        Kurs kurs = createKursAusDBSelect(response);
         kurs.wertpapier = name; 
     	return kurs; 
 		
@@ -459,15 +459,15 @@ public class DBManager {
     	try {
 	        while (response.next())
 	        {
-	        	Kurs tageskurs = new Kurs();
-	        	tageskurs.setKurs(response.getFloat("close"));
-	        	tageskurs.close = response.getFloat("close");
-	        	tageskurs.high = response.getFloat("high");
-	        	tageskurs.low = response.getFloat("low");
-	        	tageskurs.open = response.getFloat("open");
-	        	tageskurs.volume = response.getInt("volume");
-	        	tageskurs.setDatum( DateUtil.toGregorianCalendar(response.getDate("datum")));
-	        	kursreihe.add(tageskurs);
+	        	Kurs kurs = new Kurs();
+	        	kurs.setKurs(response.getFloat("close"));
+	        	kurs.close = response.getFloat("close");
+	        	kurs.high = response.getFloat("high");
+	        	kurs.low = response.getFloat("low");
+	        	kurs.open = response.getFloat("open");
+	        	kurs.volume = response.getInt("volume");
+	        	kurs.setDatum( DateUtil.toGregorianCalendar(response.getDate("datum")));
+	        	kursreihe.add(kurs);
 	        }
 		} catch (SQLException e) {
 			e.printStackTrace();
@@ -480,7 +480,7 @@ public class DBManager {
 	 * @param response
 	 * @return
 	 */
-    private static Kurs createTageskursAusDBSelect (ResultSet response)
+    private static Kurs createKursAusDBSelect (ResultSet response)
     {
     	Kurs kurs = new Kurs ();
 		try {

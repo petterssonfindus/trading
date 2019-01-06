@@ -16,7 +16,7 @@ public class StrategieAllesKaufen extends SignalStrategie {
 	public Order entscheideSignal(Signal signal, Depot depot) {
 		Order order = null; 
 		if (signal.getKaufVerkauf() == Order.KAUF) {
-			order = depot.kaufe(depot.anfangsbestand/3, signal.getTageskurs().wertpapier);
+			order = depot.kaufe(depot.anfangsbestand/3, signal.getKurs().wertpapier);
 		}
 		return order; 
 	}

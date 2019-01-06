@@ -59,19 +59,19 @@ public class SteigendeBergeFallendeTaeler implements SignalAlgorithmus {
 	}
 	
 	/**
-	 * prüft, ob der Tageskurs ein Berg ist 
-	 * @param tageskurs
+	 * prüft, ob der Kurs ein Berg ist 
+	 * @param kurs
 	 * @return
 	 */
-	static boolean istBerg (Kurs tageskurs, IndikatorBeschreibung indikator) {
-		if (tageskurs.getIndikatorWert(indikator) > SteigendeBergeFallendeTaeler.SCHWELLEBERGSUMME) {
+	static boolean istBerg (Kurs kurs, IndikatorBeschreibung indikator) {
+		if (kurs.getIndikatorWert(indikator) > SteigendeBergeFallendeTaeler.SCHWELLEBERGSUMME) {
 			return true;
 		}
 		else return false; 
 	}
 
-	static boolean istTal (Kurs tageskurs, IndikatorBeschreibung indikator) {
-		if (tageskurs.getIndikatorWert(indikator) > SteigendeBergeFallendeTaeler.SCHWELLETALSUMME) {
+	static boolean istTal (Kurs kurs, IndikatorBeschreibung indikator) {
+		if (kurs.getIndikatorWert(indikator) > SteigendeBergeFallendeTaeler.SCHWELLETALSUMME) {
 			return true;
 		}
 		else return false; 

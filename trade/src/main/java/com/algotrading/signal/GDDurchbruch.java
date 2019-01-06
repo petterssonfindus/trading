@@ -14,7 +14,7 @@ public class GDDurchbruch implements SignalAlgorithmus {
 	static final Logger log = LogManager.getLogger(GDDurchbruch.class);
 
 	/**
-	 * erzeugt ein Signal, wenn der Tageskurs den GD schneidet 
+	 * erzeugt ein Signal, wenn der Kurs den GD schneidet 
 	 * Stärke sagt aus, wie weit der Kurs vom GD abweicht. 
 	 * Parameter "schwelle" - Dezimalwert der Überschreitung 
 	 * Parameter "indikator" - die zugehörige GD-IndikatorBeschreibung
@@ -26,7 +26,7 @@ public class GDDurchbruch implements SignalAlgorithmus {
 		if (sB == null) log.error("Inputparameter Signalbeschreibung ist null");
 		int anzahl = 0;
 		IndikatorBeschreibung indikator = (IndikatorBeschreibung) sB.getParameter("indikator");
-		// wie weit muss der Tageskurs den Gleitenden Durchschnitt durchbrechen
+		// wie weit muss der Kurs den Gleitenden Durchschnitt durchbrechen
 		float schwelle = (Float) sB.getParameter("schwelle");
 		schwelle = schwelle + 1;
 		if (indikator == null) log.error("Signal enthaelt keinen Indikator");
@@ -36,7 +36,7 @@ public class GDDurchbruch implements SignalAlgorithmus {
 			Kurs vortageskurs = aktie.getVortageskurs(kurs);
 			if (vortageskurs != null) {
 				// bisher darunter, jetzt darüber
-				// dabei werden die Signale erstellt und mit dem Tageskurs verbunden 
+				// dabei werden die Signale erstellt und mit dem Kurs verbunden 
 				if (GDDurchbruch.pruefeGleitenderDurchschnittSteigung(sB, kurs, vortageskurs, indikator, schwelle)) anzahl++;
 				
 				// bisher darüber, jetzt darunter
@@ -50,22 +50,22 @@ public class GDDurchbruch implements SignalAlgorithmus {
 	 * bisher darunter, jetzt darüber
 	 * erzeugt Signale und hängt sie an den Kurs an
 	 */
-	private static boolean pruefeGleitenderDurchschnittSteigung (SignalBeschreibung sB, Kurs tageskurs, Kurs vortageskurs, IndikatorBeschreibung iB, float schwelle ) {
-		if (tageskurs == null || vortageskurs == null || iB == null) log.error("Inputvariable ist null"); 
+	private static boolean pruefeGleitenderDurchschnittSteigung (SignalBeschreibung sB, Kurs kurs, Kurs vortageskurs, IndikatorBeschreibung iB, float schwelle ) {
+		if (kurs == null || vortageskurs == null || iB == null) log.error("Inputvariable ist null"); 
 		boolean result = false; 
-		Float gd = tageskurs.getIndikatorWert(iB);
+		Float gd = kurs.getIndikatorWert(iB);
 		Float gdvt = vortageskurs.getIndikatorWert(iB);
-		log.trace("GD-Signal Steigung: " + DateUtil.formatDate(tageskurs.datum) + " - " + vortageskurs.getKurs() + " GDVt: " + gdvt + 
-				" Kurs: " + tageskurs.getKurs() + " GD: " + gd);
+		log.trace("GD-Signal Steigung: " + DateUtil.formatDate(kurs.datum) + " - " + vortageskurs.getKurs() + " GDVt: " + gdvt + 
+				" Kurs: " + kurs.getKurs() + " GD: " + gd);
 		Signal signal = null; 
 		// wenn am Vortag der Kurs unter dem GD war, und heute der Kurs über dem GD ist 
 		if ((vortageskurs.getKurs() < (gdvt * schwelle)) && 
-				tageskurs.getKurs() > (gd * schwelle)) {
-			signal = Signal.create(sB, tageskurs, Order.KAUF, 0);
+				kurs.getKurs() > (gd * schwelle)) {
+			signal = Signal.create(sB, kurs, Order.KAUF, 0);
 			result = true; 
-			signal.staerke = (tageskurs.getKurs() - gd) / gd;
-			log.debug("GD-Steigung erkannt: " + DateUtil.formatDate(tageskurs.datum) + " VTKurs " + vortageskurs.getKurs() + " GDVt: " + gdvt + 
-					" Kurs: " + tageskurs.getKurs() + " GD: " + gd);
+			signal.staerke = (kurs.getKurs() - gd) / gd;
+			log.debug("GD-Steigung erkannt: " + DateUtil.formatDate(kurs.datum) + " VTKurs " + vortageskurs.getKurs() + " GDVt: " + gdvt + 
+					" Kurs: " + kurs.getKurs() + " GD: " + gd);
 		} 
 		return result; 
 	}

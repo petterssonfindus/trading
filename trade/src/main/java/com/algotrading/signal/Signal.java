@@ -1,5 +1,7 @@
 package com.algotrading.signal;
 
+import java.util.HashMap;
+
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -12,7 +14,7 @@ import com.algotrading.aktie.Kurs;
  * repräsentiert ein Kauf/Verkaufsignal 
  * Wurde ausgelöst auf Basis einer SignalBeschreibung mit Parametern
  * Es können mehrere Signale vom gleichen Typ auftreten. 
- * Ein Signal gehört zu einem Tageskurs.
+ * Ein Signal gehört zu einem Kurs.
  * Ein Signal hat keinen Parameter, aber eine Referenz auf die SignalBeschreibung
  * Liefert häufig einen Wert über die Stärke
  * @author oskar
@@ -20,13 +22,18 @@ import com.algotrading.aktie.Kurs;
  */
 public class Signal {
 	private static final Logger log = LogManager.getLogger(Signal.class);
-
-	private Kurs tageskurs; 
-	
+	// Referenz zum Kurs, zu dem es gehört
+	private Kurs kurs; 
+	// eine Referenz auf die Signalbeschreibung wird beim Erzeugen gesetzt 
 	private SignalBeschreibung signalBeschreibung; 
-
+	// Kauf oder Verkauf 
 	private byte kaufVerkauf;
-	// die Liste aller Signale
+	// optional - eine Zahl von 0 - 100 über die Stärke
+	public float staerke; 
+	// bewertet die Prognosequalität dieses Signals 
+	private HashMap<Integer, Float> bewertung;
+	
+	// die Liste aller Signal-Typen
 	public static final short SteigenderBerg = 1;
 	public static final short FallenderBerg = 2;
 	public static final short SteigendesTal= 3;
@@ -42,11 +49,9 @@ public class Signal {
 	
 	public static final short MinMax = 13; 
 	
-	// optional - eine Zahl von 0 - 100 über die Stärke
-	public float staerke; 
 	/**
-	 * private Konstruktor kann nur über die Methode erzeugen genutzt werden. 
-	 * Dadurch kann beim Erzeugen die Referenz auf den Tageskurs eingetragen werden. 
+	 * private Konstruktor kann nur über die Methode create genutzt werden. 
+	 * Dadurch kann beim Erzeugen die Referenz auf den Kurs eingetragen werden. 
 	 * @param tageskurs der Kurs, an dem das Signal hängt. 
 	 * @param kaufVerkauf
 	 * @param typ
@@ -54,7 +59,7 @@ public class Signal {
 	 */
 	private Signal (SignalBeschreibung sB, Kurs tageskurs, byte kaufVerkauf, float staerke){
 		this.signalBeschreibung = sB; 
-		this.tageskurs = tageskurs; 
+		this.kurs = tageskurs; 
 		this.kaufVerkauf = kaufVerkauf;
 		this.staerke = staerke;
 	}
@@ -62,9 +67,9 @@ public class Signal {
 	/**
 	 * Die Signalsuche hat ein Signal identifiziert und hängt es in den Kurs ein
 	 * Der Typ ist in der zugehörigen Signalbeschreibung festgelegt. 
-	 * @param tageskurs
-	 * @param kaufVerkauf
-	 * @param staerke
+	 * @param tageskurs 
+	 * @param kaufVerkauf 
+	 * @param staerke (optional)
 	 * @return
 	 */
 	public static Signal create (SignalBeschreibung sB, Kurs tageskurs, byte kaufVerkauf, float staerke) {
@@ -81,8 +86,8 @@ public class Signal {
 		return this.signalBeschreibung.getSignalTyp();
 	}
 
-	public Kurs getTageskurs () {
-		return this.tageskurs;
+	public Kurs getKurs () {
+		return this.kurs;
 	}
 
 	public byte getKaufVerkauf() {
@@ -101,14 +106,39 @@ public class Signal {
 	public SignalBeschreibung getSignalBeschreibung() {
 		return signalBeschreibung;
 	}
+	/**
+	 * Fügt eine Bewertung hinzu
+	 * Berechnet die Performance in die Zukunft, wenn die Kursdaten verfügbar sind. 
+	 * @param tage
+	 * @return
+	 */
+	public float addBewertung (int tage) {
+		float result = 0;
+		// hole den aktuellen Kurs
+		Kurs aktKurs = this.getKurs();
+		// hole den künftigen Kurs
+//		float neuKurs = aktKurs.;
+		// berechne die Performance
+		
+		// trage die Performance ein 
+		return result; 
+	}
 	
 	public String toString () {
 		String result; 
-		result = this.tageskurs.wertpapier + Util.separatorCSV +
-			DateUtil.formatDate(this.tageskurs.datum) + Util.separatorCSV + 
+		result = this.kurs.wertpapier + Util.separatorCSV +
+			DateUtil.formatDate(this.kurs.datum) + Util.separatorCSV + 
 			this.kaufVerkaufToString() + Util.separatorCSV + 
 			this.signalBeschreibung.getSignalTyp() + Util.separatorCSV + 
 			Util.toString(this.staerke);
+		return result;
+	}
+	
+	public String toStringShort () {
+		String result; 
+		result = this.signalBeschreibung.getSignalTyp() + Util.separatorCSV + 
+				this.kaufVerkaufToString() + Util.separatorCSV + 
+				Util.toString(this.staerke);
 		return result;
 	}
 

@@ -40,8 +40,14 @@ public class UtilTest extends TestCase {
 	}
 	
 	public void testFloatString () {
-		float test = 17.834f;
-		log.info("Utiltest: " + Util.toString(test));
+		// Float rechnet mit 7 signifikanten Stellen 
+		float test = 17.838f;
+		String testString = Util.toString(test);
+		float test2 = 1234567f;
+		String testString2 = Util.toString(test2);
+		System.out.println("FloatToString: " + testString + "  " + testString2);
+		assertEquals("17,838", testString);
+		assertEquals("1.234.567", testString2);
 	}
 	
 	public void testGetHeute () {

@@ -1,6 +1,7 @@
 package com.algotrading.util;
 
 import java.text.DecimalFormat;
+import java.text.DecimalFormatSymbols;
 import java.util.Locale;
 
 import org.apache.logging.log4j.LogManager;
@@ -20,15 +21,15 @@ public class Util {
 	}
 	
 	/**
-	 * Formatiert eine float-Zahl in deutscher Schreibweise mit Komma ohne Punkt. 
-	 * @param input
-	 * @return
+	 * Formatiert eine float-Zahl in Schreibweise mit Komma ohne Punkt. 
+	 * Float rechnet mit 7 signifikanten Stellen. 
+	 * Das führt bei Beträgen von 10.000 zu Fehlern im Cent-Bereich.
 	 */
 	public static String toString( float input) {
-		DecimalFormat df = (DecimalFormat)DecimalFormat.getInstance(Locale.US);
-		df.applyPattern( "#,###,##0.00" );
-		String result = df.format(input);
-		return result;
+		DecimalFormat df = (DecimalFormat)DecimalFormat.getInstance(Locale.GERMANY);
+//		df.setDecimalFormatSymbols(DecimalFormatSymbols.getInstance(Locale.GERMAN)); 
+//		df.applyPattern( "####.##0,00" );
+		return df.format(input);
 	}
 	
 	/**

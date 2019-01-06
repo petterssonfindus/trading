@@ -111,27 +111,26 @@ public class ReadDataYahoo {
 	private static ImportKursreihe transformYahooWSToKursreihe (ArrayList<String> response, String name) {
 		ImportKursreihe kursreihe = new ImportKursreihe(name);
 		ArrayList<Kurs> kurse = kursreihe.kurse;
-		Kurs kurs = null; 
 		String line = "";
 		for (int i = 1; i < response.size(); i++) {
 			line = response.get(i);
             String splitBy = ",";
 			String[] zeile = line.split(splitBy);
-        	Kurs tageskurs = new Kurs();
-        	tageskurs.wertpapier = name;	// in jedem Kurs ist der Wertpapiername enthalten 
-        	tageskurs.datum = DateUtil.parseDatum(zeile[0]);
+        	Kurs kurs = new Kurs();
+        	kurs.wertpapier = name;	// in jedem Kurs ist der Wertpapiername enthalten 
+        	kurs.datum = DateUtil.parseDatum(zeile[0]);
         	try {
-				tageskurs.open = Float.parseFloat(zeile[1]);
-				tageskurs.high = Float.parseFloat(zeile[2]);
-				tageskurs.low = Float.parseFloat(zeile[3]);
-				tageskurs.close = Float.parseFloat(zeile[4]);
+				kurs.open = Float.parseFloat(zeile[1]);
+				kurs.high = Float.parseFloat(zeile[2]);
+				kurs.low = Float.parseFloat(zeile[3]);
+				kurs.close = Float.parseFloat(zeile[4]);
 	        	// nicht immer sind die Spalten AdjClose und Volume vorhanden 
 	        	if (zeile.length > 5) {
-	        			tageskurs.adjClose = Float.parseFloat(zeile[5]);
+	        			kurs.adjClose = Float.parseFloat(zeile[5]);
 	        		// Indizes haben als Volume Gleitkommazahlen, deshalb wird gecasted 
-	    			tageskurs.volume = (int) Float.parseFloat(zeile[6]);
+	    			kurs.volume = (int) Float.parseFloat(zeile[6]);
 	        	}
-	        	kurse.add(tageskurs);
+	        	kurse.add(kurs);
 	        // wenn beim Parsen etwas schief geht, wird der Kurs nicht eingetragen. 
         	} catch (NumberFormatException e1) {
         		log.error("FormatException: " + zeile[0] + " - " + zeile[1] + " - " + zeile[2]

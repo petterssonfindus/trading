@@ -2,6 +2,7 @@
 /.settings/
 /.metadata
 /log
+/csv
 /bin/
 *.log
 *.class

@@ -16,7 +16,6 @@ import com.algotrading.signal.Signalsuche;
 import com.algotrading.util.DateUtil;
 import com.algotrading.util.FileUtil;
 import com.algotrading.util.Parameter;
-import com.algotrading.util.Util;
 import com.algotrading.util.Zeitraum;
 
 /**
@@ -175,7 +174,7 @@ public class Aktie extends Parameter {
 		return kurse;
 	}
 	/**
-	 * der nächste Tageskurs im Ablauf einer Simulation 
+	 * der nächste Kurs im Ablauf einer Simulation 
 	 * darf/muss für jeden Handelstag genau ein Mal aufgerufen werden. 
 	 * @param kurs
 	 * @return
@@ -336,10 +335,10 @@ public class Aktie extends Parameter {
 		log.info("Datei geschrieben: " + dateiname );
 	}
 	/**
-	 * ermittelt den Tageskurs des Vortages des gegebenen Kurses
+	 * ermittelt den Kurs des Vortages des gegebenen Kurses
 	 */
-	public Kurs ermittleTageskursVortag (Kurs tk) {
-		if (tk == null) log.error("Inputvariable Tageskurs ist null");
+	public Kurs ermittleKursVortag (Kurs tk) {
+		if (tk == null) log.error("Inputvariable Kurs ist null");
 		int stelle = this.kurse.indexOf(tk);
 		if (stelle > 0) {
 			return this.kurse.get(stelle - 1);
@@ -348,7 +347,7 @@ public class Aktie extends Parameter {
 	}
 	
 	/**
-	 * ermittelt und setzt den Tageskurs zu einem gegebenen Datum 
+	 * ermittelt und setzt den Kurs zu einem gegebenen Datum 
 	 * oder den ersten darauffolgenden Kurs, kann auch mehrere Tage danach sein. 
 	 * Zur einmaligen Initialisierung am Beginn der Simulation
 	 * @param datum
@@ -367,12 +366,12 @@ public class Aktie extends Parameter {
 				return kurs;
 			}
 		}
-		log.info("Tageskurs nicht gefunden: " + DateUtil.formatDate(datum));
+		log.info("Kurs nicht gefunden: " + DateUtil.formatDate(datum));
 		return null;
 	}
 	
 	/**
-	 * alle Signale von allen Tageskursen nach Datum aufsteigend
+	 * alle Signale von allen Kursen nach Datum aufsteigend
 	 * @return
 	 */
 	public ArrayList<Signal> getSignale() {
@@ -473,7 +472,7 @@ public class Aktie extends Parameter {
 	 */
 	private ArrayList<String> writeSignale () {
 		ArrayList<String> zeilen = new ArrayList<String>();
-		zeilen.add("Name ; Datum ; KaufVerkauf; Typ; Stärke");
+		zeilen.add("Name ; Datum ; KaufVerkauf; Typ; Staerke");
 		// mit allen Kursen mit allen Signalen
 		ArrayList<Signal> signale = getSignale();
 		for (int i = 0 ; i < signale.size() ; i++) {

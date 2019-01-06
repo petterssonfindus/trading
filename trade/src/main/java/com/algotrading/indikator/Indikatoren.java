@@ -31,6 +31,7 @@ public class Indikatoren {
 													// wird auch Chaikin Money Flow genannt, wenn er akkumuliert wird. 
 	public static final short PERFORMANCE = 13; 
 	public static final short STEIGUNG = 14; 
+	public static final short KURSWERT = 15; // der Kurs selbst als Indikator
 	
 	private static HashMap<Short, IndikatorAlgorithmus> indikatoren = initialisiereIndikatoren();
 	
@@ -48,6 +49,7 @@ public class Indikatoren {
 		result.put(Indikatoren.INDIKATOR_RSI, RSI.getInstance());
 		result.put(Indikatoren.INDIKATOR_SAR, StatisticSAR.getInstance());
 		result.put(Indikatoren.INDIKATOR_VOLATILITAET, Volatilitaet.getInstance());
+		result.put(Indikatoren.KURSWERT, Kurswert.getInstance());
 		return result; 
 	}
 

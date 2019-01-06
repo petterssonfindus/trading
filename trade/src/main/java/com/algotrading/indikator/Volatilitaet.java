@@ -26,7 +26,7 @@ public class Volatilitaet implements IndikatorAlgorithmus {
 		// wenn weniger Kurse vorhanden sind, als die Zeitraum 
 		if (aktie.getBoersenkurse().size() <= x) return;
 		
-		Kurs tageskurs; 
+		Kurs kurs; 
 		DescriptiveStatistics stats = new DescriptiveStatistics();
 		// beim Einfügen weiterer Werte fliegt automatisch der erst raus
 		stats.setWindowSize(x);
@@ -35,10 +35,10 @@ public class Volatilitaet implements IndikatorAlgorithmus {
 			stats.addValue(aktie.getBoersenkurse().get(i).getKurs());
 		}
 		for (int i = x ; i < aktie.getBoersenkurse().size() ; i++) {
-			tageskurs = aktie.getBoersenkurse().get(i);
-			stats.addValue(tageskurs.getKurs());
+			kurs = aktie.getBoersenkurse().get(i);
+			stats.addValue(kurs.getKurs());
 			double vola = stats.getStandardDeviation();
-			tageskurs.addIndikator(indikator, (float) vola); 
+			kurs.addIndikator(indikator, (float) vola); 
 		}
 	}
 

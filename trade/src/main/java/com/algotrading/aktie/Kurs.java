@@ -31,10 +31,7 @@ public class Kurs {
 	public float adjClose;
 	public int volume; 
 	public String wertpapier; 
-	/**
-	 * Ein Indikator ist eine Referenz auf die Parameter des Indikators mit zugehörigem Float-Wert 
-	 * Der Float ist der Wert für diesen Kurs 
-	 */
+	// Liste der Indikatoren, die am Kurs hängen. 
 	private HashMap<IndikatorBeschreibung, Float> indikatoren = new HashMap<IndikatorBeschreibung, Float>();
 
 	// Liste aller Signale - öffentlicher Zugriff nur über add() und get()
@@ -50,7 +47,7 @@ public class Kurs {
 	public void addSignal (Signal signal) {
 		if (signal == null) log.error("Inputvariable signal ist null");
 		if (signal == null) {
-			log.info("leeres Signal bei Tageskurs: " + this.toString());
+			log.info("leeres Signal bei Kurs: " + this.toString());
 		}
 		else this.signale.add(signal);
 	}
@@ -116,6 +113,17 @@ public class Kurs {
 	public float getKurs () {
 		return close; 
 	}
+	/**
+	 * Ermittelt den Kurs in die Zukunft oder Vergangenheit um n-Tage
+	 * wenn nicht vorhanden, dann -null-
+	 * @param vorzurueck Anzahl Tage: positiv = Zukunft - negativ = Vergangenheit
+	 */
+	public Kurs getKursTage (int n) {
+		ArrayList<Kurs> kurse = this.getAktie().getBoersenkurse();
+		// an welcher Stelle ist der aktuelle Kurs ?
+		int x = kurse.indexOf(this);
+		return kurse.get(x + n);
+	}
 	
 	public void setKurs (float kurs) {
 		this.close = kurs;
@@ -130,7 +138,6 @@ public class Kurs {
 	
 	/**
 	 * das Datum mit einem GregCalendar setzen
-	 * @param datum
 	 */
 	public void setDatum (GregorianCalendar datum) {
 		this.datum = datum; 
@@ -138,20 +145,33 @@ public class Kurs {
 	
 	/**
 	 * erzeugt einen String ohne Line-Separator
-	 * Datum ; Close-Kurs ;  n-Indikatoren
+	 * Datum ; Close-Kurs ;  n-Indikatoren ; n-Signale
 	 */
 	public String toString() {
 		return DateUtil.formatDate(datum, "-", true) + Util.separatorCSV + 
-				Util.toString(close) + Util.separatorCSV + 
-				indikatorenToString();
+				Util.toString(close) + toStringIndikatoren() + toStringSignale();
 	}
-	
-	private String indikatorenToString() {
+	/**
+	 * Liefert einen String mit allen Indikatoren im Format Typ - Wert
+	 */
+	private String toStringIndikatoren() {
 		String result = ""; 
 		for (Float wert : this.indikatoren.values()) {
-			result = result.concat(Util.toString(wert) + Util.separatorCSV);
+			result = result.concat(Util.separatorCSV + Util.toString(wert));
 		}
 		return result; 
 	}
+	/**
+	 * Liefert einen String mit allen Signalen im Format 
+	 * Typ - Kauf/Verkauf - Wert
+	 */
+	private String toStringSignale() {
+		String result = ""; 
+		for (Signal signal : this.signale) {
+			result = result.concat(Util.separatorCSV + signal.toStringShort() );
+		}
+		return result; 
+	}
+	
 	
 }

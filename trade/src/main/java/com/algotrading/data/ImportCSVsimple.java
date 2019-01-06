@@ -83,7 +83,7 @@ public class ImportCSVsimple {
 	/**
 	 * liest eine csv-Datei von Yahoo-Finance ein
 	 * Zeilen mit 'null'-Werten werden ignoriert 
-	 * Aus jeder Zeile wird ein Tageskurs erzeugt
+	 * Aus jeder Zeile wird ein Kurs erzeugt
 	 * @return
 	 */
     public static ImportKursreihe readKurseYahooCSV(File file) {
@@ -107,29 +107,29 @@ public class ImportCSVsimple {
                 String[] zeile = line.split(cvsSplitBy);
                 // wenn der erste Kurs "null" enthält wird die Zeile ignoriert 
                 if ( ! zeile[1].contains("null")) {
-                	Kurs tageskurs = new Kurs();
-                	tageskurs.wertpapier = kuerzel;
-                	tageskurs.datum = DateUtil.parseDatum(zeile[0]);
-                	tageskurs.open = Float.parseFloat(zeile[1]);
-                	tageskurs.high = Float.parseFloat(zeile[2]);
-                	tageskurs.low = Float.parseFloat(zeile[3]);
-                	tageskurs.close = Float.parseFloat(zeile[4]);
+                	Kurs kurs = new Kurs();
+                	kurs.wertpapier = kuerzel;
+                	kurs.datum = DateUtil.parseDatum(zeile[0]);
+                	kurs.open = Float.parseFloat(zeile[1]);
+                	kurs.high = Float.parseFloat(zeile[2]);
+                	kurs.low = Float.parseFloat(zeile[3]);
+                	kurs.close = Float.parseFloat(zeile[4]);
                 	// nicht immer sind die Spalten AdjClose und Volume vorhanden 
                 	if (zeile.length > 5) {
                 		try {
-                			tageskurs.adjClose = Float.parseFloat(zeile[5]);
+                			kurs.adjClose = Float.parseFloat(zeile[5]);
                 		} catch (NumberFormatException e) {
                 			// kein Problem, wenn das nicht funktioniert 
                 		}
                 		// Indizes haben als Volume Gleitkommazahlen, deshalb wird gecasted 
                 		try {
-                			tageskurs.volume = (int) Float.parseFloat(zeile[6]);
+                			kurs.volume = (int) Float.parseFloat(zeile[6]);
                 		} catch (NumberFormatException e) {
                 			// keine Problem, wenn das nicht funktioniert 
                 		}
                 	}
 
-                	kursreihe.add(tageskurs);
+                	kursreihe.add(kurs);
                 }
             }
 

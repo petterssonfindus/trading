@@ -19,6 +19,21 @@ public class AktieTest extends TestCase {
 		
 	}
 	
+	public void testGetKursZukunft() {
+		
+		Aktie aktie = Aktien.getInstance().getAktie("testaktie");
+		ArrayList<Kurs> kursreihe = aktie.getBoersenkurse(); 
+		assertNotNull(kursreihe);
+		assertTrue(kursreihe.size() > 1);
+		Kurs kurs = kursreihe.get(100);
+		assertNotNull(kurs);
+		Kurs kurs2 = kurs.getKursTage(10);
+		assertEquals(22.5f, kurs2.getKurs());
+		Kurs kurs3 = kurs.getKursTage(-10);
+		assertEquals(23.03f, kurs3.getKurs());
+		// 
+	}
+	
 	public void testGetKurse () {
 		Aktie aktie = Aktien.getInstance().getAktie("AA");
 		ArrayList<Kurs> kursreihe = aktie.getBoersenkurse(); 
