@@ -122,7 +122,11 @@ public class Kurs {
 		ArrayList<Kurs> kurse = this.getAktie().getBoersenkurse();
 		// an welcher Stelle ist der aktuelle Kurs ?
 		int x = kurse.indexOf(this);
-		return kurse.get(x + n);
+		try {
+			return kurse.get(x + n);
+		} catch (IndexOutOfBoundsException e) {
+			return null;
+		}
 	}
 	
 	public void setKurs (float kurs) {
@@ -143,6 +147,10 @@ public class Kurs {
 		this.datum = datum; 
 	}
 	
+	GregorianCalendar getDatum() {
+		return datum;
+	}
+
 	/**
 	 * erzeugt einen String ohne Line-Separator
 	 * Datum ; Close-Kurs ;  n-Indikatoren ; n-Signale

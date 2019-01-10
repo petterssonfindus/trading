@@ -53,7 +53,7 @@ public class PerformancePA implements IndikatorAlgorithmus {
 	private void rechneRendite(Aktie aktie, IndikatorBeschreibung indikator, int x, float kapitalBeginn,
 			float kapitalEnde, int i) {
 		float rendite;
-		rendite = Util.rechneRendite(kapitalBeginn, kapitalEnde, x);
+		rendite = Util.rechnePerformancePA(kapitalBeginn, kapitalEnde, x);
 		aktie.getBoersenkurse().get(i).addIndikator(indikator, rendite); 
 		Indikatoren.log.trace("GD: " + x + " - " + rendite);
 	}

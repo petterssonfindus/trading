@@ -1,9 +1,13 @@
 package com.algotrading.signal;
 
+import java.util.GregorianCalendar;
+
 import com.algotrading.aktie.Aktie;
 import com.algotrading.aktie.Aktien;
 import com.algotrading.indikator.IndikatorBeschreibung;
 import com.algotrading.indikator.Indikatoren;
+import com.algotrading.util.DateUtil;
+import com.algotrading.util.Zeitraum;
 
 import junit.framework.TestCase;
 
@@ -55,17 +59,22 @@ public class TestMinMax extends TestCase {
 		assertEquals(20.05f, aktie.getBoersenkurse().get(0).getKurs());
 		
 		// Signal konfigurieren und an Aktie hängen 
-		SignalBeschreibung sB = new SignalBeschreibung(Signal.MinMax);
+		SignalBeschreibung sB = aktie.createSignalBeschreibung(Signal.MinMax);
 		sB.addParameter("indikator", iB);
 		sB.addParameter("dauer", 15);		// Min-Max-Berechnung 15 Tage zurück 
 		sB.addParameter("schwelle", 1f);		// 1-fache Standardabweichung
 		sB.addParameter("durchbruch", 0);	// tägliches Signal in der Extremzone
-		aktie.addSignalBeschreibung(sB);
 		
 		// Signale berechnen und ausgeben 
 		aktie.rechneSignale();
-		aktie.writeFileIndikatoren();
-//		aktie.writeFileSignale();
+		// Signal-Bewertung aggregieren und ausgeben 
+		GregorianCalendar beginn = DateUtil.createGregorianCalendar(01, 01, 2017);
+		GregorianCalendar ende = DateUtil.createGregorianCalendar(31, 12, 2017);
+		Zeitraum zeitraum = new Zeitraum(beginn, ende);
+		aktie.bewerteSignale(zeitraum);
+		
+//		aktie.writeFileIndikatoren();
+		aktie.writeFileSignale();
 	}
 	
 }

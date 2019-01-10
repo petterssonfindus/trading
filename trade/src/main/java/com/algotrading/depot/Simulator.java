@@ -70,7 +70,7 @@ public class Simulator {
 				signalBeschreibung.addParameter("zeitraum", zeitraum);
 				// Signalbeschreibung wird in jeder Aktie gespeichert
 				for (Aktie aktie : aktien) {
-					aktie.addSignalBeschreibung(signalBeschreibung);
+					aktie.createSignalBeschreibung(signalBeschreibung.getSignalTyp());
 				}
 			}
 	

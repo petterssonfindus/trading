@@ -63,7 +63,7 @@ public class GDDurchbruch implements SignalAlgorithmus {
 				kurs.getKurs() > (gd * schwelle)) {
 			signal = Signal.create(sB, kurs, Order.KAUF, 0);
 			result = true; 
-			signal.staerke = (kurs.getKurs() - gd) / gd;
+			signal.setStaerke ((kurs.getKurs() - gd) / gd);
 			log.debug("GD-Steigung erkannt: " + DateUtil.formatDate(kurs.datum) + " VTKurs " + vortageskurs.getKurs() + " GDVt: " + gdvt + 
 					" Kurs: " + kurs.getKurs() + " GD: " + gd);
 		} 
@@ -84,7 +84,7 @@ public class GDDurchbruch implements SignalAlgorithmus {
 				tageskurs.getKurs() < (gd * schwelle)) {
 			signal = Signal.create(sB, tageskurs, Order.VERKAUF, 0);
 			result = true;
-			signal.staerke = (gd - tageskurs.getKurs()) / gd;
+			signal.setStaerke ((gd - tageskurs.getKurs()) / gd);
 			log.debug("GD-Sinkflug: " + DateUtil.formatDate(tageskurs.datum) + " VTKurs " + vortageskurs.getKurs() + " GDVt: " + gdvt + 
 					" Kurs: " + tageskurs.getKurs() + " GD: " + gd);
 		} 

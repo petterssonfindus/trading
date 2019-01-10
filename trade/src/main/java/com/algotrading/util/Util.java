@@ -10,14 +10,21 @@ import org.apache.logging.log4j.Logger;
 public class Util {
 	static final Logger log = LogManager.getLogger(Util.class);
 
-	public static String separatorCSV = " ; ";
+	public static String separatorCSV = ";";
 
 	/**
-	 * Berechnet die Rendite eines Kapitals das x Tage lang liegt
+	 * Berechnet die Jahres-Performance/Rendite eines Kapitals das x Tage lang liegt
 	 */
-	public static float rechneRendite (float kapitalBeginn, float kapitalEnde, int tage) {
+	public static float rechnePerformancePA (float kapitalBeginn, float kapitalEnde, int tage) {
 		if ((kapitalBeginn == 0) || (kapitalEnde == 0) || tage < 1) log.error("Fehler in rechneRendite() Inputparameter ");
 		return ((kapitalEnde - kapitalBeginn) / kapitalBeginn) * (250f / tage) ; 
+	}
+	
+	/**
+	 * Berechnet die Kapitalverzinsung, unabhängig vom Zeitraum 
+	 */
+	public static float rechnePerformance (float kapitalBeginn, float kapitalEnde) {
+		return (kapitalEnde - kapitalBeginn) / kapitalBeginn; 
 	}
 	
 	/**
@@ -69,6 +76,11 @@ public class Util {
 	 */
 	public static float rundeBetrag (float betrag) {
 		return ((float) Math.round(betrag * 100)) / 100;
+	}
+	
+	public static float rundeBetrag (float betrag, int stellen) {
+		float x = (float) Math.pow(10d, stellen);
+		return ((float) Math.round(betrag * x ) / x);
 	}
 	
 	public static String getLineSeparator () {

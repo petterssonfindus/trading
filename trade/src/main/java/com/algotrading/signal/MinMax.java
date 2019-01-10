@@ -129,7 +129,7 @@ public class MinMax implements SignalAlgorithmus {
 	 * negativ, wenn Wert unter Durchschnitt 
 	 */
 	private void rechneStaerke(float value, double durchschnitt, Signal signal) {
-		signal.staerke = (value - (float) durchschnitt ) / (float) durchschnitt;
+		signal.setStaerke ((value - (float) durchschnitt ) / (float) durchschnitt);
 	}
 	
 	/**

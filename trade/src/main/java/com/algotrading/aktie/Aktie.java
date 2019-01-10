@@ -8,10 +8,12 @@ import org.apache.logging.log4j.Logger;
 
 import com.algotrading.aktie.Kurs;
 import com.algotrading.data.DBManager;
+import com.algotrading.depot.Order;
 import com.algotrading.indikator.IndikatorBeschreibung;
 import com.algotrading.indikator.Indikatoren;
 import com.algotrading.signal.Signal;
 import com.algotrading.signal.SignalBeschreibung;
+import com.algotrading.signal.SignalBewertung;
 import com.algotrading.signal.Signalsuche;
 import com.algotrading.util.DateUtil;
 import com.algotrading.util.FileUtil;
@@ -281,9 +283,10 @@ public class Aktie extends Parameter {
 	 * Eine neue SignalBeschreibung, die anschließend berechnet wird
 	 * Die Berechnung darf noch nicht durchgeführt sein. 
 	 */
-	public void addSignalBeschreibung (SignalBeschreibung signalBeschreibung) {
-		if (this.signaleSindBerechnet) log.error("neues Signal, Berechnung bereits durchgeführt");
-		this.signalbeschreibungen.add(signalBeschreibung);
+	public SignalBeschreibung createSignalBeschreibung (short typ) {
+		SignalBeschreibung result = new SignalBeschreibung(this, typ);
+		this.signalbeschreibungen.add(result);
+		return result; 
 	}
 	
 	/**
@@ -293,6 +296,58 @@ public class Aktie extends Parameter {
 		if (! this.signaleSindBerechnet && this.signalbeschreibungen.size() > 0) {
 			Signalsuche.rechneSignale(this);
 			this.signaleSindBerechnet = true; 
+		}
+	}
+	
+	/**
+	 * Bewertet alle Signale: Signalstärke * Erfolg (Performance) 
+	 * Signalstärke ist positiv für Kauf-_Signale - negativ für Verkauf-Signale 
+	 * Erfolg ist positiv bei steigenden Kursen - negativ bei fallenden Kursen. 
+	 * ==> Hohe positive Werte bedeuten gute Prognose-Qualität bei Kauf und Verkauf !
+	 * ==> Hohe negative Wert bedeuten entgegen gesetzte Prognose-Qualität
+	 * Prognose-Quantität: wie viele Signale gehen in die erwartete Richtung. 
+	 * Prognose-Qualität:  
+	 */
+	public void bewerteSignale (Zeitraum zeitraum) {
+		for (SignalBeschreibung sB : this.signalbeschreibungen) {
+			// an der Beschreibung eine neue Bewertung erzeugen 
+			SignalBewertung sBW = sB.addBewertung(10);
+			// alle zugehörigen Signale 
+			ArrayList<Signal> signale = this.getSignale(sB);
+			
+			int tage = 10;
+			float staerke = 0;		// die Signal-Stärke eines einzelnen Signals
+			int kaufKorrekt = 0;
+			int verkaufKorrekt = 0;
+			
+			// für alle Signale zu dieser SignalBeschreibung
+			for (Signal signal : signale) {
+				// nur Signale im vorgegebenen Zeitraum 
+				if (! DateUtil.istInZeitraum(signal.getKurs().getDatum(), zeitraum)) continue;
+				// die Bewertung des Signals: Kursentwicklung in die Zukunft 
+				staerke = signal.getStaerke(); 
+				Float bewertung = signal.getBewertung(tage);
+				if (bewertung == null) continue; // wenn keine Bewertung vorhanden ist, dann nächstes Signal 
+				float b = bewertung;
+				sBW.summeBewertungen += b;
+				if (signal.getKaufVerkauf() == Order.KAUF) {
+					sBW.kauf ++;
+					sBW.summeBKauf += b;
+					sBW.summeSKauf += staerke;
+					if (b > 0) kaufKorrekt ++;
+				}
+				else {
+					sBW.verkauf ++;
+					sBW.summeBVerkauf += b;
+					sBW.summeSVerkauf += staerke;
+					if (b > 0) verkaufKorrekt ++;
+				}
+				System.out.println(signal.toString());
+			}
+			sBW.kaufKorrekt = (float) ((double) kaufKorrekt / sBW.kauf);
+			sBW.verkaufKorrekt = (float) ((double) verkaufKorrekt / sBW.verkauf);
+			
+			System.out.println("Signal:" + sB.getSignalTyp() + " Tage: " + tage + " " + sBW.toString());
 		}
 	}
 	
@@ -472,12 +527,15 @@ public class Aktie extends Parameter {
 	 */
 	private ArrayList<String> writeSignale () {
 		ArrayList<String> zeilen = new ArrayList<String>();
-		zeilen.add("Name ; Datum ; KaufVerkauf; Typ; Staerke");
+		zeilen.add("Name;Datum;KaufVerkauf;Typ;Staerke;Bewertung");
 		// mit allen Kursen mit allen Signalen
 		ArrayList<Signal> signale = getSignale();
 		for (int i = 0 ; i < signale.size() ; i++) {
 			zeilen.add(signale.get(i).toString());
 		}
 		return zeilen; 
+	}
+	public String getName() {
+		return name;
 	}
 }

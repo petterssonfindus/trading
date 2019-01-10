@@ -51,11 +51,11 @@ public class Signalsuche {
 		SignalAlgorithmus algo; 
 		for (SignalBeschreibung signalbeschreibung : signalbeschreibungen) {
 			// holt sich den zugehörigen Algorithmus
-			algo = signalAlgorithmen.get(signalbeschreibung.signalTyp);
+			algo = signalAlgorithmen.get(signalbeschreibung.getSignalTyp());
 			if (algo == null) log.error("sieht aus, wie wenn der Sinalalgorithmus nicht registriert wäre");
 			// startet die Berechnung 
 			int anzahl = algo.ermittleSignal(aktie, signalbeschreibung);
-			log.debug("Signale berechnet: " + signalbeschreibung.signalTyp + " Aktie: " + aktie.name + " Anzahl: " + anzahl);
+			log.debug("Signale berechnet: " + signalbeschreibung.getSignalTyp() + " Aktie: " + aktie.name + " Anzahl: " + anzahl);
 		}
 		
 	}

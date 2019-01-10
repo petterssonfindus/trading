@@ -128,6 +128,13 @@ public class DateUtil {
 		result.setTimeInMillis(millis);
 		return result; 
 	}
+	
+	/**
+	 * Erzeugt ein GregCal mit deutscher Zeitangabe
+	 */
+	public static GregorianCalendar createGregorianCalendar (int tag, int monat, int jahr) {
+		return new GregorianCalendar(jahr, monat -1, tag);
+	}
 
 	/**
 	 * Eine Unix-Zeit in GregorianCalendar

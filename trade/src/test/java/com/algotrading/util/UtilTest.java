@@ -61,6 +61,14 @@ public class UtilTest extends TestCase {
 		DateUtil.getLetzterHandelstag();
 	}
 	
+	public void testCreateGregCal () {
+		GregorianCalendar test = DateUtil.createGregorianCalendar(01, 01, 2017);
+		String testString = DateUtil.formatDate(test, "-", false);
+		assertEquals("01-01-2017", testString);
+		GregorianCalendar test2 = DateUtil.createGregorianCalendar(31, 12, 2017);
+		assertEquals("31-12-2017", DateUtil.formatDate(test2, "-", false));
+	}
+	
 	public void testZeitraum () {
 		GregorianCalendar beginn = new GregorianCalendar(2017,11,2);
 		GregorianCalendar ende = new GregorianCalendar(2018,0,2);
@@ -86,22 +94,32 @@ public class UtilTest extends TestCase {
 		assertEquals(0f, Util.rundeBetrag(0.004f));
 	}
 	
-	public void testRechneRendite() {
-		float ergebnis = Util.rechneRendite(100f, 105f, 250);
+	public void testRechnePerformance() {
+		float ergebnis = Util.rechnePerformance(100f, 105f);
 		assertEquals(0.05F, ergebnis);
-		float ergebnis2 = Util.rechneRendite(100f, 105f, 125);
-		assertEquals(0.1F, ergebnis2);
-		float ergebnis3 = Util.rechneRendite(100f, 105f, 30);
-		float ergebnis3a = Util.rundeBetrag(ergebnis3);
-		assertEquals(0.42F, ergebnis3a);
-		float ergebnis4 = Util.rundeBetrag(ergebnis3);
-		assertEquals(0.42F, ergebnis4);
-		float ergebnis5 = Util.rechneRendite(100f, 200f, 500);
-		assertEquals(0.5F, ergebnis5);
+		float ergebnis2= Util.rechnePerformance(100f, 200f);
+		assertEquals(1F, ergebnis2);
+		float ergebnis3 = Util.rechnePerformance(100f, 80f);
+		assertEquals(-.2F, ergebnis3);
 	}
 	
+	public void testRechnePerformancePA() {
+				float ergebnis = Util.rechnePerformancePA(100f, 105f, 250);
+				assertEquals(0.05F, ergebnis);
+				float ergebnis2 = Util.rechnePerformancePA(100f, 105f, 125);
+				assertEquals(0.1F, ergebnis2);
+				float ergebnis3 = Util.rechnePerformancePA(100f, 105f, 30);
+				float ergebnis3a = Util.rundeBetrag(ergebnis3);
+				assertEquals(0.42F, ergebnis3a);
+				float ergebnis4 = Util.rundeBetrag(ergebnis3);
+				assertEquals(0.42F, ergebnis4);
+				float ergebnis5 = Util.rechnePerformancePA(100f, 200f, 500);
+				assertEquals(0.5F, ergebnis5);
+			}
+	
 	public void testDatumFormat() {
-		GregorianCalendar beginn = new GregorianCalendar(2017,11,2);
+//		GregorianCalendar beginn = new GregorianCalendar(2017,11,2);
+		GregorianCalendar beginn = DateUtil.createGregorianCalendar(2,12,2017);
 		assertTrue(DateUtil.formatDate(beginn).equalsIgnoreCase("2017-12-02"));
 		GregorianCalendar ende = new GregorianCalendar(2018,0,2);
 		assertTrue(DateUtil.formatDate(ende).equalsIgnoreCase("2018-01-02"));
