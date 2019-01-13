@@ -18,6 +18,7 @@ import com.algotrading.signal.Signalsuche;
 import com.algotrading.util.DateUtil;
 import com.algotrading.util.FileUtil;
 import com.algotrading.util.Parameter;
+import com.algotrading.util.Util;
 import com.algotrading.util.Zeitraum;
 
 /**
@@ -307,15 +308,20 @@ public class Aktie extends Parameter {
 	 * ==> Hohe negative Wert bedeuten entgegen gesetzte Prognose-Qualität
 	 * Prognose-Quantität: wie viele Signale gehen in die erwartete Richtung. 
 	 * Prognose-Qualität:  
+	 * @param zeitraum der Zeitraum in dem die signale auftreten
+	 * @param tageVoraus für die Erfolgsmessung in die Zukunft 
 	 */
-	public void bewerteSignale (Zeitraum zeitraum) {
+	public void bewerteSignale (Zeitraum zeitraum, int tage) {
+		// alle Signal-Typen an der Aktie
 		for (SignalBeschreibung sB : this.signalbeschreibungen) {
-			// an der Beschreibung eine neue Bewertung erzeugen 
-			SignalBewertung sBW = sB.addBewertung(10);
+			// an der Beschreibung eine neue Gesamt-Bewertung erzeugen 
+			SignalBewertung sBW = sB.addBewertung();
+			sBW.setTage(tage);
+			sBW.setZeitraum(zeitraum);
 			// alle zugehörigen Signale 
+			// TODO: hier könnte man den Zeitraum bereits berücksichtigen
 			ArrayList<Signal> signale = this.getSignale(sB);
 			
-			int tage = 10;
 			float staerke = 0;		// die Signal-Stärke eines einzelnen Signals
 			int kaufKorrekt = 0;
 			int verkaufKorrekt = 0;
@@ -326,6 +332,7 @@ public class Aktie extends Parameter {
 				if (! DateUtil.istInZeitraum(signal.getKurs().getDatum(), zeitraum)) continue;
 				// die Bewertung des Signals: Kursentwicklung in die Zukunft 
 				staerke = signal.getStaerke(); 
+				// die Bewertung wird ermittelt
 				Float bewertung = signal.getBewertung(tage);
 				if (bewertung == null) continue; // wenn keine Bewertung vorhanden ist, dann nächstes Signal 
 				float b = bewertung;
@@ -342,12 +349,11 @@ public class Aktie extends Parameter {
 					sBW.summeSVerkauf += staerke;
 					if (b > 0) verkaufKorrekt ++;
 				}
-				System.out.println(signal.toString());
 			}
 			sBW.kaufKorrekt = (float) ((double) kaufKorrekt / sBW.kauf);
 			sBW.verkaufKorrekt = (float) ((double) verkaufKorrekt / sBW.verkauf);
 			
-			System.out.println("Signal:" + sB.getSignalTyp() + " Tage: " + tage + " " + sBW.toString());
+			System.out.println(this.name + " B:" + tage + Util.separatorCSV + zeitraum.toStringJahre() + Util.separatorCSV + sBW.toString());
 		}
 	}
 	

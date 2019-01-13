@@ -3,8 +3,10 @@ package com.algotrading.util;
 import java.sql.Date;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
+import java.util.List;
 
 public class DateUtil {
 
@@ -46,7 +48,24 @@ public class DateUtil {
 			dateString = formatter.format(date);
 			return dateString;
 		}
-		
+	}
+	
+	
+	public static Integer getJahr (GregorianCalendar cal) {
+		return cal.get(Calendar.YEAR);
+	}
+	
+	/**
+	 * Erzeugt für jedes Jahr einen Zeitraum zwischen den Jahren. 
+	 * Der Zeitraum ist so lange wie der Turnus, normalerweise = 1
+	 */
+	public static List<Zeitraum> getJahresZeitraeume (int beginn, int ende, int turnus) {
+		List<Zeitraum> result = new ArrayList<Zeitraum>();
+			// für jedes Jahr wird ein Zeitraum erzeugt
+		for (int i = beginn; i <= ende ; i++) {
+			result.add(new Zeitraum(i,i));
+		}
+		return result;
 	}
 
 	/**

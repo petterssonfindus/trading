@@ -4,6 +4,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import com.algotrading.util.Parameter;
+import com.algotrading.util.Util;
 
 /**
  * Beschreibt einen Indikator mit Typ 
@@ -32,9 +33,9 @@ public class IndikatorBeschreibung extends Parameter {
 	 * enthält den Typ und eine Liste der vorhandenen Parameter
 	 */
 	public String toString() {
-		String result = "Indi-" + this.typ; 
+		String result = ";I:" + this.typ; 
 		for (String name : this.getAllParameter().keySet()) {
-			result = result + ("-" + name + ":" + this.getParameter(name));
+			result = result + (Util.separatorCSV + name + ":" + this.getParameter(name));
 		}
 		return result; 
 	}

@@ -1,6 +1,7 @@
 package com.algotrading.signal;
 
 import com.algotrading.util.Util;
+import com.algotrading.util.Zeitraum;
 
 /**
  * Speichert das Ergebnis der Bewertung, wie gut ein Signal einen Kurs prognostizieren kann 
@@ -11,15 +12,16 @@ import com.algotrading.util.Util;
 public class SignalBewertung {
 	
 	// der Zeithorizont in Tagen
-	private int tage; 
+	private int tage;
+	
+	private Zeitraum zeitraum; 
 	
 	private SignalBeschreibung sB; 
 	
 	public int getTage() {
 		return tage;
 	}
-	SignalBewertung(int tage, SignalBeschreibung sB) {
-		this.tage = tage; 
+	SignalBewertung(SignalBeschreibung sB) {
 		this.sB = sB; 
 	}
 	
@@ -36,7 +38,7 @@ public class SignalBewertung {
 	public float summeBewertungen; // Bewertungs-Summe als Saldo positiver und negativer Prognosequalität. 
 	
 	public String toString () {
-		return this.sB.getAktie().getName() + " Kauf:" + kauf + 
+		return this.sB + " Kauf:" + kauf + 
 				" korrekt:" + Util.rundeBetrag(kaufKorrekt, 3) + 
 				" Signal:" + Util.rundeBetrag(summeSKauf,3) + 
 				" Bewertung:" + Util.rundeBetrag(summeBKauf,3) + 
@@ -45,6 +47,15 @@ public class SignalBewertung {
 				" Signal:" + Util.rundeBetrag(summeSVerkauf,3) +
 				" Bewertung:" + Util.rundeBetrag(summeBVerkauf,3) +
 				" BewSumme:" + Util.rundeBetrag(summeBewertungen,3);
+	}
+	public Zeitraum getZeitraum() {
+		return zeitraum;
+	}
+	public void setZeitraum(Zeitraum zeitraum) {
+		this.zeitraum = zeitraum;
+	}
+	public void setTage(int tage) {
+		this.tage = tage;
 	}
 
 }

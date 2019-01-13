@@ -1,9 +1,8 @@
 package com.algotrading.util;
 
-import java.io.File;
 import java.sql.Date;
-import java.util.ArrayList;
 import java.util.GregorianCalendar;
+import java.util.List;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -67,6 +66,17 @@ public class UtilTest extends TestCase {
 		assertEquals("01-01-2017", testString);
 		GregorianCalendar test2 = DateUtil.createGregorianCalendar(31, 12, 2017);
 		assertEquals("31-12-2017", DateUtil.formatDate(test2, "-", false));
+	}
+	
+	public void testGetJahresZeitraeume () {
+		List<Zeitraum> test = DateUtil.getJahresZeitraeume(2010, 2015, 1);
+		assertEquals(6, test.size());
+		Zeitraum testZeitraum = test.get(0);
+		assertEquals("01.01.2010", DateUtil.formatDate(testZeitraum.beginn, ".", false));
+		assertEquals("31.12.2010", DateUtil.formatDate(testZeitraum.ende, ".", false));
+		Zeitraum testZeitraum2 = test.get(5);
+		assertEquals("01.01.2015", DateUtil.formatDate(testZeitraum2.beginn, ".", false));
+		assertEquals("31.12.2015", DateUtil.formatDate(testZeitraum2.ende, ".", false));
 	}
 	
 	public void testZeitraum () {

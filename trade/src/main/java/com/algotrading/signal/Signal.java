@@ -111,7 +111,6 @@ public class Signal {
 			System.out.println("Staerke wird gesetzt auf 0");
 		}
 		this.staerke = staerke;
-		this.addBewertung(10);
 	}
 
 	public byte getKaufVerkauf() {
@@ -174,13 +173,13 @@ public class Signal {
 	
 	/**
 	 * Zugriff auf die Bewertungen anhand der Tage 
-	 * Wenn es keine Bewertung gibt dann null 
+	 * Wenn es keine Bewertung gibt dann wird sie ermittelt 
 	 */
 	public Float getBewertung (int tage) {
-		if (this.bewertung == null) {
-			return null;
+		if (this.bewertung.containsKey(tage)) {
+			return this.bewertung.get(tage);
 		}
-		return this.bewertung.get(tage);
+		return new Float(this.addBewertung(tage));
 	}
 	
 	/**

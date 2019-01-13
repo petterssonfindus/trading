@@ -1,6 +1,7 @@
 package com.algotrading.signal;
 
 import java.util.GregorianCalendar;
+import java.util.List;
 
 import com.algotrading.aktie.Aktie;
 import com.algotrading.aktie.Aktien;
@@ -68,13 +69,20 @@ public class TestMinMax extends TestCase {
 		// Signale berechnen und ausgeben 
 		aktie.rechneSignale();
 		// Signal-Bewertung aggregieren und ausgeben 
-		GregorianCalendar beginn = DateUtil.createGregorianCalendar(01, 01, 2017);
-		GregorianCalendar ende = DateUtil.createGregorianCalendar(31, 12, 2017);
-		Zeitraum zeitraum = new Zeitraum(beginn, ende);
-		aktie.bewerteSignale(zeitraum);
+		Zeitraum zeitraum1 = new Zeitraum(2015, 2015);
+		Zeitraum zeitraum2 = new Zeitraum(2016, 2016);
+		Zeitraum zeitraum3 = new Zeitraum(2017, 2017);
+		aktie.bewerteSignale(zeitraum1, 10);
+		aktie.bewerteSignale(zeitraum2, 10);
+		aktie.bewerteSignale(zeitraum3, 10);
+		List<SignalBewertung> sbs = sB.getBewertungen();
+		for (SignalBewertung sb : sbs) {
+			System.out.println("Sbs: " + sb);
+		}
+//		assertEquals(expected, actual);
 		
 //		aktie.writeFileIndikatoren();
-		aktie.writeFileSignale();
+//		aktie.writeFileSignale();
 	}
 	
 }
