@@ -5,17 +5,10 @@ import java.util.ArrayList;
 import com.algotrading.aktie.Aktie;
 import com.algotrading.aktie.Kurs;
 
-public class RSI implements IndikatorAlgorithmus {
+public class IndikatorRSI extends IndikatorAlgorithmus {
 
-	// verhindert ein Instantiieren 
-	private RSI() {};
-	
-	private static RSI instance; 
-	
-	public static RSI getInstance () {
-		if (instance == null) instance = new RSI(); 
-		return instance; 
-	}
+	// Visibility package verhindert ein Instantiieren von außerhalb
+	IndikatorRSI() {};
 	
 	/**
 	 * Relative-Stärke-Index
@@ -27,8 +20,8 @@ public class RSI implements IndikatorAlgorithmus {
 	 * @param "tage"
 	 */
 	@Override
-	public void rechne (Aktie aktie, IndikatorBeschreibung indikatorBeschreibung ) {
-		int tage = (Integer) indikatorBeschreibung.getParameter("tage"); 
+	public void rechne (Aktie aktie) {
+		int tage = (Integer) getParameter("tage"); 
 		ArrayList<Kurs> kurse = aktie.getBoersenkurse();
 		float sumUp = 0;
 		float sumDown = 0;
@@ -76,9 +69,14 @@ public class RSI implements IndikatorAlgorithmus {
 			// RSI berechnen
 			rsi = sumUpA / (sumUpA + sumDownA);
 			// RSI an den Kurs anhängen
-			kursO.addIndikator(indikatorBeschreibung, rsi);
+			kursO.addIndikator(this, rsi);
 		
 		}
+	}
+
+	@Override
+	public String getKurzname() {
+		return "RSI";
 	}
 
 }

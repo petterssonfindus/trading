@@ -1,19 +1,16 @@
 package com.algotrading.indikator;
 
 import com.algotrading.aktie.Aktie;
-/**
- * Bewertet die Prognose-Qualität von Signalen in einem bestimmten Zeitraum. 
- * Wird berechnet, nachdem das zugrunde liegende Signal berechnet wurde. 
- * #Achtung nicht fertig !!!
- * 
- * @author oskar
- */
-public class SignalBewertung extends IndikatorAlgorithmus {
+
+public class IndikatorGD extends IndikatorAlgorithmus {
 
 	/**
-	 * 		
+	 * Summe aller Tageskurse der letzten x Tage / Anzahl 
+	 * incluse aktueller Kurs 
+	 * Parameter: dauer - die Zeitdauer, die berücksichtigt wird
+	 * 			  berechnungsart (optional) - 0 = der Durchschnittswert (default) 
+	 * 								1 = die Differenz zum aktuellen Kurs 
 	 */
-	@Override
 	public void rechne (Aktie aktie) {
 		// holt die Kursreihe 
 		float[] kurse = aktie.getKursArray();
@@ -53,7 +50,7 @@ public class SignalBewertung extends IndikatorAlgorithmus {
 
 	@Override
 	public String getKurzname() {
-		return "SignalBew";
+		return "GD";
 	}
 
 }

@@ -5,41 +5,12 @@ import java.util.List;
 import com.algotrading.aktie.Aktie;
 import com.algotrading.aktie.Aktien;
 import com.algotrading.indikator.IndikatorAlgorithmus;
-import com.algotrading.indikator.IndikatorGD;
 import com.algotrading.indikator.IndikatorKurswert;
 import com.algotrading.util.Zeitraum;
 
 import junit.framework.TestCase;
 
-public class TestMinMax extends TestCase {
-
-/*
-	public void testIndikatorMinMax() {
-		// Kursreihe erzeugen appl, dax
-		Aktie aktie = Aktien.getInstance().getAktie("testaktie");
-		assertNotNull(aktie);
-		assertTrue(aktie.getBoersenkurse().size() > 1);
-		
-		// Indikator konfigurieren und an Aktie hängen
-		IndikatorAlgorithmus iB = aktie.addIndikator(new IndikatorGD());
-		iB.addParameter("dauer", 10);
-		
-		// Indikator berechnen und ausgeben 
-		aktie.rechneIndikatoren();
-//		aktie.writeFileIndikatoren();
-		
-		// Signal konfigurieren an der Aktie
-		SignalBeschreibung sB = aktie.createSignalBeschreibung(Signal.MinMax);
-		sB.addParameter("indikator", iB);
-		sB.addParameter("dauer", 15);		// 15 Tage zurück 
-		sB.addParameter("schwelle", 1f);		// 1-fache Standardabweichung
-		sB.addParameter("durchbruch", 0);	// tägliches Signal in der Extremzone
-		
-		// Signale berechnen und ausgeben 
-		aktie.rechneSignale();
-//		aktie.writeFileSignale();
-	}
-*/
+public class TestMinMaxQuellAktie extends TestCase {
 	
 	public void testKurswertMinMax() {
 		Aktie aktie = Aktien.getInstance().getAktie("testaktie");
@@ -48,13 +19,13 @@ public class TestMinMax extends TestCase {
 		
 		// Indikator konfigurieren und an Aktie hängen
 		IndikatorAlgorithmus iB = aktie.addIndikator(new IndikatorKurswert());
+		iB.addParameter("aktie", "vdax-new-3m");
 		iB.addParameter("typ", 1);  // Typ 1 = open
-		aktie.addIndikator(iB);
 		
 		// Indikator berechnen und ausgeben 
 		aktie.rechneIndikatoren();
 		// am ersten Tag 18.03.2015 ist der open-Kurs 19,50 
-		assertEquals(19.5f, aktie.getBoersenkurse().get(0).getIndikatorWert(iB));
+		assertEquals(29.18f, aktie.getBoersenkurse().get(0).getIndikatorWert(iB));
 		// der close-Kurs ist 20.05
 		assertEquals(20.05f, aktie.getBoersenkurse().get(0).getKurs());
 		
@@ -83,5 +54,5 @@ public class TestMinMax extends TestCase {
 //		aktie.writeFileIndikatoren();
 //		aktie.writeFileSignale();
 	}
-	
+
 }

@@ -8,7 +8,7 @@ import com.algotrading.aktie.Kurs;
 /**
  * Berechnet den Stop-And-Reverse-Indikator 
  */
-public class StatisticSAR implements IndikatorAlgorithmus {
+public class IndikatorStatisticSAR extends IndikatorAlgorithmus {
 
 	private float afstart = 0.02f; // Standardwert
 	private float afstufe = 0.02f; // Standardwert
@@ -30,24 +30,17 @@ public class StatisticSAR implements IndikatorAlgorithmus {
 	private float af = 0;		// Anpassungs-Geschwindigkeit 
 	private float afAlt = 0; 
 	
-	private static StatisticSAR instance; 
-	
-	public static StatisticSAR getInstance () {
-		if (instance == null) instance = new StatisticSAR(); 
-		return instance; 
-	}
-	
 	/**
 	 * 
 	 * float afStart, float afStufe, float afMaximum
 	 * @param aktie
 	 */
 	@Override
-	public void rechne (Aktie aktie, IndikatorBeschreibung indikatorBeschreibung) {
+	public void rechne (Aktie aktie) {
 		
-		afstart = (Float) indikatorBeschreibung.getParameter("start");
-		afstufe = (Float) indikatorBeschreibung.getParameter("stufe");
-		afmaximum = (Float) indikatorBeschreibung.getParameter("maximum"); 
+		afstart = (Float) getParameter("start");
+		afstufe = (Float) getParameter("stufe");
+		afmaximum = (Float) getParameter("maximum"); 
 
 		ArrayList<Kurs> kurse = aktie.getBoersenkurse();
 		Kurs kurs;
@@ -89,7 +82,7 @@ public class StatisticSAR implements IndikatorAlgorithmus {
 			trend = rechneTrend(tentsar);
 			sar = rechneSAR(tentsar);
 			// das Ergebnis wird in den Kurs eingetragen 
-			kurs.addIndikator(indikatorBeschreibung, sar); 
+			kurs.addIndikator(this, sar); 
 			ep = rechneEP(epAlt);
 			af = rechneAF(afAlt);
 			
@@ -205,6 +198,11 @@ public class StatisticSAR implements IndikatorAlgorithmus {
 	 */
 	private float rechneCalcSAR () {
 		return sarAlt + (afAlt * (epAlt - sarAlt));
+	}
+
+	@Override
+	public String getKurzname() {
+		return "SSAR";
 	}
 
 	

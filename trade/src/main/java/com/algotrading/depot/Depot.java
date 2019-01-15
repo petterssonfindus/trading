@@ -11,13 +11,13 @@ import java.util.concurrent.ConcurrentHashMap;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import com.algotrading.indikator.IndikatorBeschreibung;
 import com.algotrading.signal.Signal;
 import com.algotrading.util.DateUtil;
 import com.algotrading.util.Util;
 import com.algotrading.aktie.Aktie;
 import com.algotrading.aktie.Aktien;
 import com.algotrading.aktie.Kurs;
+import com.algotrading.indikator.IndikatorAlgorithmus;
 
 /**
  * Simuliert ein Wertpapierdepot in einem Zeitraum 
@@ -434,7 +434,7 @@ public class Depot {
 				"Depotwert"  + Util.separatorCSV;
 		for (Aktie aktie : this.aktien) {
 			result = result.concat(aktie.name + Util.separatorCSV);
-			for (IndikatorBeschreibung indikator : aktie.getIndikatorBeschreibungen()) {
+			for (IndikatorAlgorithmus indikator : aktie.getIndikatorAlgorithmen()) {
 				result = result.concat(indikator.toString() + Util.separatorCSV);
 			}
 		}
@@ -461,7 +461,7 @@ public class Depot {
 
 			result.append(aktie.getAktuellerKurs().getKurs() + Util.separatorCSV);
 			// fär jede Aktie die Indikatoren
-			for (IndikatorBeschreibung indikator : aktie.getIndikatorBeschreibungen()) {
+			for (IndikatorAlgorithmus indikator : aktie.getIndikatorAlgorithmen()) {
 				// die Indikatoren-Wert am Kurs auslesen
 				float wert = kurs.getIndikatorWert(indikator);
 				result.append(wert + Util.separatorCSV);

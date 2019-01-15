@@ -9,7 +9,7 @@ import java.util.GregorianCalendar;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import com.algotrading.indikator.IndikatorBeschreibung;
+import com.algotrading.indikator.IndikatorAlgorithmus;
 import com.algotrading.signal.SignalBeschreibung;
 import com.algotrading.util.DateUtil;
 import com.algotrading.util.Util;
@@ -40,7 +40,7 @@ public class Simulator {
 			GregorianCalendar ende, 
 			int dauer, 
 			int rhythmus, 
-			ArrayList<IndikatorBeschreibung> indikatoren, 
+			ArrayList<IndikatorAlgorithmus> indikatoren, 
 			ArrayList<SignalBeschreibung> signalBeschreibungen, 
 			SignalStrategie signalStrategie, 
 			TagesStrategie tagesStrategie, 
@@ -51,7 +51,7 @@ public class Simulator {
 		// die Zeitintervalle ermitteln
 		ArrayList<Zeitraum> zeitraeume = ermittleZeitraum(beginn, ende, dauer, rhythmus);
 		for (Aktie aktie : aktien) {
-			for (IndikatorBeschreibung indikator : indikatoren){
+			for (IndikatorAlgorithmus indikator : indikatoren){
 				// die Indikator-Konfigurationen werden in jeder Aktie gespeichert
 				aktie.addIndikator(indikator);
 			}
@@ -135,7 +135,7 @@ public class Simulator {
 			FileWriter fileWriter, 
 			Zeitraum zeitraum,
 			ArrayList<Aktie> aktien,
-			ArrayList<IndikatorBeschreibung> indikatoren, 
+			ArrayList<IndikatorAlgorithmus> indikatoren, 
 			ArrayList<SignalBeschreibung> signalBeschreibungen, 
 			SignalStrategie signalStrategie, 
 			TagesStrategie tagesStrategie ) {

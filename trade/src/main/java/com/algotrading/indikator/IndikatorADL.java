@@ -5,16 +5,16 @@ import java.util.ArrayList;
 import com.algotrading.aktie.Aktie;
 import com.algotrading.aktie.Kurs;
 
-public class AccumulationDistributionLine implements IndikatorAlgorithmus {
+public class IndikatorADL extends IndikatorAlgorithmus {
 
-	private static AccumulationDistributionLine instance; 
+	private static IndikatorADL instance; 
 	
-	public static AccumulationDistributionLine getInstance () {
-		if (instance == null) instance = new AccumulationDistributionLine(); 
+	public static IndikatorADL getInstance () {
+		if (instance == null) instance = new IndikatorADL(); 
 		return instance; 
 	}
 
-	private AccumulationDistributionLine () {}
+	IndikatorADL () {}
 
 	/**
 	 * Accumulation Distribution Line
@@ -26,13 +26,13 @@ public class AccumulationDistributionLine implements IndikatorAlgorithmus {
 	 * @param aktie
 	 * @param indikator
 	 */
-	public void rechne (Aktie aktie , IndikatorBeschreibung indikator) {
+	public void rechne (Aktie aktie ) {
 		// holt die Kurse, an denen die Umsätze dran hängen.
 		ArrayList<Kurs> kurse = aktie.getBoersenkurse();
 		// holt den Parameter "dauer" aus dem Indikator 
-		int x = (Integer) indikator.getParameter("dauer");
+		int x = (Integer) getParameter("dauer");
 		// holt den Parameter "durchschnitt" aus dem Indikator, falls er vorhanden ist 
-		Object durchschnitt = indikator.getParameter("durchschnitt");
+		Object durchschnitt = getParameter("durchschnitt");
 		// wenn nicht vorhanden, wird er vorbelegt mit 1 = linear
 		byte verfahren = 0;
 		if (durchschnitt == null) {
@@ -55,17 +55,22 @@ public class AccumulationDistributionLine implements IndikatorAlgorithmus {
 			for (int i = 1 ; i <= x ; i++) {
 				kursx = kurse.get(k - x + i);
 				// erst den Multiplikator berechnen
-				mfm = MoneyFlowMultiplier.calculateMFM(kursx);
+				mfm = IndikatorMFM.calculateMFM(kursx);
 				// dann das Volumen mal dem Multiplikator 
 				adl[i-1] = mfm * kursx.volume; 
 			}
 			// den Durchschnittswert berechnen
 			adlsumme = Durchschnitt.rechneDurchschnitt(adl, verfahren);
 			// das Ergebnis in den Kurs als Indikator eintragen 
-			kurs.addIndikator(indikator, adlsumme); 
+			kurs.addIndikator(this, adlsumme); 
 			adlsumme = 0;
 		}
 		
+	}
+
+	@Override
+	public String getKurzname() {
+		return "ADL";
 	}
 
 }

@@ -15,6 +15,10 @@ public class IndikatorTests {
 		suite.addTestSuite(TestRSI.class);
 		suite.addTestSuite(TestSAR.class);
 		suite.addTestSuite(TestVolatilitaet.class);
+		suite.addTestSuite(TestMultiplikation.class);
+		suite.addTestSuite(TestPerformance.class);
+		suite.addTestSuite(TestSteigung.class);
+		suite.addTestSuite(TestVolatilitaet.class);
 		//$JUnit-END$
 		return suite;
 	}

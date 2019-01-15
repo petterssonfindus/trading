@@ -5,15 +5,14 @@ import java.util.ArrayList;
 import com.algotrading.aktie.Aktie;
 import com.algotrading.aktie.Aktien;
 import com.algotrading.aktie.Kurs;
-import com.algotrading.indikator.IndikatorBeschreibung;
-import com.algotrading.indikator.Indikatoren;
+import com.algotrading.indikator.IndikatorAlgorithmus;
 
 import junit.framework.TestCase;
 
 public class TestAccumulationDistributionLine extends TestCase {
 	
 	private static Aktie aktie; 
-	private static IndikatorBeschreibung indikatorBeschreibung; 
+	private static IndikatorAlgorithmus iA; 
 	
 	@Override
 	protected void setUp() throws Exception {
@@ -21,9 +20,9 @@ public class TestAccumulationDistributionLine extends TestCase {
 		super.setUp();
 		
 		aktie = Aktien.newInstance().getAktie("testaktie");
-		indikatorBeschreibung = new IndikatorBeschreibung(Indikatoren.INDIKATOR_ADL);
-		aktie.addIndikator(indikatorBeschreibung);
-		indikatorBeschreibung.addParameter("dauer", 10);
+		iA = aktie.addIndikator(new IndikatorADL());
+		aktie.addIndikator(iA);
+		iA.addParameter("dauer", 10);
 	}
 	
 	public void testAccumulationDistributionLine () {
@@ -32,7 +31,7 @@ public class TestAccumulationDistributionLine extends TestCase {
 		ArrayList<Kurs> kurse = aktie.getBoersenkurse();
 		Kurs testKurs;
 		testKurs = kurse.get(13);
-		assertEquals(-24865.18f,testKurs.getIndikatorWert(indikatorBeschreibung));
+		assertEquals(-24865.18f,testKurs.getIndikatorWert(iA));
 		
 	}
 

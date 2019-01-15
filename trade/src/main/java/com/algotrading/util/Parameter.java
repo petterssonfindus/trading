@@ -2,16 +2,13 @@ package com.algotrading.util;
 
 import java.util.HashMap;
 import java.util.Iterator;
-import java.util.function.BiConsumer;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import com.algotrading.indikator.IndikatorBeschreibung;
-
 /**
  * Verwaltet eine Liste von Parametern mit Namen und beliebigem Object.
- * Es kann sich um einen Zahlen-Wert handeln oder einen Zeitraum oder eine Indikatorbeschreibung
+ * Es kann sich um einen Zahlen-Wert handeln oder einen Zeitraum oder eine IndikatorAlgorithmus
  * Über den Namen kann man sich den Wert besorgen. 
  * @author oskar
  */
@@ -64,7 +61,7 @@ public class Parameter {
 		while (it.hasNext()) {
 			String key = it.next();	// der Key als String
 			String value = this.parameter.get(key).toString();  // der Value als Object
-			// der Parameter "indikator" ist eine Referenz auf eine IndikatorBeschreibung
+			// der Parameter "indikator" ist eine Referenz auf eine IndikatorAlgorithmus
 //			if (key =="indikator") result = result.concat(value.toString());
 			result = result.concat(Util.separatorCSV + key + ":" + value);
 		}

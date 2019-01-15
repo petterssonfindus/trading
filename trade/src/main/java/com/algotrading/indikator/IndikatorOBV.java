@@ -8,18 +8,10 @@ import org.apache.logging.log4j.Logger;
 import com.algotrading.aktie.Aktie;
 import com.algotrading.aktie.Kurs;
 
-public class OnBalanceVolume implements IndikatorAlgorithmus {
+public class IndikatorOBV extends IndikatorAlgorithmus {
 
-	private static final Logger log = LogManager.getLogger(OnBalanceVolume.class);
-	private static OnBalanceVolume instance; 
-	
-	public static OnBalanceVolume getInstance () {
-		if (instance == null) instance = new OnBalanceVolume(); 
-		return instance; 
-	}
+	private static final Logger log = LogManager.getLogger(IndikatorOBV.class);
 
-	private OnBalanceVolume () {}
-	
 	/**
 	 * Rechnet On-Balance-Volume - Indikator
 	 * Steigt der Kurs, wird das Volumen hinzugerechnet 
@@ -28,11 +20,11 @@ public class OnBalanceVolume implements IndikatorAlgorithmus {
 	 * @param dauer
 	 */
 	@Override
-	public void rechne (Aktie aktie, IndikatorBeschreibung indikator) {
+	public void rechne (Aktie aktie) {
 		// holt die Kurse, an denen die Umsätze dran hängen.
 		ArrayList<Kurs> kurse = aktie.getBoersenkurse();
 		// holt den Parameter aus dem Indikator 
-		int x = (Integer) indikator.getParameter("dauer");
+		int x = (Integer) getParameter("dauer");
 		
 		int summe = 0;
 		int umsatzHeute = 0;
@@ -61,10 +53,15 @@ public class OnBalanceVolume implements IndikatorAlgorithmus {
 				umsatzVortag = umsatzHeute;
 			}
 			// das Ergebnis in den Kurs eintragen. 
-			kurs.addIndikator(indikator, summe); 
+			kurs.addIndikator(this, summe); 
 			summe = 0;
 		}
 		
+	}
+
+	@Override
+	public String getKurzname() {
+		return "OBV";
 	}
 
 }

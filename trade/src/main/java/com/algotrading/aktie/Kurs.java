@@ -7,7 +7,7 @@ import java.util.HashMap;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import com.algotrading.indikator.IndikatorBeschreibung;
+import com.algotrading.indikator.IndikatorAlgorithmus;
 import com.algotrading.signal.Signal;
 import com.algotrading.signal.SignalBeschreibung;
 import com.algotrading.util.DateUtil;
@@ -24,6 +24,7 @@ public class Kurs {
 	private static final Logger log = LogManager.getLogger(Kurs.class);
 	
 	public GregorianCalendar datum; 
+	public String datumString; 
 	public float close; 
 	public float open;
 	public float high;
@@ -32,7 +33,7 @@ public class Kurs {
 	public int volume; 
 	public String wertpapier; 
 	// Liste der Indikatoren, die am Kurs hängen. 
-	private HashMap<IndikatorBeschreibung, Float> indikatoren = new HashMap<IndikatorBeschreibung, Float>();
+	private HashMap<IndikatorAlgorithmus, Float> indikatoren = new HashMap<IndikatorAlgorithmus, Float>();
 
 	// Liste aller Signale - öffentlicher Zugriff nur über add() und get()
 	private ArrayList<Signal> signale; 
@@ -45,7 +46,6 @@ public class Kurs {
 	 * @param signal
 	 */
 	public void addSignal (Signal signal) {
-		if (signal == null) log.error("Inputvariable signal ist null");
 		if (signal == null) {
 			log.info("leeres Signal bei Kurs: " + this.toString());
 		}
@@ -86,7 +86,7 @@ public class Kurs {
 	 * @param indikator
 	 * @param wert
 	 */
-	public void addIndikator (IndikatorBeschreibung indikator, float wert) {
+	public void addIndikator (IndikatorAlgorithmus indikator, float wert) {
 		this.indikatoren.put(indikator, wert);
 	}
 	
@@ -96,7 +96,7 @@ public class Kurs {
 	 * @param indikator die Indikator-Beschreibung 
 	 * @return der float-Wert zu diesem Kurs
 	 */
-	public Float getIndikatorWert (IndikatorBeschreibung indikator) {
+	public Float getIndikatorWert (IndikatorAlgorithmus indikator) {
 		if (this.indikatoren.containsKey(indikator)) {
 			return this.indikatoren.get(indikator);
 		}
@@ -144,10 +144,11 @@ public class Kurs {
 	 * das Datum mit einem GregCalendar setzen
 	 */
 	public void setDatum (GregorianCalendar datum) {
-		this.datum = datum; 
+		this.datum = datum;
+		this.datumString = DateUtil.formatDate(datum);
 	}
 	
-	GregorianCalendar getDatum() {
+	public GregorianCalendar getDatum() {
 		return datum;
 	}
 

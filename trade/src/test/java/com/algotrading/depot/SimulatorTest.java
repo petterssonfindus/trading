@@ -9,7 +9,7 @@ import org.apache.logging.log4j.Logger;
 import com.algotrading.aktie.Aktie;
 import com.algotrading.aktie.Aktien;
 
-import com.algotrading.indikator.IndikatorBeschreibung;
+import com.algotrading.indikator.IndikatorAlgorithmus;
 import com.algotrading.indikator.Indikatoren;
 import junit.framework.TestCase;
 import com.algotrading.signal.Signal;
@@ -38,9 +38,9 @@ public class SimulatorTest extends TestCase {
 //		aktien.add(Aktien.getInstance().getAktie("aa"));
 
 		// Indikatoren konfigurieren 
-		ArrayList<IndikatorBeschreibung> indikatoren = new ArrayList<IndikatorBeschreibung>();
+		ArrayList<IndikatorAlgorithmus> indikatoren = new ArrayList<IndikatorAlgorithmus>();
 
-		IndikatorBeschreibung adl = new IndikatorBeschreibung(Indikatoren.INDIKATOR_GLEITENDER_DURCHSCHNITT);
+		IndikatorAlgorithmus adl = new IndikatorAlgorithmus(Indikatoren.INDIKATOR_GLEITENDER_DURCHSCHNITT);
 		indikatoren.add(adl);
 		adl.addParameter("dauer", 10f);
 		adl.addParameter("durchschnitt", 2f);
@@ -99,7 +99,7 @@ public class SimulatorTest extends TestCase {
 
 //		ArrayList<Aktie> aktien = Aktien.getInstance().getAktien(zeitraum, false);
 		// Indikatoren konfigurieren 
-		ArrayList<IndikatorBeschreibung> indikatoren = new ArrayList<IndikatorBeschreibung>();
+		ArrayList<IndikatorAlgorithmus> indikatoren = new ArrayList<IndikatorAlgorithmus>();
 /*		
 		Indikator adl = new Indikator(Indikatoren.INDIKATOR_MFM);
 		indikatoren.add(adl);

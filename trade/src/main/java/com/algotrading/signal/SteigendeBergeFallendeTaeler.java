@@ -6,7 +6,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import com.algotrading.depot.Order;
-import com.algotrading.indikator.IndikatorBeschreibung;
+import com.algotrading.indikator.IndikatorAlgorithmus;
 import com.algotrading.aktie.Aktie;
 import com.algotrading.aktie.Kurs;
 
@@ -32,7 +32,7 @@ public class SteigendeBergeFallendeTaeler implements SignalAlgorithmus {
 	public int ermittleSignal(Aktie aktie, SignalBeschreibung sB) {
 		int anzahl = 0;
 		ArrayList<Kurs> alleBerge = new ArrayList<Kurs>();
-		IndikatorBeschreibung iB = (IndikatorBeschreibung) sB.getParameter("indikator");
+		IndikatorAlgorithmus iB = (IndikatorAlgorithmus) sB.getParameter("indikator");
 		if (iB == null) log.error("am Signal SteigendeTälerFallendeBerge hängt kein Indikator");
 		for (Kurs kurs : aktie.getBoersenkurse()) {
 			float staerke; 
@@ -44,12 +44,12 @@ public class SteigendeBergeFallendeTaeler implements SignalAlgorithmus {
 					float kursdelta = (kurs.getKurs() - alleBerge.get(alleBerge.size() - 2).getKurs()) / kurs.getKurs();
 					if (kursdelta > SteigendeBergeFallendeTaeler.SCHWELLEBERGSTEIGT) {
 						staerke = (kursdelta / SteigendeBergeFallendeTaeler.FAKTORSTAERKEBERGTAL);
-						Signal.create(sB, kurs, Order.KAUF, staerke);
+						sB.createSignal( kurs, Order.KAUF, staerke);
 						anzahl++;
 					}
 					else if (kursdelta < SteigendeBergeFallendeTaeler.SCHWELLEBERGFAELLT) {
 						staerke = (kursdelta / SteigendeBergeFallendeTaeler.FAKTORSTAERKEBERGTAL);
-						Signal.create(sB, kurs, Order.VERKAUF, staerke);
+						sB.createSignal(kurs, Order.VERKAUF, staerke);
 						anzahl++;
 					}
 				}
@@ -63,14 +63,14 @@ public class SteigendeBergeFallendeTaeler implements SignalAlgorithmus {
 	 * @param kurs
 	 * @return
 	 */
-	static boolean istBerg (Kurs kurs, IndikatorBeschreibung indikator) {
+	static boolean istBerg (Kurs kurs, IndikatorAlgorithmus indikator) {
 		if (kurs.getIndikatorWert(indikator) > SteigendeBergeFallendeTaeler.SCHWELLEBERGSUMME) {
 			return true;
 		}
 		else return false; 
 	}
 
-	static boolean istTal (Kurs kurs, IndikatorBeschreibung indikator) {
+	static boolean istTal (Kurs kurs, IndikatorAlgorithmus indikator) {
 		if (kurs.getIndikatorWert(indikator) > SteigendeBergeFallendeTaeler.SCHWELLETALSUMME) {
 			return true;
 		}

@@ -8,8 +8,8 @@ import junit.framework.TestCase;
 public class TestSteigung extends TestCase {
 	
 	public void testPerformancePositiv() {
-		Steigung steigung = new Steigung();
 		Aktie aktie = Aktien.getInstance().getAktie("testaktie");
+		IndikatorAlgorithmus iB = aktie.addIndikator(new IndikatorSteigung());
 		float kurs = aktie.getBoersenkurse().get(50).getKurs();
 		System.out.println("Performancekurs " + kurs);
 		float kurs2 = aktie.getBoersenkurse().get(40).getKurs();
@@ -17,9 +17,8 @@ public class TestSteigung extends TestCase {
 		float ergebnis = (kurs / kurs2) -1;
 		System.out.println("Steigung " + ergebnis);
 		
-		IndikatorBeschreibung iB = new IndikatorBeschreibung(Indikatoren.STEIGUNG);
 		iB.addParameter("dauer", 10);
-		steigung.rechne(aktie, iB);
+		iB.rechne(aktie);
 		float x = aktie.getKurse().get(50).getIndikatorWert(iB);
 		System.out.println("Steigung50: " + x);
 		assertEquals(ergebnis, x);

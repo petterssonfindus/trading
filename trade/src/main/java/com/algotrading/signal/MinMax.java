@@ -9,7 +9,7 @@ import org.apache.logging.log4j.Logger;
 import com.algotrading.aktie.Aktie;
 import com.algotrading.aktie.Kurs;
 import com.algotrading.depot.Order;
-import com.algotrading.indikator.IndikatorBeschreibung;
+import com.algotrading.indikator.IndikatorAlgorithmus;
 
 /**
  * Für einen beliebigen Indikator geeignet
@@ -35,7 +35,7 @@ public class MinMax implements SignalAlgorithmus {
 		if (sB == null) log.error("Inputparameter Signalbeschreibung ist null");
 		int anzahl = 0;
 		// *** indikator ***
-		IndikatorBeschreibung indikator = (IndikatorBeschreibung) sB.getParameter("indikator");
+		IndikatorAlgorithmus indikator = (IndikatorAlgorithmus) sB.getParameter("indikator");
 		if (indikator == null) log.error("Signal enthaelt keinen Indikator");
 		// *** dauer ***
 		int dauer = (Integer) sB.getParameter("dauer");
@@ -84,14 +84,14 @@ public class MinMax implements SignalAlgorithmus {
 			if (value > wertOben) {
 				// Maximalwert liegt vor 
 				if (durchbruch == 0) { // jeder Maximalwert ergibt ein Signal 
-					Signal signal = Signal.create(sB, kurs, Order.KAUF, 0);
+					Signal signal = sB.createSignal(kurs, Order.KAUF, 0);
 					// positive Werte: value - durchschnitt
 					rechneStaerke(value, durchschnitt, signal); 
 					anzahl ++; 
 				}
 				// Signale werden nur erzeugt bei Durchbruch und bisher unter Maximalwert
 				else if (durchbruchOben == false) {
-					Signal signal = Signal.create(sB, kurs, Order.KAUF, 0);
+					Signal signal = sB.createSignal(kurs, Order.KAUF, 0);
 					rechneStaerke(value, durchschnitt, signal); 
 					anzahl ++; 
 					durchbruchOben = true; // ein Durchbruch nach oben hat statt gefunden
@@ -103,14 +103,14 @@ public class MinMax implements SignalAlgorithmus {
 			if (value < wertUnten) {  // Prüfung, ob der Wert unterhalb der Unter-Grenze liegt 
 				// Minimalwert liegt vor 
 				if (durchbruch == 0) {
-					Signal signal = Signal.create(sB, kurs, Order.VERKAUF, 0);
+					Signal signal = sB.createSignal(kurs, Order.VERKAUF, 0);
 					// negative Werte 
 					rechneStaerke(value, durchschnitt, signal); 
 					anzahl ++; 
 				}
 				// Signale nur bei Durchbruch und bisher unter Maximalwert
 				else if (durchbruchUnten == false) {
-					Signal signal = Signal.create(sB, kurs, Order.KAUF, 0);
+					Signal signal = sB.createSignal(kurs, Order.KAUF, 0);
 					rechneStaerke(value, durchschnitt, signal); 
 					anzahl ++; 
 					durchbruchUnten = true; // Durchbruch nach unten hat statt gefunden 
@@ -136,7 +136,7 @@ public class MinMax implements SignalAlgorithmus {
 	 * Ermittelt den zu beobachtenden Wert 
 	 * Derzeit der Indikator, könnte auch ein Kurs sein 
 	 */
-	private Float getValue(IndikatorBeschreibung indikator, Kurs kurs) {
+	private Float getValue(IndikatorAlgorithmus indikator, Kurs kurs) {
 		
 		return kurs.getIndikatorWert(indikator);
 		

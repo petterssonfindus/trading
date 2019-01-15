@@ -2,7 +2,9 @@ package com.algotrading.signal;
 
 import com.algotrading.aktie.Aktie;
 import com.algotrading.aktie.Aktien;
-import com.algotrading.indikator.IndikatorBeschreibung;
+import com.algotrading.indikator.IndikatorAlgorithmus;
+import com.algotrading.indikator.IndikatorGD;
+import com.algotrading.indikator.IndikatorVolatilitaet;
 import com.algotrading.indikator.Indikatoren;
 import com.algotrading.util.Zeitraum;
 
@@ -16,9 +18,8 @@ public class SignalAuswertung extends TestCase {
 		assertTrue(aktie.getBoersenkurse().size() > 1);
 		
 		// Indikator konfigurieren und an Aktie hängen
-		IndikatorBeschreibung iB = new IndikatorBeschreibung(Indikatoren.INDIKATOR_GLEITENDER_DURCHSCHNITT);
-		iB.addParameter("dauer", 30);  // Typ 1 = open
-		aktie.addIndikator(iB);
+		IndikatorAlgorithmus iB = aktie.addIndikator(new IndikatorGD());
+		IndikatorAlgorithmus iB2 = aktie.addIndikator(new IndikatorVolatilitaet());
 		
 		// Indikator berechnen und ausgeben 
 		aktie.rechneIndikatoren();
@@ -26,9 +27,18 @@ public class SignalAuswertung extends TestCase {
 		// Signal konfigurieren und an Aktie hängen 
 		SignalBeschreibung sB = aktie.createSignalBeschreibung(Signal.MinMax);
 		sB.addParameter("indikator", iB);
-		sB.addParameter("dauer", 120);		// Min-Max-Berechnung x Tage zurück 
+		sB.addParameter("dauer", 30);		// Min-Max-Berechnung x Tage zurück 
 		sB.addParameter("schwelle", 1f);		// 1-fache Standardabweichung
 		sB.addParameter("durchbruch", 0);	// tägliches Signal in der Extremzone
+		
+		SignalBeschreibung sB2 = aktie.createSignalBeschreibung(Signal.MinMax);
+		sB2.addParameter("indikator", iB);
+		sB2.addParameter("dauer", 30);		// Min-Max-Berechnung x Tage zurück 
+		sB2.addParameter("schwelle", 1f);		// 1-fache Standardabweichung
+		sB2.addParameter("durchbruch", 0);	// tägliches Signal in der Extremzone
+		
+//		SignalBeschreibung sB3 = aktie.createSignalBeschreibung(Signal.AND);
+		
 		
 //		System.out.println("Signalbeschreibng:" + sB.toString());
 		
@@ -41,13 +51,12 @@ public class SignalAuswertung extends TestCase {
 			aktie.bewerteSignale(zeitraum, 10);
 		}
  */
-		aktie.bewerteSignale(new Zeitraum(1990, 2018), 10);
-		aktie.bewerteSignale(new Zeitraum(1990, 2018), 20);
-		aktie.bewerteSignale(new Zeitraum(1990, 2018), 30);
-		aktie.bewerteSignale(new Zeitraum(1990, 2018), 40);
-		aktie.bewerteSignale(new Zeitraum(1990, 2018), 50);
-		aktie.bewerteSignale(new Zeitraum(1990, 2018), 60);
-		aktie.bewerteSignale(new Zeitraum(1990, 2018), 90);
+		aktie.bewerteSignale(null, 10);
+		aktie.bewerteSignale(null, 20);
+		aktie.bewerteSignale(null, 30);
+		aktie.bewerteSignale(null, 50);
+		aktie.bewerteSignale(null, 60);
+		aktie.bewerteSignale(null, 90);
 		
 		
 //		aktie.writeFileIndikatoren();

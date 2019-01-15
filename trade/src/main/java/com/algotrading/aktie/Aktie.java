@@ -2,6 +2,7 @@ package com.algotrading.aktie;
 
 import java.util.ArrayList;
 import java.util.GregorianCalendar;
+import java.util.List;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -9,7 +10,7 @@ import org.apache.logging.log4j.Logger;
 import com.algotrading.aktie.Kurs;
 import com.algotrading.data.DBManager;
 import com.algotrading.depot.Order;
-import com.algotrading.indikator.IndikatorBeschreibung;
+import com.algotrading.indikator.IndikatorAlgorithmus;
 import com.algotrading.indikator.Indikatoren;
 import com.algotrading.signal.Signal;
 import com.algotrading.signal.SignalBeschreibung;
@@ -60,8 +61,8 @@ public class Aktie extends Parameter {
 		this.quelle = quelle;
 	}
 	public byte boersenplatz; 
-	// die Indikatoren-Beschreibungen, die an der Aktie hängen - Zugriff über Getter  
-	ArrayList<IndikatorBeschreibung> indikatorBeschreibungen = new ArrayList<IndikatorBeschreibung>();
+	// die Indikator-Algorithmen, die an der Aktie hängen - Zugriff über Getter  
+	List<IndikatorAlgorithmus> indikatorAlgorithmen = new ArrayList<IndikatorAlgorithmus>();
 	private boolean indikatorenSindBerechnet = false; 
 	// die Signal-Beschreibungen werden an der Aktie festgehalten und beim Berechnen an die Kurse gehängt
 	private ArrayList<SignalBeschreibung> signalbeschreibungen = new ArrayList<SignalBeschreibung>();
@@ -86,8 +87,8 @@ public class Aktie extends Parameter {
 	 * Darüber ist ein Zugriff auf die Eindikatoren-Wert am Kurs möglich. 
 	 * @return eine Liste der Indikator-Beschreibungen
 	 */
-	public ArrayList<IndikatorBeschreibung> getIndikatorBeschreibungen() {
-		return indikatorBeschreibungen;
+	public List<IndikatorAlgorithmus> getIndikatorAlgorithmen() {
+		return this.indikatorAlgorithmen;
 	}
 	
 	/**
@@ -237,7 +238,7 @@ public class Aktie extends Parameter {
 	
 	/**
 	 * ein Array mit allen vorhandenen Kursen 
-	 * wird fär Rechen-Operationen genutzt, um schnell auf Kurse zugreifen zu kännen. 
+	 * wird fär Rechen-Operationen genutzt, um schnell auf Kurse zugreifen zu können. 
 	 * @return
 	 */
 	public float[] getKursArray () {
@@ -249,12 +250,12 @@ public class Aktie extends Parameter {
 		return floatKurse;
 	}
 	/**
-	 * einen neuen Indikator hinzufägen 
-	 * @param typ
-	 * @return der neue Indikator
+	 * einen neuen Indikator hinzufügen 
+	 * Nachdem er über Konstruktor erzeugt wurde. 
 	 */
-	public void addIndikator (IndikatorBeschreibung indikator) {
-		this.indikatorBeschreibungen.add(indikator);
+	public IndikatorAlgorithmus addIndikator (IndikatorAlgorithmus indikator) {
+		this.indikatorAlgorithmen.add(indikator);
+		return indikator;
 	}
 	
 	/**
@@ -309,14 +310,20 @@ public class Aktie extends Parameter {
 	 * Prognose-Quantität: wie viele Signale gehen in die erwartete Richtung. 
 	 * Prognose-Qualität:  
 	 * @param zeitraum der Zeitraum in dem die signale auftreten
+	 * 		Wenn null, dann maximaler Zeitraum, für den Signale vorliegen. 
 	 * @param tageVoraus für die Erfolgsmessung in die Zukunft 
 	 */
 	public void bewerteSignale (Zeitraum zeitraum, int tage) {
 		// alle Signal-Typen an der Aktie
 		for (SignalBeschreibung sB : this.signalbeschreibungen) {
 			// an der Beschreibung eine neue Gesamt-Bewertung erzeugen 
-			SignalBewertung sBW = sB.addBewertung();
+			SignalBewertung sBW = sB.createBewertung();
 			sBW.setTage(tage);
+			if (zeitraum == null) {
+				// maximaler Zeitraum ermitteln 
+				zeitraum = sB.getZeitraumSignale(); 
+			}
+			
 			sBW.setZeitraum(zeitraum);
 			// alle zugehörigen Signale 
 			// TODO: hier könnte man den Zeitraum bereits berücksichtigen
@@ -522,8 +529,8 @@ public class Aktie extends Parameter {
 	 */
 	private String toStringIndikatoren () {
 		String result = "";
-		for (IndikatorBeschreibung iB : this.indikatorBeschreibungen) {
-			result = result.concat(Short.toString(iB.getTyp()));
+		for (IndikatorAlgorithmus iA : this.indikatorAlgorithmen) {
+			result = result.concat(iA.getKurzname());
 		}
 		return result; 
 	}

@@ -3,8 +3,6 @@ package com.algotrading.signal;
 import java.util.HashMap;
 import java.util.Iterator;
 
-import javax.naming.spi.DirStateFactory.Result;
-
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -55,14 +53,11 @@ public class Signal {
 	public static final short MinMax = 13; 
 	
 	/**
-	 * private Konstruktor kann nur über die Methode create genutzt werden. 
+	 * Konstruktor kann nur über die Methode create genutzt werden. 
 	 * Dadurch kann beim Erzeugen die Referenz auf den Kurs eingetragen werden. 
 	 * @param tageskurs der Kurs, an dem das Signal hängt. 
-	 * @param kaufVerkauf
-	 * @param typ
-	 * @param staerke
 	 */
-	private Signal (SignalBeschreibung sB, Kurs tageskurs, byte kaufVerkauf, float staerke){
+	public Signal (SignalBeschreibung sB, Kurs tageskurs, byte kaufVerkauf, float staerke){
 		this.signalBeschreibung = sB; 
 		this.kurs = tageskurs; 
 		this.kaufVerkauf = kaufVerkauf;
@@ -72,22 +67,7 @@ public class Signal {
 			this.setStaerke(staerke);
 		}
 	}
-	
-	/**
-	 * Die Signalsuche hat ein Signal identifiziert und hängt es in den Kurs ein
-	 * Der Typ ist in der zugehörigen Signalbeschreibung festgelegt. 
-	 * Dabei wird eine Bewertung vorgenommen mit einem Blick in die Zukunft
-	 * @param tageskurs 
-	 * @param kaufVerkauf 
-	 * @param staerke (optional)
-	 * @return
-	 */
-	public static Signal create (SignalBeschreibung sB, Kurs tageskurs, byte kaufVerkauf, float staerke) {
-		Signal signal = new Signal(sB, tageskurs, kaufVerkauf, staerke);
-		tageskurs.addSignal(signal);
-		log.debug("neues Signal: " + signal.toString());
-		return signal;
-	}
+
 	/**
 	 * Zugriff auf Typ-Eigenschaft, die an der Beschreibung gehalten wird
 	 * @return

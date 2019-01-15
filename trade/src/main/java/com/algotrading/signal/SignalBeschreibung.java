@@ -8,8 +8,10 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import com.algotrading.aktie.Aktie;
+import com.algotrading.aktie.Kurs;
 import com.algotrading.util.Parameter;
 import com.algotrading.util.Util;
+import com.algotrading.util.Zeitraum;
 
 /**
  * Beschreibt die Eigenschaften, die ein Signal erfüllen muss
@@ -27,6 +29,8 @@ public class SignalBeschreibung extends Parameter {
 	// die Aktie, an der die SignalBeschreibung hängt. 
 	private Aktie aktie; 
 
+	private List<Signal> signale = new ArrayList<Signal>();
+	
 	// eine Liste aller Bewertungen mit unterschiedlichen Tagen, Zeiträumen ...
 	private List<SignalBewertung> signalBewertung = new ArrayList<SignalBewertung>();  
 	
@@ -41,11 +45,31 @@ public class SignalBeschreibung extends Parameter {
 	Aktie getAktie() {
 		return aktie;
 	}
+	/**
+	 * Signal-Erzeugung an der Signal-Beschreibung
+	 * Hängt das neue Signal auch am Kurs an 
+	 */
+	public Signal createSignal (Kurs tageskurs, byte kaufVerkauf, float staerke) {
+		Signal signal = new Signal(this, tageskurs, kaufVerkauf, staerke);
+		this.signale.add(signal);  // das Signal hängt an der SignalBeschreibung 
+		tageskurs.addSignal(signal); // das Signal hängt am Kurs 
+		log.debug("neues Signal: " + signal.toString());
+		return signal;
+	}
+	
+	/**
+	 * Der Zeitraum, vom Beginn des ersten Signals bis zum letzten Signal
+	 */
+	public Zeitraum getZeitraumSignale () {
+		Signal signal1 = this.signale.get(0);
+		Signal signaln = this.signale.get(this.signale.size() - 1);
+		return new Zeitraum (signal1.getKurs().getDatum(), signaln.getKurs().getDatum());
+	}
 	
 	/**
 	 * Eine neue Bewertung wird durchgeführt 
 	 */
-	public SignalBewertung addBewertung () {
+	public SignalBewertung createBewertung () {
 		SignalBewertung sBW = new SignalBewertung(this);
 		this.signalBewertung.add(sBW);
 		return sBW;
@@ -59,8 +83,12 @@ public class SignalBeschreibung extends Parameter {
 		return signalTyp;
 	}
 	
+	public List<Signal> getSignale() {
+		return signale;
+	}
+	
 	public String toString () {
 		return "S:" + Short.toString(this.signalTyp) + this.toStringParameter();
 	}
-	
+
 }

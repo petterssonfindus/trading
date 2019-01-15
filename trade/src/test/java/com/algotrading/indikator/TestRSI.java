@@ -5,18 +5,17 @@ import java.util.ArrayList;
 import com.algotrading.aktie.Aktie;
 import com.algotrading.aktie.Aktien;
 import com.algotrading.aktie.Kurs;
-import com.algotrading.indikator.IndikatorBeschreibung;
-import com.algotrading.indikator.Indikatoren;
+import com.algotrading.indikator.IndikatorAlgorithmus;
 import junit.framework.TestCase;
 
 public class TestRSI extends TestCase {
 	
 	Aktie rsiAktie; 
-	IndikatorBeschreibung rsi;
+	IndikatorAlgorithmus rsi;
 	
 	public void setUp() {
 		rsiAktie = Aktien.newInstance().getAktie("sardata5");
-		rsi = new IndikatorBeschreibung(Indikatoren.INDIKATOR_RSI);
+		rsi = rsiAktie.addIndikator(new IndikatorRSI());
 		rsi.addParameter("tage", 10);
 		rsiAktie.addIndikator(rsi);
 	}

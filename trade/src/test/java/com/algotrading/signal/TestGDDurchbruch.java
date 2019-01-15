@@ -8,7 +8,8 @@ import org.apache.logging.log4j.Logger;
 
 import com.algotrading.aktie.Aktie;
 import com.algotrading.aktie.Aktien;
-import com.algotrading.indikator.IndikatorBeschreibung;
+import com.algotrading.indikator.IndikatorAlgorithmus;
+import com.algotrading.indikator.IndikatorGD;
 import com.algotrading.indikator.Indikatoren;
 import com.algotrading.util.Zeitraum;
 
@@ -18,8 +19,8 @@ public class TestGDDurchbruch extends TestCase {
 	
 	private static final Logger log = LogManager.getLogger(SignalsucheTest.class);
 	private static Aktie aktie;
-	private static IndikatorBeschreibung indikator10; 
-	private static IndikatorBeschreibung indikator30; 
+	private static IndikatorAlgorithmus indikator10; 
+	private static IndikatorAlgorithmus indikator30; 
 	private static SignalBeschreibung signal; 
 	private static SignalBeschreibung signal2; 
 	private static SignalBeschreibung signal3; 
@@ -36,12 +37,12 @@ public class TestGDDurchbruch extends TestCase {
 		assertTrue(aktie.getBoersenkurse().size() > 1);
 		
 		// Indikator1 konfigurieren und an aktie hängen
-		indikator10 = new IndikatorBeschreibung(Indikatoren.INDIKATOR_GLEITENDER_DURCHSCHNITT);
+		indikator10 = aktie.addIndikator(new IndikatorGD());
 		aktie.addIndikator(indikator10);
 		indikator10.addParameter("dauer", 10);
 
 		// Indikator3 konfigurieren
-		indikator30 = new IndikatorBeschreibung(Indikatoren.INDIKATOR_GLEITENDER_DURCHSCHNITT);
+		indikator30 = aktie.addIndikator(new IndikatorGD());
 		aktie.addIndikator(indikator30);
 		indikator30.addParameter("dauer", 30);
 		
