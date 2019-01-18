@@ -11,7 +11,7 @@ import com.algotrading.util.Zeitraum;
 
 import junit.framework.TestCase;
 
-public class SignalAuswertung extends TestCase {
+public class SignalAuswertung2 extends TestCase {
 
 	public void testSignalauswertung() {
 		Aktie aktie = Aktien.getInstance().getAktie("^gdaxi");
@@ -24,37 +24,21 @@ public class SignalAuswertung extends TestCase {
 		IndikatorAlgorithmus iB3 = aktie.addIndikator(new IndikatorMultiplikation());
 		iB3.addParameter("indikator1", iB);
 		iB3.addParameter("indikator2", iB2);
+		iB3.addParameter("reziprok2", 1);
+		iB3.addParameter("faktor", 100f);
 		
 		// Indikator berechnen und ausgeben 
 		aktie.rechneIndikatoren();
 		
 		// Signal konfigurieren und an Aktie hängen 
 		SignalBeschreibung sB = aktie.createSignalBeschreibung(Signal.MinMax);
-		sB.addParameter("indikator", iB);
+		sB.addParameter("indikator", iB3);
 		sB.addParameter("dauer", 30);		// Min-Max-Berechnung x Tage zurück 
 		sB.addParameter("schwelle", 1f);		// 1-fache Standardabweichung
 		sB.addParameter("durchbruch", 0);	// tägliches Signal in der Extremzone
 		
-		SignalBeschreibung sB2 = aktie.createSignalBeschreibung(Signal.MinMax);
-		sB2.addParameter("indikator", iB);
-		sB2.addParameter("dauer", 30);		// Min-Max-Berechnung x Tage zurück 
-		sB2.addParameter("schwelle", 1f);		// 1-fache Standardabweichung
-		sB2.addParameter("durchbruch", 0);	// tägliches Signal in der Extremzone
-		
-//		SignalBeschreibung sB3 = aktie.createSignalBeschreibung(Signal.AND);
-		
-		
-//		System.out.println("Signalbeschreibng:" + sB.toString());
-		
 		// Signale berechnen und ausgeben 
 		aktie.rechneSignale();
-		// Signal-Bewertung aggregieren und ausgeben 
-/*		
-		List<Zeitraum> liste = DateUtil.getJahresZeitraeume(1990, 2018, 1);
-		for (Zeitraum zeitraum : liste) {
-			aktie.bewerteSignale(zeitraum, 10);
-		}
- */
 		aktie.bewerteSignale(null, 10);
 		aktie.bewerteSignale(null, 20);
 		aktie.bewerteSignale(null, 30);
@@ -63,7 +47,7 @@ public class SignalAuswertung extends TestCase {
 		aktie.bewerteSignale(null, 90);
 		
 		
-//		aktie.writeFileIndikatoren();
+		aktie.writeFileKursIndikatorSignal();
 //		aktie.writeFileSignale();
 	}
 	

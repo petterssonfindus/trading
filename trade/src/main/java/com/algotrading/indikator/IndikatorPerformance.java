@@ -1,5 +1,8 @@
 package com.algotrading.indikator;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import com.algotrading.aktie.Aktie;
 import com.algotrading.util.Util;
 
@@ -11,6 +14,7 @@ import com.algotrading.util.Util;
  *
  */
 public class IndikatorPerformance extends IndikatorAlgorithmus {
+	private static final Logger log = LogManager.getLogger(IndikatorPerformance.class);
 
 	@Override
 	public void rechne(Aktie aktie) {
@@ -20,7 +24,7 @@ public class IndikatorPerformance extends IndikatorAlgorithmus {
 		// holt die gewünschte Dauer
 		int x = ((Integer) getParameter("dauer")).intValue();
 
-		if (kurse.length <= x) Indikatoren.log.error(aktie.name + " zu wenig Kurse: " + kurse.length + " vorhanden: " + x + " benoetigt."); // wenn weniger Kurse vorhanden sind
+		if (kurse.length <= x) log.error(aktie.name + " zu wenig Kurse: " + kurse.length + " vorhanden: " + x + " benoetigt."); // wenn weniger Kurse vorhanden sind
 		
 		float kapitalBeginn = 0; 
 		float kapitalEnde = 0; 
@@ -55,7 +59,7 @@ public class IndikatorPerformance extends IndikatorAlgorithmus {
 		float rendite;
 		rendite = Util.rechnePerformancePA(kapitalBeginn, kapitalEnde, x);
 		aktie.getBoersenkurse().get(i).addIndikator(this, rendite); 
-		Indikatoren.log.trace("GD: " + x + " - " + rendite);
+		log.trace("GD: " + x + " - " + rendite);
 	}
 
 	@Override

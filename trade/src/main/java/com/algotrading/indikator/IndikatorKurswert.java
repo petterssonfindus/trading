@@ -35,10 +35,11 @@ public class IndikatorKurswert extends IndikatorAlgorithmus {
 			aktie2 = aktie; 
 		}
 		
+		int typ = 0;
 		Object o = getParameter("typ");
-		if (o == null) log.error("Kurswert enthält keinen Typ" );
-		int typ = (Integer) o ;
-		if (typ == 0) log.error("Kurswert enthält keinen Typ " );
+		if (o == null) typ = 1; 
+		else typ = (Integer) o ;
+
 		// alle Kurse werden ergänzt um den Indikator
 		
 		for (Kurs kurs : aktie.getBoersenkurse()) {	// der Kurs der Ziel-Aktie 

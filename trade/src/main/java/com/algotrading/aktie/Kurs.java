@@ -3,6 +3,7 @@ package com.algotrading.aktie;
 import java.util.ArrayList;
 import java.util.GregorianCalendar;
 import java.util.HashMap;
+import java.util.List;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -32,8 +33,10 @@ public class Kurs {
 	public float adjClose;
 	public int volume; 
 	public String wertpapier; 
-	// Liste der Indikatoren, die am Kurs hängen. 
+	// Map der Indikatoren, die am Kurs hängen. 
 	private HashMap<IndikatorAlgorithmus, Float> indikatoren = new HashMap<IndikatorAlgorithmus, Float>();
+	// Liste der Indikatoren in Reihenfolge des Einfügens. 
+	private List<IndikatorAlgorithmus> indikatorenListe = new ArrayList<IndikatorAlgorithmus>();
 
 	// Liste aller Signale - öffentlicher Zugriff nur über add() und get()
 	private ArrayList<Signal> signale; 
@@ -83,11 +86,12 @@ public class Kurs {
 	
 	/**
 	 * ein Indikator wurde berechnet und wird dem Kurs hinzugefügt
-	 * @param indikator
-	 * @param wert
+	 * Die Map dient als Assoziativer Speicher
+	 * Die List als Reihenfolge
 	 */
 	public void addIndikator (IndikatorAlgorithmus indikator, float wert) {
 		this.indikatoren.put(indikator, wert);
+		this.indikatorenListe.add(indikator);
 	}
 	
 	/**
@@ -162,14 +166,16 @@ public class Kurs {
 	}
 	/**
 	 * Liefert einen String mit allen Indikatoren im Format Typ - Wert
+	 * In der Reihenfolge des Einfügens der Indikatoren 
 	 */
 	private String toStringIndikatoren() {
 		String result = ""; 
-		for (Float wert : this.indikatoren.values()) {
-			result = result.concat(Util.separatorCSV + Util.toString(wert));
+		for (IndikatorAlgorithmus iA : this.indikatorenListe) {
+			result = result.concat(Util.separatorCSV + Util.toString(this.getIndikatorWert(iA)));
 		}
 		return result; 
 	}
+	
 	/**
 	 * Liefert einen String mit allen Signalen im Format 
 	 * Typ - Kauf/Verkauf - Wert

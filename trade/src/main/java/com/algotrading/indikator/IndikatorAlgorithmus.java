@@ -13,16 +13,14 @@ public abstract class IndikatorAlgorithmus extends Parameter {
 	
 	/**
 	 * iteriert über alle Kurse dieser Aktie und berechnet die Indikatorenwerte, die dann am Kurs hängen
-	 * Die Parameter hängen an der Indikator-Beschreibung
-	 * @param aktie
-	 * @param IndikatorAlgorithmus
+	 * Die Parameter hängen am Indikator-Algorithmus
 	 */
-	abstract void rechne (Aktie aktie);
+	public abstract void rechne (Aktie aktie);
 	
 	public abstract String getKurzname () ;
 	
 	/**
-	 * enthält den Typ und eine Liste der vorhandenen Parameter
+	 * enthält den Kurznamen und eine Liste der vorhandenen Parameter
 	 */
 	public String toString() {
 		String result = ";I:" + getKurzname(); 

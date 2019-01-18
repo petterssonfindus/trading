@@ -1,5 +1,8 @@
 package com.algotrading.indikator;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import com.algotrading.aktie.Aktie;
 /**
  * Bewertet die Prognose-Qualität von Signalen in einem bestimmten Zeitraum. 
@@ -9,6 +12,8 @@ import com.algotrading.aktie.Aktie;
  * @author oskar
  */
 public class SignalBewertung extends IndikatorAlgorithmus {
+	private static final Logger log = LogManager.getLogger(SignalBewertung.class);
+
 
 	/**
 	 * 		
@@ -28,7 +33,7 @@ public class SignalBewertung extends IndikatorAlgorithmus {
 		
 		// addiert die Kurse der vergangenen x Tage. 
 		// dabei wird nicht geschrieben, da die Berechnung noch unvollständig ist. 
-		if (kurse.length <= x) Indikatoren.log.error(aktie.name + " zu wenig Kurse: " + kurse.length + " vorhanden: " + x + " benoetigt."); // wenn weniger Kurse vorhanden sind
+		if (kurse.length <= x) log.error(aktie.name + " zu wenig Kurse: " + kurse.length + " vorhanden: " + x + " benoetigt."); // wenn weniger Kurse vorhanden sind
 		// addiert die ersten x Kurse. 
 		for (int i = 0 ; i < x ; i++) {
 			summe += kurse[i];
@@ -46,7 +51,7 @@ public class SignalBewertung extends IndikatorAlgorithmus {
 			}
 			// das GD-Ergebnis in den Kurs eintragen
 			aktie.getBoersenkurse().get(i).addIndikator(this, ergebnis); 
-			Indikatoren.log.trace("GD: " + x + " - " + ergebnis);
+			log.trace("GD: " + x + " - " + ergebnis);
 		}
 
 	}

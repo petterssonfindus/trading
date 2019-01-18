@@ -3,21 +3,16 @@ package com.algotrading.signal;
 import java.util.ArrayList;
 import java.util.GregorianCalendar;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-
 import com.algotrading.aktie.Aktie;
 import com.algotrading.aktie.Aktien;
 import com.algotrading.indikator.IndikatorAlgorithmus;
 import com.algotrading.indikator.IndikatorGD;
-import com.algotrading.indikator.Indikatoren;
 import com.algotrading.util.Zeitraum;
 
 import junit.framework.TestCase;
 
 public class TestGDDurchbruch extends TestCase {
 	
-	private static final Logger log = LogManager.getLogger(SignalsucheTest.class);
 	private static Aktie aktie;
 	private static IndikatorAlgorithmus indikator10; 
 	private static IndikatorAlgorithmus indikator30; 

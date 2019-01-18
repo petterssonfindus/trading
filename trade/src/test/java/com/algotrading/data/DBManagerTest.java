@@ -10,7 +10,6 @@ import com.algotrading.aktie.Aktie;
 import com.algotrading.aktie.Aktien;
 import com.algotrading.aktie.Kurs;
 
-import com.algotrading.indikator.Indikatoren;
 import com.algotrading.signal.Signal;
 import com.algotrading.util.DateUtil;
 import com.algotrading.util.Zeitraum;

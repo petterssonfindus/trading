@@ -11,7 +11,6 @@ import com.algotrading.aktie.Kurs;
 import com.algotrading.data.DBManager;
 import com.algotrading.depot.Order;
 import com.algotrading.indikator.IndikatorAlgorithmus;
-import com.algotrading.indikator.Indikatoren;
 import com.algotrading.signal.Signal;
 import com.algotrading.signal.SignalBeschreibung;
 import com.algotrading.signal.SignalBewertung;
@@ -259,13 +258,16 @@ public class Aktie extends Parameter {
 	}
 	
 	/**
-	 * Startet die Berechnung der Indikatoren, die als Indikator-Beschreibungen an der Aktie hängen
+	 * Startet die Berechnung der Indikatoren, die als Liste an IndikatorAlgorithmen vorliegen
 	 */
 	public void rechneIndikatoren () {
 		if (this.indikatorenSindBerechnet) {
 			log.warn("Berechnung angestossen, obwohl bereits berechnet wurde");
 		} else { 
-			Indikatoren.rechneIndikatoren(this);
+			for (IndikatorAlgorithmus iA : this.indikatorAlgorithmen) {
+				// die abstrakte Methode, die jeder Algorithmus implmentieren muss
+				iA.rechne(this);
+			}
 			this.indikatorenSindBerechnet = true;
 		}
 		
@@ -378,18 +380,11 @@ public class Aktie extends Parameter {
 	}
 
 	/**
-	 * veranlasst das Schreiben on 2 Dateien und Kursen und Signalen
+	 * schreibt eine neue Datei mit Kursen, Indikatoren, Signalen
 	 */
-	public void writeIndikatorenSignale () {
-		writeFileIndikatoren();
-		writeFileSignale();
-	}
-	/**
-	 * schreibt eine neue Datei mit allen Kursen, Indikatoren
-	 */
-	public void writeFileIndikatoren () {
-		String dateiname = "kurse" + this.name + Long.toString(System.currentTimeMillis());
-		ArrayList<String> zeilen = this.writeIndikatoren();
+	public void writeFileKursIndikatorSignal () {
+		String dateiname = "indisig" + this.name + Long.toString(System.currentTimeMillis());
+		ArrayList<String> zeilen = this.writeIndikatorenSignale();
 		FileUtil.writeCSVFile(zeilen, dateiname);
 		log.info("Datei geschrieben: " + dateiname );
 	}
@@ -514,10 +509,10 @@ public class Aktie extends Parameter {
 	/**
 	 * schreibt pro Tag alle Kurse, und Indikatoren als Zeilen 
 	 */
-	private ArrayList<String> writeIndikatoren () {
+	private ArrayList<String> writeIndikatorenSignale () {
 		ArrayList<String> zeilen = new ArrayList<String>();
 		// Header-Zeile
-		zeilen.add("Datum ; Close ; " + toStringIndikatoren());
+		zeilen.add("Datum;Close" + toStringIndikatorenSignalHeader());
 		
 		for (int i = 0 ; i < kurse.size(); i++) {
 			zeilen.add(kurse.get(i).toString());
@@ -527,11 +522,12 @@ public class Aktie extends Parameter {
 	/**
 	 * ein Header als Liste der Indikatoren, die an einer Aktie vorhanden sind
 	 */
-	private String toStringIndikatoren () {
+	private String toStringIndikatorenSignalHeader () {
 		String result = "";
 		for (IndikatorAlgorithmus iA : this.indikatorAlgorithmen) {
-			result = result.concat(iA.getKurzname());
+			result = result.concat(";" + iA.getKurzname());
 		}
+		result = result.concat(";STyp1;KV1;Wert1;STyp2;KV2;Wert2");
 		return result; 
 	}
 	
@@ -543,8 +539,8 @@ public class Aktie extends Parameter {
 		zeilen.add("Name;Datum;KaufVerkauf;Typ;Staerke;Bewertung");
 		// mit allen Kursen mit allen Signalen
 		ArrayList<Signal> signale = getSignale();
-		for (int i = 0 ; i < signale.size() ; i++) {
-			zeilen.add(signale.get(i).toString());
+		for (Signal signal : signale) {
+			zeilen.add(signal.toString());
 		}
 		return zeilen; 
 	}

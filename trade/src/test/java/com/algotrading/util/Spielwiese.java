@@ -3,6 +3,7 @@ package com.algotrading.util;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.function.BiConsumer;
@@ -28,14 +29,41 @@ public class Spielwiese extends TestCase {
 		HashMap<String, Integer> map = new HashMap<String, Integer>();
 		map.put("test1", new Integer(1));
 		map.put("test2", new Integer(2));
-//		map.put("test2", new Float(2.2));
-//		map.put("test3", new Long(3));
+		map.put("test3", new Integer(3));
 		Set<String> keySet = map.keySet();
+		// mit einem Iterator iterieren 
 		Iterator<String> it = keySet.iterator();
 		while (it.hasNext()) {
 			String key = it.next();
 			System.out.println("Number: " + key + map.get(key));
 		}
+		// über die values iterieren
+		for (Integer i : map.values()) {
+			System.out.println("Values: " + i);
+		}
+		// über die Schlüssel iterieren 
+		for (String s : map.keySet()) {
+			Integer i = map.get(s);
+			System.out.println("Keys: " + i);
+		}
+		// über die Entries iterieren 
+		for (Object o : map.entrySet()) {
+			System.out.println("Entries: " + o);
+		}
+		
+	}
+	
+	public void testArrayList() {
+		ArrayList<String> test = new ArrayList<String>();
+		test.add("1");
+		test.add("2");
+		test.add("3");
+		test.add("4");
+		
+		for (String t : test) {
+			System.out.println("ArrayList: " + t);
+		}
+		
 	}
 	
 	public void testNumber () {
@@ -46,6 +74,7 @@ public class Spielwiese extends TestCase {
 		System.out.println(nummer1.floatValue());
 		System.out.println(nummer2.longValue());
 	}
+	
 	
 	
 	

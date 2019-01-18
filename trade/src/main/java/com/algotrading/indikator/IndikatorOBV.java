@@ -33,7 +33,7 @@ public class IndikatorOBV extends IndikatorAlgorithmus {
 		
 		// addiert die Umsätze der vergangenen x Tage. 
 		// dabei wird nicht geschrieben, da die Berechnung noch unvollständig ist. 
-		if (kurse.size() <= x) Indikatoren.log.error(aktie.name + " zu wenig Kurse: " + kurse.size() + " vorhanden: " + x + " benoetigt."); // wenn weniger Kurse vorhanden sind
+		if (kurse.size() <= x) log.error(aktie.name + " zu wenig Kurse: " + kurse.size() + " vorhanden: " + x + " benoetigt."); // wenn weniger Kurse vorhanden sind
 		// k beginnt mit x, bis zum Ende 
 		for (int k = x ; k < kurse.size() ; k++) {
 			// fär jeden Kurs x-Tage zuräck 

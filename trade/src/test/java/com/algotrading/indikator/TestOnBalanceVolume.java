@@ -6,7 +6,6 @@ import com.algotrading.aktie.Aktie;
 import com.algotrading.aktie.Aktien;
 import com.algotrading.aktie.Kurs;
 import com.algotrading.indikator.IndikatorAlgorithmus;
-import com.algotrading.indikator.Indikatoren;
 
 import junit.framework.TestCase;
 

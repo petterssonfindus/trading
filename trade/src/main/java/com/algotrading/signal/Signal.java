@@ -187,6 +187,9 @@ public class Signal {
 		return result; 
 	}
 	
+	/**
+	 * Kurz-Ausgabe: Typ + KV + Stärke
+	 */
 	public String toStringShort () {
 		String result; 
 		result = this.signalBeschreibung.getSignalTyp() + Util.separatorCSV + 
