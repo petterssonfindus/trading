@@ -329,7 +329,7 @@ public class Aktie extends Parameter {
 			sBW.setZeitraum(zeitraum);
 			// alle zugehörigen Signale 
 			// TODO: hier könnte man den Zeitraum bereits berücksichtigen
-			ArrayList<Signal> signale = this.getSignale(sB);
+			List<Signal> signale = this.getSignale(sB);
 			
 			float staerke = 0;		// die Signal-Stärke eines einzelnen Signals
 			int kaufKorrekt = 0;
@@ -452,9 +452,9 @@ public class Aktie extends Parameter {
 	 * von allen Tageskursen nach Datum aufsteigend
 	 * @return eine Liste mit 0 - n Signalen 
 	 */
-	public ArrayList<Signal> getSignale(SignalBeschreibung signalBeschreibung) {
+	public List<Signal> getSignale(SignalBeschreibung signalBeschreibung) {
 		if ( this.kurse == null) log.error("keine Kurse vorhanden in Aktie " + this.name);
-		ArrayList<Signal> signale = new ArrayList<Signal>();
+		List<Signal> signale = new ArrayList<Signal>();
 		Signal signal = null; 
 		// geht durch alle Kurse und holt die gewünschten Signale
 		for (Kurs kurs : this.kurse) {

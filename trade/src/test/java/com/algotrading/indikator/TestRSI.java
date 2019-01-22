@@ -8,6 +8,11 @@ import com.algotrading.aktie.Kurs;
 import com.algotrading.indikator.IndikatorAlgorithmus;
 import junit.framework.TestCase;
 
+/**
+ * die beiden Berechnungs-Methoden liefern genau die selben Ergebnisse 
+ * @author oskar
+ *
+ */
 public class TestRSI extends TestCase {
 	
 	Aktie rsiAktie; 
@@ -15,12 +20,11 @@ public class TestRSI extends TestCase {
 	
 	public void setUp() {
 		rsiAktie = Aktien.newInstance().getAktie("sardata5");
-		rsi = rsiAktie.addIndikator(new IndikatorRSI());
-		rsi.addParameter("tage", 10);
-		rsiAktie.addIndikator(rsi);
 	}
 	
 	public void testRSI() {
+		rsi = rsiAktie.addIndikator(new IndikatorRSI());
+		rsi.addParameter("dauer", 10);
 		
 		rsiAktie.rechneIndikatoren();
 		
@@ -31,4 +35,17 @@ public class TestRSI extends TestCase {
 
 	}
 
+	public void testRSI2() {
+		IndikatorAlgorithmus iA2 = rsiAktie.addIndikator(new IndikatorRSI2());
+		iA2.addParameter("dauer", 10);
+		
+		rsiAktie.rechneIndikatoren();
+		
+		ArrayList<Kurs> kurse = rsiAktie.getBoersenkurse();
+		Kurs testKurs = kurse.get(13);
+		assertEquals(0.3162709f,testKurs.getIndikatorWert(iA2));
+
+		
+		
+	}
 }

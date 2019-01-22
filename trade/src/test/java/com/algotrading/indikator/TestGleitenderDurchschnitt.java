@@ -14,6 +14,7 @@ public class TestGleitenderDurchschnitt extends TestCase {
 	private static Aktie aktie; 
 	private static IndikatorAlgorithmus iA10; 
 	private static IndikatorAlgorithmus iA20; 
+	private static IndikatorAlgorithmus iAR;
 	
 	@Override
 	protected void setUp() throws Exception {
@@ -23,12 +24,14 @@ public class TestGleitenderDurchschnitt extends TestCase {
 		aktie = Aktien.newInstance().getAktie("sardata5");
 		
 		iA10 = aktie.addIndikator(new IndikatorGD());
-		aktie.addIndikator(iA10);
 		iA10.addParameter("dauer", 10);
 		
 		iA20 = aktie.addIndikator(new IndikatorGD());
-		aktie.addIndikator(iA20);
 		iA20.addParameter("dauer", 20);
+		
+		iAR = aktie.addIndikator(new IndikatorGD());
+		iAR.addParameter("dauer", 10);
+		iAR.addParameter("berechnungsart", 2);
 	}
 	
 	public void testRechne () {
@@ -41,6 +44,9 @@ public class TestGleitenderDurchschnitt extends TestCase {
 		testKurs = kurse.get(30);
 		assertEquals(43.461f,testKurs.getIndikatorWert(iA10));
 		assertEquals(43.8395f,testKurs.getIndikatorWert(iA20));
+		
+		assertEquals(0.024882235f,testKurs.getIndikatorWert(iAR));
+		
 		
 	}
 

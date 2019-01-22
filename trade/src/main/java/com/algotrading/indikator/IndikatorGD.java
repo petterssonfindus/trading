@@ -13,7 +13,8 @@ public class IndikatorGD extends IndikatorAlgorithmus {
 	 * incluse aktueller Kurs 
 	 * Parameter: dauer - die Zeitdauer, die berücksichtigt wird
 	 * 			  berechnungsart (optional) - 0 = der Durchschnittswert (default) 
-	 * 								1 = die Differenz zum aktuellen Kurs 
+	 * 								1 = die absolute Differenz zum aktuellen Kurs = Mittelwert-Abweichung
+	 * 								2 = die relative Differenz zum aktuellen Kurs = Mittelwert-Abweichung
 	 */
 	public void rechne (Aktie aktie) {
 		// holt die Kursreihe 
@@ -40,10 +41,16 @@ public class IndikatorGD extends IndikatorAlgorithmus {
 			float kursalt = kurse[i - x];
 			summe += kursneu;
 			summe -= kursalt; 
+			// den Durchschnitt berechnen
 			float ergebnis = summe / x;
-			// abhängig von der Berechnungs-Art wird noch die Differenz berechnet. 
+			
+			// wenn Berechnungs-Art = 1, die Differenz berechnen. 
 			if (berechnungsArt == 1) {
 				ergebnis -= kursneu;
+			}
+			// wenn Berechnungs-Art = 2, die relative Veränderung berechnen. 
+			else if (berechnungsArt == 2) {
+				ergebnis = (kursneu - ergebnis) / kursneu; 
 			}
 			// das GD-Ergebnis in den Kurs eintragen
 			aktie.getBoersenkurse().get(i).addIndikator(this, ergebnis); 

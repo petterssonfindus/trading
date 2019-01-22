@@ -31,6 +31,7 @@ public class IndikatorVolatilitaet extends IndikatorAlgorithmus {
 		for (int i = x ; i < aktie.getBoersenkurse().size() ; i++) {
 			kurs = aktie.getBoersenkurse().get(i);
 			stats.addValue(kurs.getKurs());
+			// Ermittlung der StandardAbweichung 
 			double vola = stats.getStandardDeviation();
 			kurs.addIndikator(this, (float) vola); 
 		}

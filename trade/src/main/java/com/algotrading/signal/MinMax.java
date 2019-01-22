@@ -19,7 +19,7 @@ import com.algotrading.indikator.IndikatorAlgorithmus;
  * Parameter: dauer - für den beobachteten Zeitraum in dem die Extremwerte bestimmt werden
  *            schwelle - für den Extrem-Wertebereich - in Standardabweichungen 
  *            			1 = 68 % oben und unten; 2 = 95 %; 3 = 99,73%
- *            durchbruch - 0 = tägliches Signal in der Extremzone
+ *            durchbruch (optional) - 0 = tägliches Signal in der Extremzone (Standard)
  *            			   1 = nur bei Durchbruch 
  *            indikator - der Indikator der bewertet wird.
  * Stärke des Signals: Prozentuale Abweichung des Indikators vom Durchschnitt
@@ -45,8 +45,11 @@ public class MinMax implements SignalAlgorithmus {
 		if (o == null) log.error("IndikatorMinMax enthält keine Schwelle" );
 		float schwelle = (Float) o ;
 		if (schwelle == 0) log.error("IndikatorMinMax enthält keine Schwelle" );
-		// *** durchbruch ***
-		float durchbruch = (Integer) sB.getParameter("durchbruch");
+		// *** durchbruch - optional - Stand = 0
+		float durchbruch = 0;
+		Object od = sB.getParameter("durchbruch");
+		if (od != null) durchbruch = (Integer) od;
+		
 		boolean durchbruchOben = false;
 		boolean durchbruchUnten = false;
 		

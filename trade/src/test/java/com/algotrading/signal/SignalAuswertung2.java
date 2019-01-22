@@ -34,7 +34,7 @@ public class SignalAuswertung2 extends TestCase {
 		SignalBeschreibung sB = aktie.createSignalBeschreibung(Signal.MinMax);
 		sB.addParameter("indikator", iB3);
 		sB.addParameter("dauer", 30);		// Min-Max-Berechnung x Tage zurück 
-		sB.addParameter("schwelle", 1f);		// 1-fache Standardabweichung
+		sB.addParameter("schwelle", 2.5f);		// 1-fache Standardabweichung
 		sB.addParameter("durchbruch", 0);	// tägliches Signal in der Extremzone
 		
 		// Signale berechnen und ausgeben 

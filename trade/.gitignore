@@ -8,5 +8,6 @@
 *.class
 *.csv
 *.zip
+*.doc*
 *.~*
 /target/
