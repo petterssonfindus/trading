@@ -10,10 +10,10 @@ import com.algotrading.aktie.Aktie;
 import com.algotrading.aktie.Aktien;
 
 import com.algotrading.indikator.IndikatorAlgorithmus;
-import com.algotrading.indikator.Indikatoren;
+import com.algotrading.indikator.IndikatorGD;
+
 import junit.framework.TestCase;
 import com.algotrading.signal.Signal;
-import com.algotrading.signal.SignalBeschreibung;
 import com.algotrading.util.Util;
 import com.algotrading.util.Zeitraum;
 
@@ -40,7 +40,7 @@ public class SimulatorTest extends TestCase {
 		// Indikatoren konfigurieren 
 		ArrayList<IndikatorAlgorithmus> indikatoren = new ArrayList<IndikatorAlgorithmus>();
 
-		IndikatorAlgorithmus adl = new IndikatorAlgorithmus(Indikatoren.INDIKATOR_GLEITENDER_DURCHSCHNITT);
+		IndikatorAlgorithmus adl = new IndikatorAlgorithmus(new IndikatorGD());
 		indikatoren.add(adl);
 		adl.addParameter("dauer", 10f);
 		adl.addParameter("durchschnitt", 2f);

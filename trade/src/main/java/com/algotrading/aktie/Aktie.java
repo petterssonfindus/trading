@@ -12,9 +12,8 @@ import com.algotrading.data.DBManager;
 import com.algotrading.depot.Order;
 import com.algotrading.indikator.IndikatorAlgorithmus;
 import com.algotrading.signal.Signal;
-import com.algotrading.signal.SignalBeschreibung;
+import com.algotrading.signal.SignalAlgorithmus;
 import com.algotrading.signal.SignalBewertung;
-import com.algotrading.signal.Signalsuche;
 import com.algotrading.util.DateUtil;
 import com.algotrading.util.FileUtil;
 import com.algotrading.util.Parameter;
@@ -63,8 +62,8 @@ public class Aktie extends Parameter {
 	// die Indikator-Algorithmen, die an der Aktie hängen - Zugriff über Getter  
 	List<IndikatorAlgorithmus> indikatorAlgorithmen = new ArrayList<IndikatorAlgorithmus>();
 	private boolean indikatorenSindBerechnet = false; 
-	// die Signal-Beschreibungen werden an der Aktie festgehalten und beim Berechnen an die Kurse gehängt
-	private ArrayList<SignalBeschreibung> signalbeschreibungen = new ArrayList<SignalBeschreibung>();
+	// die Signal-Algorithmen werden an der Aktie festgehalten und beim Berechnen an die Kurse gehängt
+	private List<SignalAlgorithmus> sAs = new ArrayList<SignalAlgorithmus>();
 	private boolean signaleSindBerechnet = false; 
 	
 	/**
@@ -252,7 +251,7 @@ public class Aktie extends Parameter {
 	 * einen neuen Indikator hinzufügen 
 	 * Nachdem er über Konstruktor erzeugt wurde. 
 	 */
-	public IndikatorAlgorithmus addIndikator (IndikatorAlgorithmus indikator) {
+	public IndikatorAlgorithmus createIndikatorAlgorithmus (IndikatorAlgorithmus indikator) {
 		this.indikatorAlgorithmen.add(indikator);
 		return indikator;
 	}
@@ -275,32 +274,37 @@ public class Aktie extends Parameter {
 	/**
 	 * Bestehende SignalBeschreibugen werden entfernt. 
 	 * Indikatoren bleiben erhalten 
-	 * Anschlieäend muss die SignalBerechnung erneut durchgefährt werden. 
+	 * Anschließend muss die SignalBerechnung erneut durchgeführt werden. 
 	 */
 	public void clearSignale () {
 		this.deleteSignale();
-		this.signalbeschreibungen = new ArrayList<SignalBeschreibung>();
+		this.sAs = new ArrayList<SignalAlgorithmus>();
 		this.signaleSindBerechnet = false; 
 	}
 	
 	/**
-	 * Eine neue SignalBeschreibung, die anschließend berechnet wird
+	 * Ein neuer SignalAlgorithmus, der anschließend berechnet wird
 	 * Die Berechnung darf noch nicht durchgeführt sein. 
 	 */
-	public SignalBeschreibung createSignalBeschreibung (short typ) {
-		SignalBeschreibung result = new SignalBeschreibung(this, typ);
-		this.signalbeschreibungen.add(result);
-		return result; 
+	public SignalAlgorithmus createSignalAlgorithmus (SignalAlgorithmus sA) {
+		this.sAs.add(sA);
+		return sA; 
 	}
 	
 	/**
-	 * Berechnet alle Signale für alle Kurse anhand der SignalBeschreibungen 
+	 * steuert die Berechnung von allen Signalen einer Aktie auf Basis der vorhandene SignalBeschreibungen 
+	 * Die Signalsuche wird in Test-Cases separat/einzeln beauftragt. 
+	 * Die Indikatoren müssen bereits berechnet worden sein und hängen am Kurs. 
 	 */
 	public void rechneSignale () {
-		if (! this.signaleSindBerechnet && this.signalbeschreibungen.size() > 0) {
-			Signalsuche.rechneSignale(this);
-			this.signaleSindBerechnet = true; 
+		
+		if (! this.signaleSindBerechnet && this.sAs.size() > 0) {
+			for (SignalAlgorithmus sA : this.sAs) {
+				int anzahl = sA.rechne(this);
+				log.debug("Signale berechnet: " + sA.getKurzname() + " Aktie: " + this.name + " Anzahl: " + anzahl);
+			}
 		}
+		this.signaleSindBerechnet = true; 
 	}
 	
 	/**
@@ -317,19 +321,19 @@ public class Aktie extends Parameter {
 	 */
 	public void bewerteSignale (Zeitraum zeitraum, int tage) {
 		// alle Signal-Typen an der Aktie
-		for (SignalBeschreibung sB : this.signalbeschreibungen) {
+		for (SignalAlgorithmus sA : this.sAs) {
 			// an der Beschreibung eine neue Gesamt-Bewertung erzeugen 
-			SignalBewertung sBW = sB.createBewertung();
+			SignalBewertung sBW = sA.createBewertung();
 			sBW.setTage(tage);
 			if (zeitraum == null) {
 				// maximaler Zeitraum ermitteln 
-				zeitraum = sB.getZeitraumSignale(); 
+				zeitraum = sA.getZeitraumSignale(); 
 			}
 			
 			sBW.setZeitraum(zeitraum);
 			// alle zugehörigen Signale 
 			// TODO: hier könnte man den Zeitraum bereits berücksichtigen
-			List<Signal> signale = this.getSignale(sB);
+			List<Signal> signale = this.getSignale(sA);
 			
 			float staerke = 0;		// die Signal-Stärke eines einzelnen Signals
 			int kaufKorrekt = 0;
@@ -440,26 +444,25 @@ public class Aktie extends Parameter {
 	public ArrayList<Signal> getSignale() {
 		if ( this.kurse == null) log.error("keine Kurse vorhanden in Aktie " + this.name);
 		ArrayList<Signal> signale = new ArrayList<Signal>();
-		// geht durch alle Kurse und holt alle angehängten Signale
-		for (Kurs kurs : this.kurse) {
-			signale.addAll(kurs.getSignale());
+		// geht durch alle SignalAlgorithmen und holt alle angehängten Signale
+		for (SignalAlgorithmus sA : this.sAs) {
+			signale.addAll(sA.getSignale());
 		}
 		return signale;
 	}
 	
 	/**
-	 * alle Signale einer zugehörigen Signal-Beschreibung 
-	 * von allen Tageskursen nach Datum aufsteigend
+	 * alle Signale eines zugehörigen Signal-Algorithmus
 	 * @return eine Liste mit 0 - n Signalen 
 	 */
-	public List<Signal> getSignale(SignalBeschreibung signalBeschreibung) {
+	public List<Signal> getSignale(SignalAlgorithmus signalAlgo) {
 		if ( this.kurse == null) log.error("keine Kurse vorhanden in Aktie " + this.name);
 		List<Signal> signale = new ArrayList<Signal>();
-		Signal signal = null; 
+		Signal signal; 
 		// geht durch alle Kurse und holt die gewünschten Signale
-		for (Kurs kurs : this.kurse) {
-			signal = kurs.getSignal(signalBeschreibung);
-			if (signal != null) {
+		for (Kurs kurs : this.getBoersenkurse()) {
+			signal = kurs.getSignal(signalAlgo);
+			if ( signal != null) {
 				signale.add(signal);
 			}
 		}
@@ -479,8 +482,8 @@ public class Aktie extends Parameter {
 	 * Zugriff auf die Signalbeschreibungen, die zu Beginn an die Aktie gehängt werden. 
 	 * @return
 	 */
-	public ArrayList<SignalBeschreibung> getSignalbeschreibungen() {
-		return signalbeschreibungen;
+	public List<SignalAlgorithmus> getSignalAlgorithmen() {
+		return this.sAs;
 	}
 	
 	public Zeitraum getZeitraumKurse() {

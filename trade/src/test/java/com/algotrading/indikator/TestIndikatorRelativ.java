@@ -8,25 +8,27 @@ import com.algotrading.aktie.Kurs;
 
 import junit.framework.TestCase;
 
-public class TestRSI2 extends TestCase {
-
-	public static void testRSI2() { 
+public class TestIndikatorRelativ extends TestCase {
+	
+	public static void testRSIRelativ() {
 		
 		Aktie aktie = Aktien.getInstance().getAktie("testaktie");
-		IndikatorAlgorithmus iA = aktie.createIndikatorAlgorithmus(new IndikatorRSI2());
+		IndikatorAlgorithmus iA = aktie.createIndikatorAlgorithmus(new IndikatorRSIRelativ());
 		iA.addParameter("dauer", 10);
+		IndikatorAlgorithmus iA2 = aktie.createIndikatorAlgorithmus(new IndikatorRSI2());
+		iA2.addParameter("dauer", 10);
 		
 		aktie.rechneIndikatoren();
 		
 		List<Kurs> liste = aktie.getBoersenkurse();
 		Kurs test = liste.get(13);
 		float rsi = test.getIndikatorWert(iA);
-		System.out.println("Kurs13=" + test.getKurs());
-		System.out.println("RSI13=" + rsi);
+		
+		assertEquals(0.36231863f, rsi);
 		
 //		aktie.writeFileKursIndikatorSignal();
 		
 	}
 	
-	
+
 }

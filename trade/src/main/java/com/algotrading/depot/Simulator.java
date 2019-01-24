@@ -10,7 +10,6 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import com.algotrading.indikator.IndikatorAlgorithmus;
-import com.algotrading.signal.SignalBeschreibung;
 import com.algotrading.util.DateUtil;
 import com.algotrading.util.Util;
 import com.algotrading.util.Zeitraum;
@@ -53,7 +52,7 @@ public class Simulator {
 		for (Aktie aktie : aktien) {
 			for (IndikatorAlgorithmus indikator : indikatoren){
 				// die Indikator-Konfigurationen werden in jeder Aktie gespeichert
-				aktie.addIndikator(indikator);
+				aktie.createIndikatorAlgorithmus(indikator);
 			}
 			// für jede Aktie werden die benötigten Indikatoren berechnet 
 			aktie.rechneIndikatoren();
@@ -70,7 +69,7 @@ public class Simulator {
 				signalBeschreibung.addParameter("zeitraum", zeitraum);
 				// Signalbeschreibung wird in jeder Aktie gespeichert
 				for (Aktie aktie : aktien) {
-					aktie.createSignalBeschreibung(signalBeschreibung.getSignalTyp());
+					aktie.createSignalAlgorithmus(signalBeschreibung.getSignalTyp());
 				}
 			}
 	

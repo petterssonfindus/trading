@@ -10,7 +10,7 @@ import org.apache.logging.log4j.Logger;
 
 import com.algotrading.indikator.IndikatorAlgorithmus;
 import com.algotrading.signal.Signal;
-import com.algotrading.signal.SignalBeschreibung;
+import com.algotrading.signal.SignalAlgorithmus;
 import com.algotrading.util.DateUtil;
 import com.algotrading.util.Util;
 /**
@@ -39,7 +39,7 @@ public class Kurs {
 	private List<IndikatorAlgorithmus> indikatorenListe = new ArrayList<IndikatorAlgorithmus>();
 
 	// Liste aller Signale - öffentlicher Zugriff nur über add() und get()
-	private ArrayList<Signal> signale; 
+	private List<Signal> signale; 
 
 	public Kurs() {
 		this.signale = new ArrayList<Signal>();
@@ -58,22 +58,15 @@ public class Kurs {
 	 * Zugriff auf die Signale eines Kurses 
 	 * @return eine Liste mit Signalen, oder null
 	 */
-	public ArrayList<Signal> getSignale () {
+	public List<Signal> getSignale () {
 		return this.signale; 
 	}
-	/**
-	 * Zugriff auf das Signal einer bestimmten SignalBeschreibung
-	 * @param signalBeschreibung
-	 * @return ein Signal oder null, wenn nicht vorhanden
-	 */
-	public Signal getSignal (SignalBeschreibung signalBeschreibung) {
-		Signal result = null; 
+	
+	public Signal getSignal (SignalAlgorithmus sA) {
 		for (Signal signal : this.signale) {
-			if (signal.getSignalBeschreibung().equals(signalBeschreibung)) {
-				result = signal; 
-			}
+			if (signal.getSignalAlgorithmus().equals(sA)) return signal;
 		}
-		return result; 
+		return null; 
 	}
 	
 	public void clearSignale () {
@@ -186,6 +179,20 @@ public class Kurs {
 			result = result.concat(Util.separatorCSV + signal.toStringShort() );
 		}
 		return result; 
+	}
+	
+	/**
+	 * Signal-Erzeugung am Kurs 
+	 * @param signalBeschreibung TODO
+	 * @param kaufVerkauf TODO
+	 * @param staerke TODO
+	 */
+	public Signal createSignal (SignalAlgorithmus sA, byte kaufVerkauf, float staerke) {
+		Signal signal = new Signal(sA, this, kaufVerkauf, staerke);
+		sA.addSignal(signal);  // das Signal hängt am Signal-Algorithmus
+		addSignal(signal); // das Signal hängt am Kurs 
+		log.debug("neues Signal: " + signal.toString());
+		return signal;
 	}
 	
 	

@@ -5,20 +5,13 @@ import java.util.ArrayList;
 import com.algotrading.aktie.Aktie;
 import com.algotrading.aktie.Kurs;
 
-public class IndikatorRSI2 extends IndikatorAlgorithmus {
-
-
-	public IndikatorRSI2() {};
+	public class IndikatorRSIRelativ extends IndikatorAlgorithmus {
 	
 	/**
-	 * Relative-Stärke-Index
+	 * Relative-Stärke-Index - Berechnung erfolgt relativ zu den positiven - negativen Tagen. 
+	 * Wie groß sind die positiven Tage im Verhältnis zu den negativen Tagen. 
+	 * Summe Wertdifferenz positive Tage / Anzahl positive Tage 
 	 * Die Implementierung geht an jedem Tag durch alle rückliegenden Tage 
-	 * Das Verhältnis der durschnittlich positiven Tage zu den durchschnittlich negativen Tagen 
-	 * Wie stark sind die guten Tage im Vergleich zu den schlechten Tagen. 
-	 * Ein Wert > 0,5 sagt, dass die positiven Tage stark sind, die negativen Tage schwach. 
-	 * Ein Wert > 1 sagt, dass die positiven Tage doppelt so große Gewinne wie die negativen Verluste brachten 
-	 * An jedem Tag kommt eine neue Differnz hinzu, eine alte fällt weg. 
-	 * @param aktie
 	 * @param "dauer"
 	 */
 	@Override
@@ -29,6 +22,8 @@ public class IndikatorRSI2 extends IndikatorAlgorithmus {
 		float sumDown = 0; // Summe der negativen Wertveränderung 
 		float sumUpA = 0; // Summe Up Average
 		float sumDownA = 0; // Summe Down Average
+		int tagePlus = 0;
+		int tageMinus = 0;
 		float rsi; 
 		float kurs = 0; 
 		float kursVortag = kurse.get(0).getKurs(); // der 1. Kurs ist Kurs(0)
@@ -54,27 +49,36 @@ public class IndikatorRSI2 extends IndikatorAlgorithmus {
 			for (int t = 0; t < tage ; t++) {
 				// die Differenzen rückwirkend auf-addieren 
 				differenz = differenzen [i - t];
-				if (differenz > 0) sumUp += differenz;
-				else sumDown += differenz;
+				
+				if (differenz > 0) {
+					sumUp += differenz;
+					tagePlus ++;
+				}
+				
+				else {
+					sumDown += differenz;
+					tageMinus ++;
+				}
 			}
 			// Durchschnitte berechnen
 			// alle +Differenzen / Tage 
-			sumUpA = sumUp / tage;
+			sumUpA = sumUp / tagePlus;
 			// alle -Differenzen / Tage 
-			sumDownA = Math.abs(sumDown / tage);
+			sumDownA = Math.abs(sumDown / tageMinus);
 			// RSI berechnen
 			rsi = sumUpA / (sumUpA + sumDownA);
 			// RSI an den Kurs anhängen
 			kursO.addIndikator(this, rsi);
 			sumUp = 0;
 			sumDown = 0;
-		
+			tagePlus = 0;
+			tageMinus = 0;
 		}
 	}
 
 	@Override
 	public String getKurzname() {
-		return "RSI2";
+		return "RSIRelativ";
 	}
 
 }

@@ -23,13 +23,13 @@ public class TestGleitenderDurchschnitt extends TestCase {
 		
 		aktie = Aktien.newInstance().getAktie("sardata5");
 		
-		iA10 = aktie.addIndikator(new IndikatorGD());
+		iA10 = aktie.createIndikatorAlgorithmus(new IndikatorGD());
 		iA10.addParameter("dauer", 10);
 		
-		iA20 = aktie.addIndikator(new IndikatorGD());
+		iA20 = aktie.createIndikatorAlgorithmus(new IndikatorGD());
 		iA20.addParameter("dauer", 20);
 		
-		iAR = aktie.addIndikator(new IndikatorGD());
+		iAR = aktie.createIndikatorAlgorithmus(new IndikatorGD());
 		iAR.addParameter("dauer", 10);
 		iAR.addParameter("berechnungsart", 2);
 	}

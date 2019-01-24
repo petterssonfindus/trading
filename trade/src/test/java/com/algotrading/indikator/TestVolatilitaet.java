@@ -22,12 +22,12 @@ public class TestVolatilitaet extends TestCase {
 		
 		aktie = Aktien.newInstance().getAktie("sardata5");
 		
-		IndikatorAlgorithmus10 = aktie.addIndikator(new IndikatorVolatilitaet());
-		aktie.addIndikator(IndikatorAlgorithmus10);
+		IndikatorAlgorithmus10 = aktie.createIndikatorAlgorithmus(new IndikatorVolatilitaet());
+		aktie.createIndikatorAlgorithmus(IndikatorAlgorithmus10);
 		IndikatorAlgorithmus10.addParameter("dauer", 10);
 		
-		IndikatorAlgorithmus20 = aktie.addIndikator(new IndikatorVolatilitaet());
-		aktie.addIndikator(IndikatorAlgorithmus20);
+		IndikatorAlgorithmus20 = aktie.createIndikatorAlgorithmus(new IndikatorVolatilitaet());
+		aktie.createIndikatorAlgorithmus(IndikatorAlgorithmus20);
 		IndikatorAlgorithmus20.addParameter("dauer", 20);
 	}
 	

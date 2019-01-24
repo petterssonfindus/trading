@@ -24,33 +24,32 @@ public class IndikatorOBV extends IndikatorAlgorithmus {
 		// holt die Kurse, an denen die Umsätze dran hängen.
 		ArrayList<Kurs> kurse = aktie.getBoersenkurse();
 		// holt den Parameter aus dem Indikator 
-		int x = (Integer) getParameter("dauer");
+		int dauer = (Integer) getParameter("dauer");
 		
 		int summe = 0;
 		int umsatzHeute = 0;
-		int umsatzVortag = 0;
+		Kurs kursVortag = null;
 		Kurs kurs = null; 
 		
-		// addiert die Umsätze der vergangenen x Tage. 
-		// dabei wird nicht geschrieben, da die Berechnung noch unvollständig ist. 
-		if (kurse.size() <= x) log.error(aktie.name + " zu wenig Kurse: " + kurse.size() + " vorhanden: " + x + " benoetigt."); // wenn weniger Kurse vorhanden sind
-		// k beginnt mit x, bis zum Ende 
-		for (int k = x ; k < kurse.size() ; k++) {
-			// fär jeden Kurs x-Tage zuräck 
-			// der erste Kurs braucht einen Vortageskurs 
-			umsatzVortag = kurse.get(0).volume;
-			for (int i = 1 ; i < x ; i++) {
-				kurs = kurse.get(k - x + i);
-				if (kurs == null) log.error("Kurs nicht vorhanden im Indikator OnBalanceVolume");
+		// addiert die Umsätze der vergangenen x(dauer) Tage. 
+		if (kurse.size() <= dauer) log.error(aktie.name + " zu wenig Kurse: " + kurse.size() + " vorhanden: " + dauer + " benoetigt."); // wenn weniger Kurse vorhanden sind
+		// k zählt von x(dauer) + 1 Tag , bis zum Ende 
+		for (int k = dauer + 1; k < kurse.size() ; k++) {
+			// für jeden Kurs x-Tage zurück 
+			// i zählt von 0 bis 9
+			for (int i = 0 ; i < dauer ; i++) {
+				kursVortag = kurse.get(k - dauer + i - 1);
+				kurs = kurse.get(k - dauer + i);
+				
+				if (kurs == null || kursVortag == null) log.error("Kurs nicht vorhanden im Indikator OnBalanceVolume");
 				umsatzHeute = kurs.volume;
-				if (umsatzHeute > umsatzVortag) { // der Kurs ist gestiegen
+				if (kurs.getKurs() > kursVortag.getKurs()) { // der Kurs ist gestiegen
 					// das Volumen wird hinzu addiert 
 					summe += umsatzHeute ;
 				}
-				else { // der Kurs ist gefallen 
+				else { // der Kurs ist gefallen oder gleich geblieben #TODO gleiche Kurse geschieht nichts
 					summe -= umsatzHeute ;
 				}
-				umsatzVortag = umsatzHeute;
 			}
 			// das Ergebnis in den Kurs eintragen. 
 			kurs.addIndikator(this, summe); 

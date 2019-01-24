@@ -17,11 +17,11 @@ public class SignalAuswertung2 extends TestCase {
 		Aktie aktie = Aktien.getInstance().getAktie("^gdaxi");
 		
 		// Indikator konfigurieren und an Aktie hängen
-		IndikatorAlgorithmus iB = aktie.addIndikator(new IndikatorMinMax());
+		IndikatorAlgorithmus iB = aktie.createIndikatorAlgorithmus(new IndikatorMinMax());
 		iB.addParameter("dauer", 30);
-		IndikatorAlgorithmus iB2 = aktie.addIndikator(new IndikatorVolatilitaet());
+		IndikatorAlgorithmus iB2 = aktie.createIndikatorAlgorithmus(new IndikatorVolatilitaet());
 		iB2.addParameter("dauer", 30);
-		IndikatorAlgorithmus iB3 = aktie.addIndikator(new IndikatorMultiplikation());
+		IndikatorAlgorithmus iB3 = aktie.createIndikatorAlgorithmus(new IndikatorMultiplikation());
 		iB3.addParameter("indikator1", iB);
 		iB3.addParameter("indikator2", iB2);
 		iB3.addParameter("reziprok2", 1);
@@ -31,7 +31,20 @@ public class SignalAuswertung2 extends TestCase {
 		aktie.rechneIndikatoren();
 		
 		// Signal konfigurieren und an Aktie hängen 
-		SignalBeschreibung sB = aktie.createSignalBeschreibung(Signal.MinMax);
+		SignalAlgorithmus sB = aktie.createSignalAlgorithmus(new SignalAlgorithmus() {
+			
+			@Override
+			public int rechne(Aktie aktie) {
+				// TODO Auto-generated method stub
+				return 0;
+			}
+			
+			@Override
+			public String getKurzname() {
+				// TODO Auto-generated method stub
+				return null;
+			}
+		});
 		sB.addParameter("indikator", iB3);
 		sB.addParameter("dauer", 30);		// Min-Max-Berechnung x Tage zurück 
 		sB.addParameter("schwelle", 2.5f);		// 1-fache Standardabweichung

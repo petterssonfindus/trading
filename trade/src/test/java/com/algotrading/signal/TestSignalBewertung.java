@@ -18,7 +18,7 @@ public class TestSignalBewertung extends TestCase {
 		assertTrue(aktie.getBoersenkurse().size() > 1);
 		
 		// Indikator konfigurieren und an Aktie hängen
-		IndikatorAlgorithmus iB = aktie.addIndikator(new IndikatorKurswert());
+		IndikatorAlgorithmus iB = aktie.createIndikatorAlgorithmus(new IndikatorKurswert());
 		iB.addParameter("typ", 1);  // Typ 1 = open
 		
 		// Indikator berechnen und ausgeben 
@@ -29,11 +29,11 @@ public class TestSignalBewertung extends TestCase {
 		assertEquals(20.05f, aktie.getBoersenkurse().get(0).getKurs());
 		
 		// Signal konfigurieren und an Aktie hängen 
-		SignalBeschreibung sB = aktie.createSignalBeschreibung(Signal.MinMax);
-		sB.addParameter("indikator", iB);
-		sB.addParameter("dauer", 15);		// Min-Max-Berechnung 15 Tage zurück 
-		sB.addParameter("schwelle", 1f);		// 1-fache Standardabweichung
-		sB.addParameter("durchbruch", 0);	// tägliches Signal in der Extremzone
+		SignalAlgorithmus sA = aktie.createSignalAlgorithmus(new SignalMinMax());
+		sA.addParameter("indikator", iB);
+		sA.addParameter("dauer", 15);		// Min-Max-Berechnung 15 Tage zurück 
+		sA.addParameter("schwelle", 1f);		// 1-fache Standardabweichung
+		sA.addParameter("durchbruch", 0);	// tägliches Signal in der Extremzone
 		
 		// Signale berechnen und ausgeben 
 		aktie.rechneSignale();
@@ -44,7 +44,7 @@ public class TestSignalBewertung extends TestCase {
 		aktie.bewerteSignale(zeitraum1, 10);
 		aktie.bewerteSignale(zeitraum2, 10);
 		aktie.bewerteSignale(zeitraum3, 10);
-		List<SignalBewertung> sbs = sB.getBewertungen();
+		List<SignalBewertung> sbs = sA.getBewertungen();
 		for (SignalBewertung sb : sbs) {
 			System.out.println("Sbs: " + sb);
 		}

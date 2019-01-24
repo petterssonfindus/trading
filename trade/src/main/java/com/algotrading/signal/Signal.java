@@ -27,7 +27,7 @@ public class Signal {
 	// Referenz zum Kurs, zu dem es gehört
 	private Kurs kurs; 
 	// eine Referenz auf die Signalbeschreibung wird beim Erzeugen gesetzt 
-	private SignalBeschreibung signalBeschreibung; 
+	private SignalAlgorithmus sA; 
 	// Kauf oder Verkauf 
 	private byte kaufVerkauf;
 	// optional - eine Zahl von 0 - 100 über die Stärke
@@ -57,8 +57,10 @@ public class Signal {
 	 * Dadurch kann beim Erzeugen die Referenz auf den Kurs eingetragen werden. 
 	 * @param tageskurs der Kurs, an dem das Signal hängt. 
 	 */
-	public Signal (SignalBeschreibung sB, Kurs tageskurs, byte kaufVerkauf, float staerke){
-		this.signalBeschreibung = sB; 
+	public Signal (SignalAlgorithmus sA, Kurs tageskurs, byte kaufVerkauf, float staerke){
+		this.sA = sA; 
+		// der SignalAlgorithmus erhält Zugriff auf das neue Signal 
+		sA.addSignal(this);
 		this.kurs = tageskurs; 
 		this.kaufVerkauf = kaufVerkauf;
 		this.bewertung = new HashMap<Integer, Float>();
@@ -66,14 +68,6 @@ public class Signal {
 		if (staerke != 0) {
 			this.setStaerke(staerke);
 		}
-	}
-
-	/**
-	 * Zugriff auf Typ-Eigenschaft, die an der Beschreibung gehalten wird
-	 * @return
-	 */
-	public short getTyp () {
-		return this.signalBeschreibung.getSignalTyp();
 	}
 
 	public Kurs getKurs () {
@@ -106,8 +100,8 @@ public class Signal {
 		this.kaufVerkauf = kaufVerkauf;
 	}
 	
-	public SignalBeschreibung getSignalBeschreibung() {
-		return signalBeschreibung;
+	public SignalAlgorithmus getSignalAlgorithmus() {
+		return this.sA;
 	}
 	
 	/**
@@ -170,7 +164,7 @@ public class Signal {
 		result = this.kurs.wertpapier + Util.separatorCSV +
 			DateUtil.formatDate(this.kurs.datum) + Util.separatorCSV + 
 			this.kaufVerkaufToString() + Util.separatorCSV + 
-			this.signalBeschreibung.getSignalTyp() + Util.separatorCSV + 
+			this.sA.getKurzname() + Util.separatorCSV + 
 			Util.toString(this.staerke) + 
 			this.toStringBewertungen();
 		return result;
@@ -192,7 +186,7 @@ public class Signal {
 	 */
 	public String toStringShort () {
 		String result; 
-		result = this.signalBeschreibung.getSignalTyp() + Util.separatorCSV + 
+		result = this.sA.getKurzname() + Util.separatorCSV + 
 				this.kaufVerkaufToString() + Util.separatorCSV + 
 				Util.toString(this.staerke);
 		return result;

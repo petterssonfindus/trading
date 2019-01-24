@@ -17,11 +17,11 @@ public class SignalAuswertung extends TestCase {
 		Aktie aktie = Aktien.getInstance().getAktie("^gdaxi");
 		
 		// Indikator konfigurieren und an Aktie hängen
-		IndikatorAlgorithmus iB = aktie.addIndikator(new IndikatorMinMax());
+		IndikatorAlgorithmus iB = aktie.createIndikatorAlgorithmus(new IndikatorMinMax());
 		iB.addParameter("dauer", 30);
-		IndikatorAlgorithmus iB2 = aktie.addIndikator(new IndikatorVolatilitaet());
+		IndikatorAlgorithmus iB2 = aktie.createIndikatorAlgorithmus(new IndikatorVolatilitaet());
 		iB2.addParameter("dauer", 30);
-		IndikatorAlgorithmus iB3 = aktie.addIndikator(new IndikatorMultiplikation());
+		IndikatorAlgorithmus iB3 = aktie.createIndikatorAlgorithmus(new IndikatorMultiplikation());
 		iB3.addParameter("indikator1", iB);
 		iB3.addParameter("indikator2", iB2);
 		
@@ -29,17 +29,17 @@ public class SignalAuswertung extends TestCase {
 		aktie.rechneIndikatoren();
 		
 		// Signal konfigurieren und an Aktie hängen 
-		SignalBeschreibung sB = aktie.createSignalBeschreibung(Signal.MinMax);
-		sB.addParameter("indikator", iB);
-		sB.addParameter("dauer", 30);		// Min-Max-Berechnung x Tage zurück 
-		sB.addParameter("schwelle", 1f);		// 1-fache Standardabweichung
-		sB.addParameter("durchbruch", 0);	// tägliches Signal in der Extremzone
+		SignalAlgorithmus sA = aktie.createSignalAlgorithmus(new SignalMinMax());
+		sA.addParameter("indikator", iB);
+		sA.addParameter("dauer", 30);		// Min-Max-Berechnung x Tage zurück 
+		sA.addParameter("schwelle", 1f);		// 1-fache Standardabweichung
+		sA.addParameter("durchbruch", 0);	// tägliches Signal in der Extremzone
 		
-		SignalBeschreibung sB2 = aktie.createSignalBeschreibung(Signal.MinMax);
-		sB2.addParameter("indikator", iB);
-		sB2.addParameter("dauer", 30);		// Min-Max-Berechnung x Tage zurück 
-		sB2.addParameter("schwelle", 1f);		// 1-fache Standardabweichung
-		sB2.addParameter("durchbruch", 0);	// tägliches Signal in der Extremzone
+		SignalAlgorithmus sA2 = aktie.createSignalAlgorithmus(new SignalMinMax());
+		sA2.addParameter("indikator", iB);
+		sA2.addParameter("dauer", 30);		// Min-Max-Berechnung x Tage zurück 
+		sA2.addParameter("schwelle", 1f);		// 1-fache Standardabweichung
+		sA2.addParameter("durchbruch", 0);	// tägliches Signal in der Extremzone
 		
 //		SignalBeschreibung sB3 = aktie.createSignalBeschreibung(Signal.AND);
 		

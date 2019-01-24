@@ -10,8 +10,8 @@ import com.algotrading.util.Zeitraum;
 import com.algotrading.aktie.Aktie;
 import com.algotrading.aktie.Kurs;
 
-public class GDDurchbruch implements SignalAlgorithmus {
-	static final Logger log = LogManager.getLogger(GDDurchbruch.class);
+public class SignalGDDurchbruch extends SignalAlgorithmus {
+	static final Logger log = LogManager.getLogger(SignalGDDurchbruch.class);
 
 	/**
 	 * erzeugt ein Signal, wenn der Kurs den GD schneidet 
@@ -21,26 +21,25 @@ public class GDDurchbruch implements SignalAlgorithmus {
 	 * Parameter "zeitraum" - der zu berechnende Zeitraum
 	 * @param kursreihe
 	 */
-	public int ermittleSignal(Aktie aktie, SignalBeschreibung sB) {
+	public int rechne(Aktie aktie) {
 		if (aktie == null) log.error("Inputparameter Aktie ist null");
-		if (sB == null) log.error("Inputparameter Signalbeschreibung ist null");
 		int anzahl = 0;
-		IndikatorAlgorithmus indikator = (IndikatorAlgorithmus) sB.getParameter("indikator");
-		// wie weit muss der Kurs den Gleitenden Durchschnitt durchbrechen
-		float schwelle = (Float) sB.getParameter("schwelle");
-		schwelle = schwelle + 1;
+		IndikatorAlgorithmus indikator = (IndikatorAlgorithmus) getParameter("indikator");
 		if (indikator == null) log.error("Signal enthaelt keinen Indikator");
-		Zeitraum zeitraum = (Zeitraum) sB.getParameter("zeitraum");
+		// wie weit muss der Kurs den Gleitenden Durchschnitt durchbrechen
+		float schwelle = (Float) getParameter("schwelle");
+		schwelle = schwelle + 1;
+		Zeitraum zeitraum = (Zeitraum) getParameter("zeitraum");
 		
 		for (Kurs kurs : aktie.getKurse(zeitraum)) {
 			Kurs vortageskurs = aktie.getVortageskurs(kurs);
 			if (vortageskurs != null) {
 				// bisher darunter, jetzt darüber
 				// dabei werden die Signale erstellt und mit dem Kurs verbunden 
-				if (GDDurchbruch.pruefeGleitenderDurchschnittSteigung(sB, kurs, vortageskurs, indikator, schwelle)) anzahl++;
+				if (pruefeGleitenderDurchschnittSteigung( kurs, vortageskurs, indikator, schwelle)) anzahl++;
 				
 				// bisher darüber, jetzt darunter
-				if (GDDurchbruch.pruefeGleitenderDurchschnittSinkflug(sB, kurs, vortageskurs, indikator, schwelle)) anzahl++;
+				if (pruefeGleitenderDurchschnittSinkflug(kurs, vortageskurs, indikator, schwelle)) anzahl++;
 			}
 		}
 		return anzahl; 
@@ -50,18 +49,18 @@ public class GDDurchbruch implements SignalAlgorithmus {
 	 * bisher darunter, jetzt darüber
 	 * erzeugt Signale und hängt sie an den Kurs an
 	 */
-	private static boolean pruefeGleitenderDurchschnittSteigung (SignalBeschreibung sB, Kurs kurs, Kurs vortageskurs, IndikatorAlgorithmus iB, float schwelle ) {
-		if (kurs == null || vortageskurs == null || iB == null) log.error("Inputvariable ist null"); 
+	private boolean pruefeGleitenderDurchschnittSteigung (Kurs kurs, Kurs vortageskurs, IndikatorAlgorithmus iA, float schwelle ) {
+		if (kurs == null || vortageskurs == null ) log.error("Inputvariable ist null"); 
 		boolean result = false; 
-		Float gd = kurs.getIndikatorWert(iB);
-		Float gdvt = vortageskurs.getIndikatorWert(iB);
+		Float gd = kurs.getIndikatorWert(iA);
+		Float gdvt = vortageskurs.getIndikatorWert(iA);
 		log.trace("GD-Signal Steigung: " + DateUtil.formatDate(kurs.datum) + " - " + vortageskurs.getKurs() + " GDVt: " + gdvt + 
 				" Kurs: " + kurs.getKurs() + " GD: " + gd);
 		Signal signal = null; 
 		// wenn am Vortag der Kurs unter dem GD war, und heute der Kurs über dem GD ist 
 		if ((vortageskurs.getKurs() < (gdvt * schwelle)) && 
 				kurs.getKurs() > (gd * schwelle)) {
-			signal = sB.createSignal(kurs, Order.KAUF, 0);
+			signal = kurs.createSignal(this, Order.KAUF, 0);
 			result = true; 
 			signal.setStaerke ((kurs.getKurs() - gd) / gd);
 			log.debug("GD-Steigung erkannt: " + DateUtil.formatDate(kurs.datum) + " VTKurs " + vortageskurs.getKurs() + " GDVt: " + gdvt + 
@@ -73,7 +72,7 @@ public class GDDurchbruch implements SignalAlgorithmus {
 	/**
 	 * bisher darüber, jetzt darunter
 	 */
-	private static boolean pruefeGleitenderDurchschnittSinkflug (SignalBeschreibung sB, Kurs tageskurs, Kurs vortageskurs, IndikatorAlgorithmus indikator, float schwelle ) {
+	private boolean pruefeGleitenderDurchschnittSinkflug (Kurs tageskurs, Kurs vortageskurs, IndikatorAlgorithmus indikator, float schwelle ) {
 		if (tageskurs == null || vortageskurs == null || indikator == null) log.error("Inputvariable ist null"); 
 		boolean result = false; 
 		Float gd = tageskurs.getIndikatorWert(indikator);
@@ -82,13 +81,18 @@ public class GDDurchbruch implements SignalAlgorithmus {
 		
 		if ((vortageskurs.getKurs() > (gdvt * schwelle)) && 
 				tageskurs.getKurs() < (gd * schwelle)) {
-			signal = sB.createSignal(tageskurs, Order.VERKAUF, 0);
+			signal = tageskurs.createSignal(this, Order.VERKAUF, 0);
 			result = true;
 			signal.setStaerke ((gd - tageskurs.getKurs()) / gd);
 			log.debug("GD-Sinkflug: " + DateUtil.formatDate(tageskurs.datum) + " VTKurs " + vortageskurs.getKurs() + " GDVt: " + gdvt + 
 					" Kurs: " + tageskurs.getKurs() + " GD: " + gd);
 		} 
 		return result; 
+	}
+
+	@Override
+	public String getKurzname() {
+		return "GDDurch";
 	}
 
 }

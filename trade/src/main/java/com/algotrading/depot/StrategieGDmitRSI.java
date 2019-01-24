@@ -16,8 +16,8 @@ public class StrategieGDmitRSI extends SignalStrategie {
 	public Order entscheideSignal(Signal signal, Depot depot) {
 		Order order = null; 
 		// filtere die Signale
-		// reagiert auf GD-Durchbräche ( Kauf oder Verkauf) 
-		if (signal.getTyp() == Signal.GDDurchbruch) {
+		// reagiert auf GD-Durchbrüche ( Kauf oder Verkauf) 
+		if (signal.getClass().toString() == "SignalGDDurchbruch") {
 			// GD -Kauf-Signal 
 			if (signal.getKaufVerkauf() == Order.KAUF) {
 				this.GDDurchbruch = true;
@@ -29,7 +29,7 @@ public class StrategieGDmitRSI extends SignalStrategie {
 			}
 		}
 		// reagiert auf RSI - Durchbrüche  
-		if (signal.getTyp() == Signal.RSI) {
+		if (signal.getClass().toString() == "SignalGDDurchbruch") {
 			// Eintritt in die Kaufzone
 			if (signal.getKaufVerkauf() == Order.KAUF) {
 				this.RSIKauf = true;

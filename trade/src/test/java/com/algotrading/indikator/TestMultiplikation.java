@@ -19,11 +19,11 @@ public class TestMultiplikation extends TestCase {
 	 * Kurswert * Volatilität
 	 */
 	public void testMultiplikation () {
-		IndikatorAlgorithmus iB = aktie.addIndikator(new IndikatorKurswert());
-		IndikatorAlgorithmus iB2 = aktie.addIndikator(new IndikatorVolatilitaet());
+		IndikatorAlgorithmus iB = aktie.createIndikatorAlgorithmus(new IndikatorKurswert());
+		IndikatorAlgorithmus iB2 = aktie.createIndikatorAlgorithmus(new IndikatorVolatilitaet());
 		iB2.addParameter("dauer", 10);
 		
-		IndikatorAlgorithmus iB3 = aktie.addIndikator(new IndikatorMultiplikation());
+		IndikatorAlgorithmus iB3 = aktie.createIndikatorAlgorithmus(new IndikatorMultiplikation());
 		iB3.addParameter("indikator1", iB);
 		iB3.addParameter("indikator2", iB2);
 		aktie.rechneIndikatoren();
@@ -38,12 +38,12 @@ public class TestMultiplikation extends TestCase {
 	 * Ist dann hoch, wenn Vola und Ausschlag hoch ist. 
 	 */
 	public void testMultiMinMax() {
-		IndikatorAlgorithmus iB = aktie.addIndikator(new IndikatorMinMax());
+		IndikatorAlgorithmus iB = aktie.createIndikatorAlgorithmus(new IndikatorMinMax());
 		iB.addParameter("dauer", 30);
-		IndikatorAlgorithmus iB2 = aktie.addIndikator(new IndikatorVolatilitaet());
+		IndikatorAlgorithmus iB2 = aktie.createIndikatorAlgorithmus(new IndikatorVolatilitaet());
 		iB2.addParameter("dauer", 30);
 		
-		IndikatorAlgorithmus iB3 = aktie.addIndikator(new IndikatorMultiplikation());
+		IndikatorAlgorithmus iB3 = aktie.createIndikatorAlgorithmus(new IndikatorMultiplikation());
 		iB3.addParameter("indikator1", iB);
 		iB3.addParameter("indikator2", iB2);
 		aktie.rechneIndikatoren();
@@ -55,11 +55,11 @@ public class TestMultiplikation extends TestCase {
 	 * Kurswert * Volatilität
 	 */
 	public void testMultiplikationReziprok () {
-		IndikatorAlgorithmus iB = aktie.addIndikator(new IndikatorKurswert());
-		IndikatorAlgorithmus iB2 = aktie.addIndikator(new IndikatorVolatilitaet());
+		IndikatorAlgorithmus iB = aktie.createIndikatorAlgorithmus(new IndikatorKurswert());
+		IndikatorAlgorithmus iB2 = aktie.createIndikatorAlgorithmus(new IndikatorVolatilitaet());
 		iB2.addParameter("dauer", 10);
 		
-		IndikatorAlgorithmus iB3 = aktie.addIndikator(new IndikatorMultiplikation());
+		IndikatorAlgorithmus iB3 = aktie.createIndikatorAlgorithmus(new IndikatorMultiplikation());
 		iB3.addParameter("indikator1", iB);
 		iB3.addParameter("indikator2", iB2);
 		iB3.addParameter("reziprok2", 1);

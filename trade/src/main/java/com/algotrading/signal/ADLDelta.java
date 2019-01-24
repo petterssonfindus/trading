@@ -16,18 +16,17 @@ import com.algotrading.depot.Order;
  * @author oskar
  *
  */
-public class ADLDelta implements SignalAlgorithmus {
+public class ADLDelta extends SignalAlgorithmus {
 	static final Logger log = LogManager.getLogger(ADLDelta.class);
 
-	public int ermittleSignal(Aktie aktie, SignalBeschreibung sB) {
+	public int rechne(Aktie aktie) {
 		if (aktie == null) log.error("Inputparameter Aktie ist null");
-		if (sB == null) log.error("Inputparameter Signalbeschreibung ist null");
 		
 		// hole die Parameter, die bei der Konfiguration eingesetzt wurden. 
-		IndikatorAlgorithmus indikator = (IndikatorAlgorithmus) sB.getParameter("indikator");
-		float schwelle = (Float) sB.getParameter("schwelle");
+		IndikatorAlgorithmus indikator = (IndikatorAlgorithmus) getParameter("indikator");
+		float schwelle = (Float) getParameter("schwelle");
 		if (indikator == null) log.error("Signal enthaelt keinen Indikator");
-		Zeitraum zeitraum = (Zeitraum) sB.getParameter("zeitraum");
+		Zeitraum zeitraum = (Zeitraum) getParameter("zeitraum");
 		
 		int anzahl = 0;
 		for (Kurs kurs : aktie.getKurse(zeitraum)) {
@@ -37,11 +36,16 @@ public class ADLDelta implements SignalAlgorithmus {
 				float delta = kurs.getIndikatorWert(indikator) / vortageskurs.getIndikatorWert(indikator);
 				if (delta > schwelle ) {
 					anzahl++;
-					sB.createSignal( kurs, Order.KAUF, delta);
+					kurs.createSignal( this, Order.KAUF, delta);
 				}
 			}
 		}
 		return anzahl; 
+	}
+
+	@Override
+	public String getKurzname() {
+		return "ADLDelta";
 	}
 
 }

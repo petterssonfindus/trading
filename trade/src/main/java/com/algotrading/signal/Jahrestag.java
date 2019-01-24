@@ -17,7 +17,7 @@ import com.algotrading.aktie.Kurs;
  * @author oskar
  *
  */
-public class Jahrestag implements SignalAlgorithmus {
+public class Jahrestag extends SignalAlgorithmus {
 	static final Logger log = LogManager.getLogger(Jahrestag.class);
 	// merkt sich das Jahr der letzten Signalerzeugung
 	private static int jahreszahl = 0;
@@ -27,17 +27,16 @@ public class Jahrestag implements SignalAlgorithmus {
 	 * Genau ein Signal pro Jahr
 	 * @param kursreihe
 	 */
-	public int ermittleSignal(Aktie aktie, SignalBeschreibung sB) {
+	public int rechne(Aktie aktie) {
 		if (aktie == null) log.error("Inputparameter Aktie ist null");
-		if (sB == null) log.error("Inputparameter Signalbeschreibung ist null");
 		int anzahl = 0;
 		jahreszahl = 0;
-		int tage = (Integer) sB.getParameter("tage");
-		int kaufverkauf = (Integer) sB.getParameter("kaufverkauf");
-		Zeitraum zeitraum = (Zeitraum) sB.getParameter("zeitraum");
+		int tage = (Integer) getParameter("tage");
+		int kaufverkauf = (Integer) getParameter("kaufverkauf");
+		Zeitraum zeitraum = (Zeitraum) getParameter("zeitraum");
 		
 		for (Kurs kurs : aktie.getKurse(zeitraum)) {
-			if (Jahrestag.pruefeJahrestag(sB, kurs, tage, kaufverkauf)) anzahl++;
+			if (pruefeJahrestag(kurs, tage, kaufverkauf)) anzahl++;
 		}
 		return anzahl; 
 	}
@@ -45,7 +44,7 @@ public class Jahrestag implements SignalAlgorithmus {
 	/**
 	 * erzeugt Jahrestag-Signal und hängt es an den Kurs an
 	 */
-	private static boolean pruefeJahrestag (SignalBeschreibung sB, Kurs tageskurs, int jahrestag, int kaufverkauf) {
+	private boolean pruefeJahrestag (Kurs tageskurs, int jahrestag, int kaufverkauf) {
 		if (tageskurs == null ) log.error("Inputvariable ist null"); 
 		boolean result = false; 
 		GregorianCalendar datum = tageskurs.datum;
@@ -54,11 +53,16 @@ public class Jahrestag implements SignalAlgorithmus {
 		if (dayofyear > jahrestag && year > jahreszahl) {
 			log.debug("Jahrestag eingetreten: " + tageskurs.wertpapier + " " + 
 					jahrestag + " " + kaufverkauf + " " + DateUtil.formatDate(datum));
-			sB.createSignal(tageskurs, (byte) kaufverkauf, 0);
+			tageskurs.createSignal(this, (byte) kaufverkauf, 0);
 			jahreszahl = datum.get(Calendar.YEAR);
 			result = true; 
 		}
 
 		return result; 
+	}
+
+	@Override
+	public String getKurzname() {
+		return "Jahrestag";
 	}
 }

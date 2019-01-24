@@ -9,7 +9,7 @@ public class TestSteigung extends TestCase {
 	
 	public void testPerformancePositiv() {
 		Aktie aktie = Aktien.getInstance().getAktie("testaktie");
-		IndikatorAlgorithmus iB = aktie.addIndikator(new IndikatorSteigung());
+		IndikatorAlgorithmus iB = aktie.createIndikatorAlgorithmus(new IndikatorSteigung());
 		float kurs = aktie.getBoersenkurse().get(50).getKurs();
 		System.out.println("Performancekurs " + kurs);
 		float kurs2 = aktie.getBoersenkurse().get(40).getKurs();

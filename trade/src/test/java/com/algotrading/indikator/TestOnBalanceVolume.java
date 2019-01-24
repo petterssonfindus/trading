@@ -20,8 +20,10 @@ public class TestOnBalanceVolume extends TestCase {
 		super.setUp();
 		
 		aktie = Aktien.newInstance().getAktie("testaktie");
-		iA = aktie.addIndikator(new IndikatorOBV());
-		aktie.addIndikator(iA);
+		IndikatorAlgorithmus iAVolume = aktie.createIndikatorAlgorithmus(new IndikatorKurswert());
+		iAVolume.addParameter("typ", 5);
+		iA = aktie.createIndikatorAlgorithmus(new IndikatorOBV());
+		aktie.createIndikatorAlgorithmus(iA);
 		iA.addParameter("dauer", 10);
 	}
 	
@@ -31,8 +33,9 @@ public class TestOnBalanceVolume extends TestCase {
 		ArrayList<Kurs> kurse = aktie.getBoersenkurse();
 		Kurs testKurs;
 		testKurs = kurse.get(13);
-		assertEquals(-399600f,testKurs.getIndikatorWert(iA));
+		assertEquals(-183700f,testKurs.getIndikatorWert(iA));
 		
+//		aktie.writeFileKursIndikatorSignal();
 	}
 
 }

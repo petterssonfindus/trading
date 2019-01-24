@@ -20,8 +20,8 @@ public class TestAccumulationDistributionLine extends TestCase {
 		super.setUp();
 		
 		aktie = Aktien.newInstance().getAktie("testaktie");
-		iA = aktie.addIndikator(new IndikatorADL());
-		aktie.addIndikator(iA);
+		iA = aktie.createIndikatorAlgorithmus(new IndikatorADL());
+		aktie.createIndikatorAlgorithmus(iA);
 		iA.addParameter("dauer", 10);
 	}
 	

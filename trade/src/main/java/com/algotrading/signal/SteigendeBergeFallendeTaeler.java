@@ -10,7 +10,7 @@ import com.algotrading.indikator.IndikatorAlgorithmus;
 import com.algotrading.aktie.Aktie;
 import com.algotrading.aktie.Kurs;
 
-public class SteigendeBergeFallendeTaeler implements SignalAlgorithmus {
+public class SteigendeBergeFallendeTaeler extends SignalAlgorithmus {
 
 	private static final float SCHWELLEBERGSUMME = 0.05f;
 	private static final float SCHWELLEBERGSTEIGT = 0.01f;
@@ -22,17 +22,17 @@ public class SteigendeBergeFallendeTaeler implements SignalAlgorithmus {
 	// Kursdifferenz in Prozentpunkte
 	private static final float FAKTORSTAERKEBERGTAL = 0.01f;
 	
-	static final Logger log = LogManager.getLogger(Signalsuche.class);
+	static final Logger log = LogManager.getLogger(SteigendeBergeFallendeTaeler.class);
 
 	/**
 	 * erzeugt Kaufsignal, wenn Berge ansteigen
 	 * Verkaufsignal, wenn Täler fallen
 	 * @param kursreihe
 	 */
-	public int ermittleSignal(Aktie aktie, SignalBeschreibung sB) {
+	public int rechne(Aktie aktie) {
 		int anzahl = 0;
 		ArrayList<Kurs> alleBerge = new ArrayList<Kurs>();
-		IndikatorAlgorithmus iB = (IndikatorAlgorithmus) sB.getParameter("indikator");
+		IndikatorAlgorithmus iB = (IndikatorAlgorithmus) getParameter("indikator");
 		if (iB == null) log.error("am Signal SteigendeTälerFallendeBerge hängt kein Indikator");
 		for (Kurs kurs : aktie.getBoersenkurse()) {
 			float staerke; 
@@ -44,12 +44,12 @@ public class SteigendeBergeFallendeTaeler implements SignalAlgorithmus {
 					float kursdelta = (kurs.getKurs() - alleBerge.get(alleBerge.size() - 2).getKurs()) / kurs.getKurs();
 					if (kursdelta > SteigendeBergeFallendeTaeler.SCHWELLEBERGSTEIGT) {
 						staerke = (kursdelta / SteigendeBergeFallendeTaeler.FAKTORSTAERKEBERGTAL);
-						sB.createSignal( kurs, Order.KAUF, staerke);
+						kurs.createSignal( this, Order.KAUF, staerke);
 						anzahl++;
 					}
 					else if (kursdelta < SteigendeBergeFallendeTaeler.SCHWELLEBERGFAELLT) {
 						staerke = (kursdelta / SteigendeBergeFallendeTaeler.FAKTORSTAERKEBERGTAL);
-						sB.createSignal(kurs, Order.VERKAUF, staerke);
+						kurs.createSignal(this, Order.VERKAUF, staerke);
 						anzahl++;
 					}
 				}
@@ -75,5 +75,10 @@ public class SteigendeBergeFallendeTaeler implements SignalAlgorithmus {
 			return true;
 		}
 		else return false; 
+	}
+
+	@Override
+	public String getKurzname() {
+		return "SBFT";
 	}
 }

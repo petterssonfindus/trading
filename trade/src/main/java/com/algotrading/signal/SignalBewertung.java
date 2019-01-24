@@ -16,13 +16,14 @@ public class SignalBewertung {
 	
 	private Zeitraum zeitraum; 
 	
-	private SignalBeschreibung sB; 
+	private SignalAlgorithmus sA; 
 	
 	public int getTage() {
 		return tage;
 	}
-	SignalBewertung(SignalBeschreibung sB) {
-		this.sB = sB; 
+	
+	SignalBewertung(SignalAlgorithmus sA) {
+		this.sA = sA; 
 	}
 	
 	public int kauf; // Anzahl Kauf-Signale
@@ -38,7 +39,7 @@ public class SignalBewertung {
 	public float summeBewertungen; // Bewertungs-Summe als Saldo positiver und negativer Prognosequalität. 
 	
 	public String toString () {
-		return this.sB + " Kauf:" + kauf + 
+		return this.sA + " Kauf:" + kauf + 
 				" korrekt:" + Util.rundeBetrag(kaufKorrekt, 3) + 
 				" Signal:" + Util.rundeBetrag(summeSKauf,3) + 
 				" Bewertung:" + Util.rundeBetrag(summeBKauf,3) + 
