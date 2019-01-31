@@ -36,22 +36,6 @@ public class Signal {
 	// bewertet die Prognosequalität dieses Signals 
 	private HashMap<Integer, Float> bewertung;
 	
-	// die Liste aller Signal-Typen
-	public static final short SteigenderBerg = 1;
-	public static final short FallenderBerg = 2;
-	public static final short SteigendesTal= 3;
-	public static final short FallendesTal= 4;
-
-	public static final short GDDurchbruch = 5;
-	public static final short GDSchnitt = 6;
-
-	public static final short Jahrestag = 8;
-	
-	public static final short RSI = 10; 
-	public static final short ADL = 12; 
-	
-	public static final short MinMax = 13; 
-	
 	/**
 	 * Konstruktor kann nur über die Methode create genutzt werden. 
 	 * Dadurch kann beim Erzeugen die Referenz auf den Kurs eingetragen werden. 

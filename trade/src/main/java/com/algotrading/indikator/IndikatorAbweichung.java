@@ -6,6 +6,7 @@ import org.apache.logging.log4j.Logger;
 import com.algotrading.aktie.Aktie;
 import com.algotrading.aktie.Aktien;
 import com.algotrading.aktie.Kurs;
+import com.algotrading.util.MathUtil;
 
 /**
  * ein Indikator als Kurs des selben Tages 
@@ -16,11 +17,13 @@ import com.algotrading.aktie.Kurs;
  * 					4 = low
  * 					5 = volume
  * Parameter aktie = Name der Aktie, die referenziert wird (optional) 
+ * Parameter stabw = Anzahl Tage für die Standardabweichung. Damit wird der Indikator ersetzt. 
+ * Parameter relativ = wenn vorhanden, dann: wie viele Standabweichungen ist der Kurs vom Durchschnitt entfernt
  * @author oskar
  *
  */
-public class IndikatorKurswert extends IndikatorAlgorithmus {
-	static final Logger log = LogManager.getLogger(IndikatorKurswert.class);
+public class IndikatorAbweichung extends IndikatorAlgorithmus {
+	static final Logger log = LogManager.getLogger(IndikatorAbweichung.class);
 	
 	@Override
 	public void rechne(Aktie aktie) {
@@ -39,6 +42,18 @@ public class IndikatorKurswert extends IndikatorAlgorithmus {
 		Object o = getParameter("typ");
 		if (o == null) typ = 1; 
 		else typ = (Integer) o ;
+		
+		int stabwDauer = 0;
+		Object stabwO = getParameter("stabw");
+		if (stabwO != null) {
+			stabwDauer = (int) stabwO; 
+		}
+
+		boolean relativ = false;
+		Object relativO = getParameter("relativ");
+		if (relativO != null) {
+			relativ = true; 
+		}
 
 		// alle Kurse werden ergänzt um den Indikator
 		
@@ -62,6 +77,16 @@ public class IndikatorKurswert extends IndikatorAlgorithmus {
 			
 			// den Quell-Kurs holen und als Indikator eintragen. 
 			kurs.addIndikator(this, getValue(kurs2, typ));
+		}
+		
+		// zum Schluss wird auf Wunsch die Standardabweichung berechnet und der Indikator damit ersetzt 
+		if (stabwO != null) {
+			if (relativ) {
+				MathUtil.transformiereNachAbweichung(aktie, this, stabwDauer, true);
+			}
+			else {
+				MathUtil.transformiereNachAbweichung(aktie, this, stabwDauer, false);
+			}
 		}
 		
 	}

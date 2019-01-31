@@ -460,7 +460,7 @@ public class DBManager {
 	        while (response.next())
 	        {
 	        	Kurs kurs = new Kurs();
-	        	kurs.setKurs(response.getFloat("close"));
+	        	kurs.setKurswert(response.getFloat("close"));
 	        	kurs.close = response.getFloat("close");
 	        	kurs.high = response.getFloat("high");
 	        	kurs.low = response.getFloat("low");

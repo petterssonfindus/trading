@@ -19,7 +19,7 @@ public class TestMultiplikation extends TestCase {
 	 * Kurswert * Volatilität
 	 */
 	public void testMultiplikation () {
-		IndikatorAlgorithmus iB = aktie.createIndikatorAlgorithmus(new IndikatorKurswert());
+		IndikatorAlgorithmus iB = aktie.createIndikatorAlgorithmus(new IndikatorAbweichung());
 		IndikatorAlgorithmus iB2 = aktie.createIndikatorAlgorithmus(new IndikatorVolatilitaet());
 		iB2.addParameter("dauer", 10);
 		
@@ -55,7 +55,7 @@ public class TestMultiplikation extends TestCase {
 	 * Kurswert * Volatilität
 	 */
 	public void testMultiplikationReziprok () {
-		IndikatorAlgorithmus iB = aktie.createIndikatorAlgorithmus(new IndikatorKurswert());
+		IndikatorAlgorithmus iB = aktie.createIndikatorAlgorithmus(new IndikatorAbweichung());
 		IndikatorAlgorithmus iB2 = aktie.createIndikatorAlgorithmus(new IndikatorVolatilitaet());
 		iB2.addParameter("dauer", 10);
 		

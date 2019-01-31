@@ -7,6 +7,7 @@ import org.apache.logging.log4j.Logger;
 
 import com.algotrading.aktie.Aktie;
 import com.algotrading.aktie.Kurs;
+import com.algotrading.util.MathUtil;
 
 public class IndikatorOBV extends IndikatorAlgorithmus {
 
@@ -16,15 +17,22 @@ public class IndikatorOBV extends IndikatorAlgorithmus {
 	 * Rechnet On-Balance-Volume - Indikator
 	 * Steigt der Kurs, wird das Volumen hinzugerechnet 
 	 * Fällt der Kurs, wird das Volumen abgezogen. 
+	 * 
 	 * @param aktie
-	 * @param dauer
+	 * @param dauer - Anzahl Tage 
+	 * @param relativ - Anzahl Standardabweichungen vom Durchschnitt
 	 */
 	@Override
 	public void rechne (Aktie aktie) {
 		// holt die Kurse, an denen die Umsätze dran hängen.
 		ArrayList<Kurs> kurse = aktie.getBoersenkurse();
+		
 		// holt den Parameter aus dem Indikator 
 		int dauer = (Integer) getParameter("dauer");
+		
+		Object relativO = getParameter("relativ");
+		boolean relativ = false; 
+		if (relativO != null) relativ = true; 
 		
 		int summe = 0;
 		int umsatzHeute = 0;
@@ -55,7 +63,8 @@ public class IndikatorOBV extends IndikatorAlgorithmus {
 			kurs.addIndikator(this, summe); 
 			summe = 0;
 		}
-		
+		// wenn relative Berechnung gewnünscht, dann Transformieren 
+		if (relativ) MathUtil.transformiereNachAbweichung(aktie, this, dauer, relativ);
 	}
 
 	@Override

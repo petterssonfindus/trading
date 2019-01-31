@@ -88,6 +88,23 @@ public class Kurs {
 	}
 	
 	/**
+	 * Ersetzt einen Indikator-Wert durch einen anderen
+	 */
+	public void replaceIndikatorWert (IndikatorAlgorithmus iA, float wert) {
+		if (this.indikatoren.containsKey(iA)) {
+			this.indikatoren.replace(iA, wert);
+		}
+	}
+	/**
+	 * Entfernt einen Indikator
+	 * z.B. wenn der Indikator transformiert wird mit Standardabw. und die ersten Kurse leer bleiben. 
+	 */
+	public void removeIndikator (IndikatorAlgorithmus iA) {
+		if (this.indikatoren.containsKey(iA))
+			this.indikatoren.remove(iA);
+	}
+	
+	/**
 	 * ermittelt den Wert eines bestimmten Indikators dieses Kurses. 
 	 * null - wenn Indikator an diesem Kurs nicht vorhanden
 	 * @param indikator die Indikator-Beschreibung 
@@ -98,7 +115,6 @@ public class Kurs {
 			return this.indikatoren.get(indikator);
 		}
 		else {
-//			log.error("Kurs enthält den gewünschten Indikator nicht");
 			return null;
 		}
 	}
@@ -126,7 +142,7 @@ public class Kurs {
 		}
 	}
 	
-	public void setKurs (float kurs) {
+	public void setKurswert (float kurs) {
 		this.close = kurs;
 	}
 	/**

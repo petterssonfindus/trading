@@ -12,22 +12,17 @@ import junit.framework.TestCase;
 public class TestOnBalanceVolume extends TestCase {
 	
 	private static Aktie aktie; 
-	private static IndikatorAlgorithmus iA; 
 	
 	@Override
 	protected void setUp() throws Exception {
-		// TODO Auto-generated method stub
 		super.setUp();
-		
 		aktie = Aktien.newInstance().getAktie("testaktie");
-		IndikatorAlgorithmus iAVolume = aktie.createIndikatorAlgorithmus(new IndikatorKurswert());
-		iAVolume.addParameter("typ", 5);
-		iA = aktie.createIndikatorAlgorithmus(new IndikatorOBV());
-		aktie.createIndikatorAlgorithmus(iA);
-		iA.addParameter("dauer", 10);
 	}
 	
+/*
 	public void testOnBalanceVolume () {
+		iA = aktie.createIndikatorAlgorithmus(new IndikatorOBV());
+		iA.addParameter("dauer", 10);
 		aktie.rechneIndikatoren();
 		
 		ArrayList<Kurs> kurse = aktie.getBoersenkurse();
@@ -37,5 +32,32 @@ public class TestOnBalanceVolume extends TestCase {
 		
 //		aktie.writeFileKursIndikatorSignal();
 	}
+*/
+	public void testOnBalanceVolumeRelativ () {
+		IndikatorAlgorithmus iAVolume = aktie.createIndikatorAlgorithmus(new IndikatorAbweichung());
+		iAVolume.addParameter("typ", 5);
+		
+		IndikatorAlgorithmus iAOBV = aktie.createIndikatorAlgorithmus(new IndikatorOBV());
+		iAOBV.addParameter("dauer", 10);
+		iAOBV.addParameter("relativ", 1);
+		
+		IndikatorAlgorithmus iAGD = aktie.createIndikatorAlgorithmus(new IndikatorGD());
+		iAGD.addParameter("dauer", 10);
+		
+		IndikatorAlgorithmus iAM = aktie.createIndikatorAlgorithmus(new IndikatorMultiplikation());
+		iAM.addParameter("indikator1", iAOBV);
+		iAM.addParameter("indikator2", iAGD);
+		
+		aktie.rechneIndikatoren();
+		
+		ArrayList<Kurs> kurse = aktie.getBoersenkurse();
+		Kurs testKurs;
+		testKurs = kurse.get(13);
+		System.out.println("IndikatorMultiplikator " + kurse.get(13).getIndikatorWert(iAM));
+//		assertEquals(-183700f,testKurs.getIndikatorWert(iAM));
+		
+		aktie.writeFileKursIndikatorSignal();
+	}
+	
 
 }

@@ -60,7 +60,8 @@ public class Aktie extends Parameter {
 	}
 	public byte boersenplatz; 
 	// die Indikator-Algorithmen, die an der Aktie hängen - Zugriff über Getter  
-	List<IndikatorAlgorithmus> indikatorAlgorithmen = new ArrayList<IndikatorAlgorithmus>();
+	// die Liste stellt die Reihenfolge sicher
+	private List<IndikatorAlgorithmus> indikatorAlgorithmen = new ArrayList<IndikatorAlgorithmus>();
 	private boolean indikatorenSindBerechnet = false; 
 	// die Signal-Algorithmen werden an der Aktie festgehalten und beim Berechnen an die Kurse gehängt
 	private List<SignalAlgorithmus> sAs = new ArrayList<SignalAlgorithmus>();
@@ -266,6 +267,7 @@ public class Aktie extends Parameter {
 			for (IndikatorAlgorithmus iA : this.indikatorAlgorithmen) {
 				// die abstrakte Methode, die jeder Algorithmus implmentieren muss
 				iA.rechne(this);
+				iA.berechnet();
 			}
 			this.indikatorenSindBerechnet = true;
 		}

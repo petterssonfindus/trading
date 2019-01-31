@@ -2,14 +2,14 @@ package com.algotrading.indikator;
 
 import com.algotrading.aktie.Aktie;
 import com.algotrading.aktie.Kurs;
-import com.algotrading.util.Util;
+
 /**
  * Multipliziert 2 bestehende Indikatoren 
- * Berücksichtigt einen zusätzlichen festen Faktor 
+ * Berücksichtigt einen zusätzlichen festen Faktor (Multiplikator)
  * Jeder Indikator kann als Nenner verwendet werden durch reziproken Wert 
  * parameter: 	reziprok1 (optional) - Integer 0 oder null = Zähler  1 = Nenner
  * 				reziprok2 (optional) - Integer 0 oder null = Zähler  1 = Nenner
- * 				faktor
+ * 				faktor dient als Multiplikator
  * @author oskar
  */
 public class IndikatorMultiplikation extends IndikatorAlgorithmus {
@@ -39,14 +39,17 @@ public class IndikatorMultiplikation extends IndikatorAlgorithmus {
 			float value1 = iA1V.floatValue();
 			// wenn reziprok eingeschalten, dann umdrehen. 
 			if (reziprok1 == 1) value1 = 1 / value1; 
+			
 			// hole den Indikator-Wert2 an dem Kurs 
 			Float iA2V = kurs.getIndikatorWert(iA2);
 			if (iA2V == null) continue; 
 			float value2 = iA2V.floatValue();
 			// wenn reziprok eingeschalten, dann umdrehen. 
 			if (reziprok2 == 1) value2 = 1 / value2; 
-
+			
+			// Multiplikation durchführen
 			ergebnis = value1 * value2 * faktor; 
+			// den neuen Indikator einfügen 
 			kurs.addIndikator(this, ergebnis);
 		}
 	}

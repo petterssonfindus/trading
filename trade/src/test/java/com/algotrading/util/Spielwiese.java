@@ -13,6 +13,15 @@ import junit.framework.TestCase;
 
 public class Spielwiese extends TestCase {
 
+	/**
+	 * 
+	 * @startuml
+	 * Klasse1 -> Kl2
+	 * Kl2 --> Klasse1
+	 * @enduml
+	 * 
+	 */
+	
 /*
 	public void testBiConsumer () {
 		Map<String,Number> num = new HashMap<>();
@@ -50,6 +59,20 @@ public class Spielwiese extends TestCase {
 		for (Object o : map.entrySet()) {
 			System.out.println("Entries: " + o);
 		}
+		
+	}
+	
+	public void testHashMapReplace () {
+		HashMap<String, Integer> testMap = new HashMap<String, Integer>();
+		testMap.put("1", new Integer(1));
+		testMap.put("2", new Integer(2));
+		
+		Integer test = testMap.get("2");
+		testMap.replace("1", 5);
+		testMap.remove("2");
+		testMap.put("2", 3);
+		System.out.println("HashMapRaplace:" + testMap.get("1"));
+		System.out.println("HashMapRaplace:" + testMap.get("2"));
 		
 	}
 	
