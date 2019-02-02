@@ -36,27 +36,45 @@ public class TestOnBalanceVolume extends TestCase {
 	public void testOnBalanceVolumeRelativ () {
 		IndikatorAlgorithmus iAVolume = aktie.createIndikatorAlgorithmus(new IndikatorAbweichung());
 		iAVolume.addParameter("typ", 5);
+
+		IndikatorAlgorithmus iAOBVa = aktie.createIndikatorAlgorithmus(new IndikatorOBV());
+		iAOBVa.addParameter("dauer", 10);
 		
-		IndikatorAlgorithmus iAOBV = aktie.createIndikatorAlgorithmus(new IndikatorOBV());
-		iAOBV.addParameter("dauer", 10);
-		iAOBV.addParameter("relativ", 1);
+		IndikatorAlgorithmus iAOBVs = aktie.createIndikatorAlgorithmus(new IndikatorOBV());
+		iAOBVs.addParameter("dauer", 10);
+		iAOBVs.addParameter("stabw", 10);
 		
-		IndikatorAlgorithmus iAGD = aktie.createIndikatorAlgorithmus(new IndikatorGD());
-		iAGD.addParameter("dauer", 10);
-		
-		IndikatorAlgorithmus iAM = aktie.createIndikatorAlgorithmus(new IndikatorMultiplikation());
-		iAM.addParameter("indikator1", iAOBV);
-		iAM.addParameter("indikator2", iAGD);
-		
+		IndikatorAlgorithmus iAOBVr = aktie.createIndikatorAlgorithmus(new IndikatorOBV());
+		iAOBVr.addParameter("dauer", 10);
+		iAOBVr.addParameter("stabw", 10);
+		iAOBVr.addParameter("relativ", 1);
+
+		IndikatorAlgorithmus iAOBVf = aktie.createIndikatorAlgorithmus(new IndikatorOBV());
+		iAOBVf.addParameter("dauer", 10);
+		iAOBVf.addParameter("stabw", 10);
+		iAOBVf.addParameter("faktor", 1);
+
+		IndikatorAlgorithmus iAOBVl = aktie.createIndikatorAlgorithmus(new IndikatorOBV());
+		iAOBVl.addParameter("dauer", 10);
+		iAOBVl.addParameter("stabw", 10);
+		iAOBVl.addParameter("log", 1);
+
 		aktie.rechneIndikatoren();
 		
 		ArrayList<Kurs> kurse = aktie.getBoersenkurse();
-		Kurs testKurs;
-		testKurs = kurse.get(13);
-		System.out.println("IndikatorMultiplikator " + kurse.get(13).getIndikatorWert(iAM));
-//		assertEquals(-183700f,testKurs.getIndikatorWert(iAM));
+		Kurs testKurs = kurse.get(23);
+		System.out.println("IndikatorOBVabsolut " + testKurs.getIndikatorWert(iAOBVa));
+		System.out.println("IndikatorOBVStabw " + testKurs.getIndikatorWert(iAOBVs));
+		System.out.println("IndikatorOBVrelativ " + testKurs.getIndikatorWert(iAOBVr));
+		System.out.println("IndikatorOBVfaktor " + testKurs.getIndikatorWert(iAOBVf));
+		System.out.println("IndikatorOBVlog " + testKurs.getIndikatorWert(iAOBVl));
+		assertEquals(188800.0f,testKurs.getIndikatorWert(iAOBVa));
+		assertEquals(139502.28f,testKurs.getIndikatorWert(iAOBVs));
+		assertEquals(-0.15254231f,testKurs.getIndikatorWert(iAOBVr));
+		assertEquals(0.98474574f,testKurs.getIndikatorWert(iAOBVf));
+		assertEquals(-0.0066758767f,testKurs.getIndikatorWert(iAOBVl));
 		
-		aktie.writeFileKursIndikatorSignal();
+//		aktie.writeFileKursIndikatorSignal();
 	}
 	
 

@@ -21,6 +21,9 @@ public class IndikatorOBV extends IndikatorAlgorithmus {
 	 * @param aktie
 	 * @param dauer - Anzahl Tage 
 	 * @param relativ - Anzahl Standardabweichungen vom Durchschnitt
+	 * 				benutzt für die Stabw die selbe Dauer wie für die OBV 
+	 * @param faktor - Faktorisierung oszilliert um Wert 1, impliziert relativ
+	 * 
 	 */
 	@Override
 	public void rechne (Aktie aktie) {
@@ -30,10 +33,22 @@ public class IndikatorOBV extends IndikatorAlgorithmus {
 		// holt den Parameter aus dem Indikator 
 		int dauer = (Integer) getParameter("dauer");
 		
-		Object relativO = getParameter("relativ");
-		boolean relativ = false; 
-		if (relativO != null) relativ = true; 
 		
+		
+		boolean faktor = false; 
+		boolean relativ = false; 
+		Object faktorO = getParameter("faktor");
+		// wenn Parameter 'faktor' vorhanden, dann ist faktor und relativ = true
+		if (faktorO != null) {
+			faktor = true; 
+			relativ = true; 
+		}
+		// wenn 'faktor' nicht vorhanden könnte realtiv vorhanden sein 
+		else {
+			Object relativO = getParameter("relativ");
+			if (relativO != null) relativ = true; 
+		}
+
 		int summe = 0;
 		int umsatzHeute = 0;
 		Kurs kursVortag = null;
@@ -63,8 +78,8 @@ public class IndikatorOBV extends IndikatorAlgorithmus {
 			kurs.addIndikator(this, summe); 
 			summe = 0;
 		}
-		// wenn relative Berechnung gewnünscht, dann Transformieren 
-		if (relativ) MathUtil.transformiereNachAbweichung(aktie, this, dauer, relativ);
+		// zum Schluss wird die Faktorisierung und Logarithmierung durchgeführt
+		MathUtil.transformiereIndikator(aktie, this);
 	}
 
 	@Override

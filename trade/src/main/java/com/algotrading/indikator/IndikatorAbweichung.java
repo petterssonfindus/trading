@@ -43,17 +43,6 @@ public class IndikatorAbweichung extends IndikatorAlgorithmus {
 		if (o == null) typ = 1; 
 		else typ = (Integer) o ;
 		
-		int stabwDauer = 0;
-		Object stabwO = getParameter("stabw");
-		if (stabwO != null) {
-			stabwDauer = (int) stabwO; 
-		}
-
-		boolean relativ = false;
-		Object relativO = getParameter("relativ");
-		if (relativO != null) {
-			relativ = true; 
-		}
 
 		// alle Kurse werden ergänzt um den Indikator
 		
@@ -79,15 +68,8 @@ public class IndikatorAbweichung extends IndikatorAlgorithmus {
 			kurs.addIndikator(this, getValue(kurs2, typ));
 		}
 		
-		// zum Schluss wird auf Wunsch die Standardabweichung berechnet und der Indikator damit ersetzt 
-		if (stabwO != null) {
-			if (relativ) {
-				MathUtil.transformiereNachAbweichung(aktie, this, stabwDauer, true);
-			}
-			else {
-				MathUtil.transformiereNachAbweichung(aktie, this, stabwDauer, false);
-			}
-		}
+		// zum Schluss wird die Faktorisierung und Logarithmierung durchgeführt
+		MathUtil.transformiereIndikator(aktie, this);
 		
 	}
 	

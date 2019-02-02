@@ -32,7 +32,8 @@ public class Util {
 	 * Float rechnet mit 7 signifikanten Stellen. 
 	 * Das führt bei Beträgen von 10.000 zu Fehlern im Cent-Bereich.
 	 */
-	public static String toString( float input) {
+	public static String toString( Float input) {
+		if (input == null) return ""; 
 		DecimalFormat df = (DecimalFormat)DecimalFormat.getInstance(Locale.GERMANY);
 //		df.setDecimalFormatSymbols(DecimalFormatSymbols.getInstance(Locale.GERMAN)); 
 //		df.applyPattern( "####.##0,00" );
