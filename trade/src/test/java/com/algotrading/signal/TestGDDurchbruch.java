@@ -6,7 +6,7 @@ import java.util.List;
 import com.algotrading.aktie.Aktie;
 import com.algotrading.aktie.Aktien;
 import com.algotrading.indikator.IndikatorAlgorithmus;
-import com.algotrading.indikator.IndikatorGD;
+import com.algotrading.indikator.IndikatorGDalt;
 import com.algotrading.util.Zeitraum;
 
 import junit.framework.TestCase;
@@ -32,12 +32,12 @@ public class TestGDDurchbruch extends TestCase {
 		assertTrue(aktie.getBoersenkurse().size() > 1);
 		
 		// Indikator1 konfigurieren und an aktie hängen
-		indikator10 = aktie.createIndikatorAlgorithmus(new IndikatorGD());
+		indikator10 = aktie.createIndikatorAlgorithmus(new IndikatorGDalt());
 		aktie.createIndikatorAlgorithmus(indikator10);
 		indikator10.addParameter("dauer", 10);
 
 		// Indikator3 konfigurieren
-		indikator30 = aktie.createIndikatorAlgorithmus(new IndikatorGD());
+		indikator30 = aktie.createIndikatorAlgorithmus(new IndikatorGDalt());
 		aktie.createIndikatorAlgorithmus(indikator30);
 		indikator30.addParameter("dauer", 30);
 		

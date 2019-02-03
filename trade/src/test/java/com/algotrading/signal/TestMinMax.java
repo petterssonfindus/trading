@@ -5,7 +5,7 @@ import java.util.List;
 import com.algotrading.aktie.Aktie;
 import com.algotrading.aktie.Aktien;
 import com.algotrading.indikator.IndikatorAlgorithmus;
-import com.algotrading.indikator.IndikatorGD;
+import com.algotrading.indikator.IndikatorGDalt;
 import com.algotrading.indikator.IndikatorAbweichung;
 import com.algotrading.util.Zeitraum;
 

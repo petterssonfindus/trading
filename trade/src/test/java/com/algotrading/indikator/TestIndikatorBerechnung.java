@@ -19,17 +19,17 @@ public class TestIndikatorBerechnung extends TestCase {
 	 * stellt sicher, dass die Reihenfolge des Einstellens bei der Berechnung gleich bleibt. 
 	 */
 	public static void testReihenfolge() {
-		IndikatorAlgorithmus iA1 = aktie.createIndikatorAlgorithmus(new IndikatorGD());
+		IndikatorAlgorithmus iA1 = aktie.createIndikatorAlgorithmus(new IndikatorGDalt());
 		iA1.addParameter("test", 1);
-		IndikatorAlgorithmus iA2 = aktie.createIndikatorAlgorithmus(new IndikatorGD());
+		IndikatorAlgorithmus iA2 = aktie.createIndikatorAlgorithmus(new IndikatorGDalt());
 		iA2.addParameter("test", 2);
-		IndikatorAlgorithmus iA3 = aktie.createIndikatorAlgorithmus(new IndikatorGD());
+		IndikatorAlgorithmus iA3 = aktie.createIndikatorAlgorithmus(new IndikatorGDalt());
 		iA3.addParameter("test", 3);
-		IndikatorAlgorithmus iA4 = aktie.createIndikatorAlgorithmus(new IndikatorGD());
+		IndikatorAlgorithmus iA4 = aktie.createIndikatorAlgorithmus(new IndikatorGDalt());
 		iA4.addParameter("test", 4);
-		IndikatorAlgorithmus iA5 = aktie.createIndikatorAlgorithmus(new IndikatorGD());
+		IndikatorAlgorithmus iA5 = aktie.createIndikatorAlgorithmus(new IndikatorGDalt());
 		iA5.addParameter("test", 5);
-		IndikatorAlgorithmus iA6 = aktie.createIndikatorAlgorithmus(new IndikatorGD());
+		IndikatorAlgorithmus iA6 = aktie.createIndikatorAlgorithmus(new IndikatorGDalt());
 		iA6.addParameter("test", 6);
 		
 		List<IndikatorAlgorithmus> algos = aktie.getIndikatorAlgorithmen();

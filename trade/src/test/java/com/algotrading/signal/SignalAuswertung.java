@@ -3,7 +3,7 @@ package com.algotrading.signal;
 import com.algotrading.aktie.Aktie;
 import com.algotrading.aktie.Aktien;
 import com.algotrading.indikator.IndikatorAlgorithmus;
-import com.algotrading.indikator.IndikatorGD;
+import com.algotrading.indikator.IndikatorGDalt;
 import com.algotrading.indikator.IndikatorMinMax;
 import com.algotrading.indikator.IndikatorMultiplikation;
 import com.algotrading.indikator.IndikatorVolatilitaet;
