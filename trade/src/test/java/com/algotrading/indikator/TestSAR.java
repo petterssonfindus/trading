@@ -20,7 +20,7 @@ public class TestSAR extends TestCase {
 		super.setUp();
 		
 		aktie = Aktien.newInstance().getAktie("sardata5");
-		iA = aktie.createIndikatorAlgorithmus(new IndikatorStatisticSAR());
+		iA = aktie.addIndikatorAlgorithmus(new IndikatorStatisticSAR());
 		iA.addParameter("start", 0.02f);
 		iA.addParameter("stufe", 0.02f);
 		iA.addParameter("maximum", 0.2f);

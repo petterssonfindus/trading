@@ -34,27 +34,27 @@ public class TestOnBalanceVolume extends TestCase {
 	}
 */
 	public void testOnBalanceVolumeRelativ () {
-		IndikatorAlgorithmus iAVolume = aktie.createIndikatorAlgorithmus(new IndikatorAbweichung());
+		IndikatorAlgorithmus iAVolume = aktie.addIndikatorAlgorithmus(new IndikatorAbweichung());
 		iAVolume.addParameter("typ", 5);
 
-		IndikatorAlgorithmus iAOBVa = aktie.createIndikatorAlgorithmus(new IndikatorOBV());
+		IndikatorAlgorithmus iAOBVa = aktie.addIndikatorAlgorithmus(new IndikatorOBV());
 		iAOBVa.addParameter("dauer", 10);
 		
-		IndikatorAlgorithmus iAOBVs = aktie.createIndikatorAlgorithmus(new IndikatorOBV());
+		IndikatorAlgorithmus iAOBVs = aktie.addIndikatorAlgorithmus(new IndikatorOBV());
 		iAOBVs.addParameter("dauer", 10);
 		iAOBVs.addParameter("stabw", 10);
 		
-		IndikatorAlgorithmus iAOBVr = aktie.createIndikatorAlgorithmus(new IndikatorOBV());
+		IndikatorAlgorithmus iAOBVr = aktie.addIndikatorAlgorithmus(new IndikatorOBV());
 		iAOBVr.addParameter("dauer", 10);
 		iAOBVr.addParameter("stabw", 10);
 		iAOBVr.addParameter("relativ", 1);
 
-		IndikatorAlgorithmus iAOBVf = aktie.createIndikatorAlgorithmus(new IndikatorOBV());
+		IndikatorAlgorithmus iAOBVf = aktie.addIndikatorAlgorithmus(new IndikatorOBV());
 		iAOBVf.addParameter("dauer", 10);
 		iAOBVf.addParameter("stabw", 10);
 		iAOBVf.addParameter("faktor", 1);
 
-		IndikatorAlgorithmus iAOBVl = aktie.createIndikatorAlgorithmus(new IndikatorOBV());
+		IndikatorAlgorithmus iAOBVl = aktie.addIndikatorAlgorithmus(new IndikatorOBV());
 		iAOBVl.addParameter("dauer", 10);
 		iAOBVl.addParameter("stabw", 10);
 		iAOBVl.addParameter("log", 1);

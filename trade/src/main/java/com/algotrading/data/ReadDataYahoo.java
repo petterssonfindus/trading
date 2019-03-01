@@ -10,6 +10,7 @@ import java.net.URL;
 import java.net.URLConnection;
 import java.util.ArrayList;
 import java.util.GregorianCalendar;
+import java.util.List;
 
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.utils.URIBuilder;
@@ -64,7 +65,7 @@ public class ReadDataYahoo {
 	 */
 	public static void YahooWSAktienController () {
 		Aktien aktien = Aktien.getInstance(); 
-		ArrayList<Aktie> alleAktien = aktien.getAllAktien();
+		List<Aktie> alleAktien = aktien.getAllAktien();
 		for (Aktie aktie : alleAktien) {
 			if (aktie.getQuelle() == 1) {
 				YahooWSController(aktie.name);
@@ -92,7 +93,7 @@ public class ReadDataYahoo {
 		if (nextKurs == null) {
 			nextKurs = new GregorianCalendar(1980, 1, 1);
 		}
-		int diff = DateUtil.anzahlTage(nextKurs, letzterHandelstag);
+		int diff = DateUtil.anzahlKalenderTage(nextKurs, letzterHandelstag);
 		System.out.println(name + ": Anfrage von: " + DateUtil.formatDate(nextKurs) + " bis: " + DateUtil.formatDate(letzterHandelstag) + " Diff " + diff);
 		// wenn der letzte Kurs vor dem letzten Handelstag liegt
 		if (diff >= 1) {	

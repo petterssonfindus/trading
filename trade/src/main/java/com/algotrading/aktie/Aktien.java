@@ -1,12 +1,16 @@
 package com.algotrading.aktie;
 
 import java.util.ArrayList;
+import java.util.GregorianCalendar;
 import java.util.HashMap;
+import java.util.List;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import com.algotrading.data.DBManager;
+import com.algotrading.indikator.IndikatorAlgorithmus;
+import com.algotrading.util.DateUtil;
 import com.algotrading.util.Zeitraum;
 
 	/**
@@ -88,39 +92,51 @@ public class Aktien {
 	/**
 	 * eine Liste aller registrierter Aktien incl. Indizes
 	 */
-	public ArrayList<Aktie> getAllAktien () {
-		ArrayList<Aktie> result = new ArrayList<Aktie>();
+	public List<Aktie> getAllAktien () {
+		List<Aktie> result = new ArrayList<Aktie>();
 		for (Aktie aktie : verzeichnis.values()) {
 			result.add(aktie);
 		}
 		return result;
 	}
 	/**
-	 * Alle Aktien und Indizes, bei denen Kurse innerhalb des gewünschten Zeitraums vorhanden sind 
-	 * @param mitIndizes 
-	 * @return Liste von Aktien mit Kursreihen
+	 * Alle Aktien und Indizes, bei denen Kurse rückwirkend vorliegen bis zum Beginn
 	 */
-	public ArrayList<Aktie> getAktien (Zeitraum zeitraum, boolean mitIndizes) {
-		ArrayList<Aktie> result = new ArrayList<Aktie>();
-		long beginn = zeitraum.beginn.getTimeInMillis();
-		long ende = zeitraum.ende.getTimeInMillis();
+	public List<Aktie> getAktien (GregorianCalendar beginn) {
+		List<Aktie> result = new ArrayList<Aktie>();
 		for (Aktie aktie : verzeichnis.values()) {
-			boolean test = false; 
-			if (aktie.getZeitraumKurse().beginn.getTimeInMillis() < beginn &&  
-					aktie.getZeitraumKurse().ende.getTimeInMillis() > ende) {
-				test = true; 
-				if (mitIndizes) {
-					String substring = aktie.name.substring(0, 3);
-					if (substring == "xxx") {
-						test = false;
-					}
-				}
+			Zeitraum zeitraum = aktie.getZeitraumKurse();
+			if (zeitraum != null && zeitraum.beginn != null && zeitraum.beginn.before(beginn)) {
 				result.add(aktie);
 			}
 		}
 		return result;
-		
 	}
+	
+	/**
+	 * Alle Aktien mit diesen Suchkriterien 
+	 */
+	public List<Aktie> getAktien (Integer land, Integer waehrung) {
+		List<Aktie> result = new ArrayList<Aktie>();
+		for (Aktie aktie : verzeichnis.values()) {
+			if (land == null || aktie.getLand() == land) {
+				if (waehrung == null && aktie.getWaehrung() == waehrung) {
+					result.add(aktie);
+				}
+			}
+		}
+		return result;
+	}
+	
+	/**
+	 * Hängt an jede Aktie einer Aktien-Liste einen Indikator 
+	 */
+	public static void addIndikatorAlgorithmus (List<Aktie> aktien, IndikatorAlgorithmus iA) {
+		for (Aktie aktie : aktien) {
+			aktie.addIndikatorAlgorithmus(iA);
+		}
+	}
+	
 	
 	/**
 	 * das Verzeichnis wird beim Erstellen initialisiert aus der DB 

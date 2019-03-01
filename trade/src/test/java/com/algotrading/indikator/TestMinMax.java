@@ -10,7 +10,7 @@ public class TestMinMax extends TestCase {
 	
 	public void testMinMax() {
 		Aktie aktie = Aktien.getInstance().getAktie("testaktie");
-		IndikatorAlgorithmus iA = aktie.createIndikatorAlgorithmus(new IndikatorMinMax());
+		IndikatorAlgorithmus iA = aktie.addIndikatorAlgorithmus(new IndikatorMinMax());
 		iA.addParameter("dauer", 10);
 		aktie.rechneIndikatoren();
 		

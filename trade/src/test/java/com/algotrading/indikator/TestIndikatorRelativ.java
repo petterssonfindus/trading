@@ -13,9 +13,9 @@ public class TestIndikatorRelativ extends TestCase {
 	public static void testRSIRelativ() {
 		
 		Aktie aktie = Aktien.getInstance().getAktie("testaktie");
-		IndikatorAlgorithmus iA = aktie.createIndikatorAlgorithmus(new IndikatorRSIRelativ());
+		IndikatorAlgorithmus iA = aktie.addIndikatorAlgorithmus(new IndikatorRSIRelativ());
 		iA.addParameter("dauer", 10);
-		IndikatorAlgorithmus iA2 = aktie.createIndikatorAlgorithmus(new IndikatorRSI2());
+		IndikatorAlgorithmus iA2 = aktie.addIndikatorAlgorithmus(new IndikatorRSI2());
 		iA2.addParameter("dauer", 10);
 		
 		aktie.rechneIndikatoren();

@@ -13,6 +13,7 @@ import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.GregorianCalendar;
+import java.util.List;
 import java.util.zip.GZIPInputStream;
 
 import org.apache.http.client.utils.URIBuilder;
@@ -37,7 +38,7 @@ import com.algotrading.util.Util;
 	 */
 	public static void FinanzenWSAktienController () {
 		Aktien aktien = Aktien.getInstance(); 
-		ArrayList<Aktie> alleAktien = aktien.getAllAktien();
+		List<Aktie> alleAktien = aktien.getAllAktien();
 		for (Aktie aktie : alleAktien) {
 			if (aktie.getQuelle() == 2) {
 				FinanzenWSController(aktie.name, false);
@@ -66,7 +67,7 @@ import com.algotrading.util.Util;
 		if (nextKurs == null) {
 			nextKurs = new GregorianCalendar(1998, 01, 01);
 		}
-		int diff = DateUtil.anzahlTage(nextKurs, letzterHandelstag);
+		int diff = DateUtil.anzahlKalenderTage(nextKurs, letzterHandelstag);
 		System.out.println(name + ": Anfrage von: " + DateUtil.formatDate(nextKurs) + " bis: " + DateUtil.formatDate(letzterHandelstag) + " Diff " + diff);
 		// wenn der letzte Kurs vor dem letzten Handelstag liegt
 		if (diff >= 1) {	

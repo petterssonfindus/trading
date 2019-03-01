@@ -38,6 +38,14 @@ public class UtilTest extends TestCase {
 		assertEquals("1987-12-30", d2);
 	}
 	
+	public void testZeitraumTage() {
+		GregorianCalendar beginn = DateUtil.createGregorianCalendar(01, 01, 2017);
+		GregorianCalendar ende = DateUtil.createGregorianCalendar(31, 12, 2017);
+		Zeitraum zeit = new Zeitraum(beginn, ende);
+		int test = zeit.getHandestage();
+		assertEquals(249, test);
+	}
+	
 	public void testFloatString () {
 		// Float rechnet mit 7 signifikanten Stellen 
 		float test = 17.838f;
@@ -190,10 +198,10 @@ public class UtilTest extends TestCase {
 		GregorianCalendar datum1 = new GregorianCalendar(2018,0,1);
 		GregorianCalendar datum2 = new GregorianCalendar(2017,11,3);
 		GregorianCalendar datum3 = new GregorianCalendar(2017,11,31);
-		assertEquals(31, DateUtil.anzahlTage(beginn, ende));
-		assertEquals(30, DateUtil.anzahlTage(beginn, datum1));
-		assertEquals(1, DateUtil.anzahlTage(beginn, datum2));
-		assertEquals(29, DateUtil.anzahlTage(beginn, datum3));
+		assertEquals(31, DateUtil.anzahlKalenderTage(beginn, ende));
+		assertEquals(30, DateUtil.anzahlKalenderTage(beginn, datum1));
+		assertEquals(1, DateUtil.anzahlKalenderTage(beginn, datum2));
+		assertEquals(29, DateUtil.anzahlKalenderTage(beginn, datum3));
 	}
 	
 	public void testAddTage() {

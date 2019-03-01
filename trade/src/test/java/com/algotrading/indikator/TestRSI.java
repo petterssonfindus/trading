@@ -23,7 +23,7 @@ public class TestRSI extends TestCase {
 	}
 	
 	public void testRSI() {
-		rsi = rsiAktie.createIndikatorAlgorithmus(new IndikatorRSI());
+		rsi = rsiAktie.addIndikatorAlgorithmus(new IndikatorRSI());
 		rsi.addParameter("dauer", 10);
 		
 		rsiAktie.rechneIndikatoren();
@@ -36,7 +36,7 @@ public class TestRSI extends TestCase {
 	}
 
 	public void testRSI2() {
-		IndikatorAlgorithmus iA2 = rsiAktie.createIndikatorAlgorithmus(new IndikatorRSI2());
+		IndikatorAlgorithmus iA2 = rsiAktie.addIndikatorAlgorithmus(new IndikatorRSI2());
 		iA2.addParameter("dauer", 10);
 		
 		rsiAktie.rechneIndikatoren();

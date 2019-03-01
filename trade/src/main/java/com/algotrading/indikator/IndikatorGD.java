@@ -11,6 +11,8 @@ public class IndikatorGD extends IndikatorAlgorithmus {
 	/**
 	 * Gleitender Durchschnitt mit Hilfe der apache.math.statistic-Komponente
 	 * @param dauer - Anzahl Tage die rückwirkend betrachtet werden
+	 * @param mittelwert - 0 = geometrischer Mittelwert - gewichtet größere Zahlen geringer - default
+	 * 					 - 1 = arithmetischer Mittelwert - 
 	 * @param stabw, relativ, faktor, log aus MathUtil.Transformation
 	 */
 	@Override
@@ -19,6 +21,12 @@ public class IndikatorGD extends IndikatorAlgorithmus {
 		int x = (Integer) dauerO;
 		// wenn weniger Kurse vorhanden sind, als die Zeitraum 
 		if (aktie.getBoersenkurse().size() <= x) return;
+		
+		Object mittelwertO = getParameter("mittelwert");
+		int mittelwert = 0;	// Default-Wert = geometrisch
+		if (mittelwertO != null) {
+			mittelwert = 1;
+		}
 		
 		Kurs kurs; 
 		DescriptiveStatistics stats = new DescriptiveStatistics();
@@ -32,7 +40,9 @@ public class IndikatorGD extends IndikatorAlgorithmus {
 			kurs = aktie.getBoersenkurse().get(i);
 			stats.addValue(kurs.getKurs());
 			// Ermittlung des Durchschnitts
-			double gd = stats.getMean();
+			double gd = 0;
+			if (mittelwert == 0) gd = stats.getGeometricMean();
+			else gd = stats.getMean();
 			kurs.addIndikator(this, (float) gd); 
 		}
 		MathUtil.transformiereIndikator(aktie, this);

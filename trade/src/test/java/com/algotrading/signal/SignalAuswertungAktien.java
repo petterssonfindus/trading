@@ -6,26 +6,21 @@ import com.algotrading.aktie.Aktie;
 import com.algotrading.aktie.Aktien;
 import com.algotrading.indikator.IndikatorAlgorithmus;
 import com.algotrading.indikator.IndikatorGDalt;
-import com.algotrading.indikator.IndikatorAbweichung;
 import com.algotrading.indikator.IndikatorOBV;
-import com.algotrading.indikator.IndikatorRSI;
-import com.algotrading.indikator.IndikatorRSI2;
-import com.algotrading.indikator.IndikatorRSIRelativ;
-import com.algotrading.indikator.IndikatorVolatilitaet;
 import com.algotrading.util.DateUtil;
 import com.algotrading.util.Zeitraum;
 
 import junit.framework.TestCase;
 
-public class SignalAuswertung3 extends TestCase {
-	
-	public static void testSignalAuswertung () {
+public class SignalAuswertungAktien extends TestCase {
+
+
+	public static void testSignalAuswertungAktien () {
+		List<Aktie> aktien = Aktien.getInstance().getAktien(DateUtil.createGregorianCalendar(01, 01, 2010));
 		Aktie aktie = Aktien.getInstance().getAktie("^gdaxi");
-		List<Aktie> aktien = Aktien.getInstance().getAktien(DateUtil.createGregorianCalendar(1, 1, 2000));
-		IndikatorAlgorithmus iA = new IndikatorGDalt();
+		
+		IndikatorAlgorithmus iA = aktie.addIndikatorAlgorithmus(new IndikatorGDalt());
 		iA.addParameter("dauer", 10);
-		Aktien.addIndikatorAlgorithmus(aktien, iA);
-		aktie.addIndikatorAlgorithmus(iA);
 		
 		IndikatorAlgorithmus iA2 = aktie.addIndikatorAlgorithmus(new IndikatorOBV());
 		iA2.addParameter("dauer", 10);
@@ -52,5 +47,5 @@ public class SignalAuswertung3 extends TestCase {
 		
 //		aktie.writeFileKursIndikatorSignal();
 	}
-
+	
 }

@@ -26,9 +26,10 @@ import com.algotrading.util.Zeitraum;
  * enthält eine Reihe von Kursen mit aufsteigender Sortierung 
  * Erzeugung und Zugang findet über die Klasse Aktien statt 
  */
+
 public class Aktie extends Parameter {
 	private static final Logger log = LogManager.getLogger(Aktie.class);
-
+	
 	public String name; 
 	public String firmenname; 
 	// kein öffentlicher Zugriff auf kurse, weil Initialisierung über DB erfolgt. 
@@ -43,6 +44,8 @@ public class Aktie extends Parameter {
 	// ein Cache für die aktuell ermittelte Kursreihe 
 	private Zeitraum zeitraum; 
 	public String indexname;
+	private int land;
+	private int waehrung; 
 	private String ISIN; 
 	public String getISIN() {
 		return ISIN;
@@ -68,7 +71,12 @@ public class Aktie extends Parameter {
 	private boolean signaleSindBerechnet = false; 
 	
 	/**
-	 * ein Konstruktor mit beschränktem Zugriff für die Klasse Aktien 
+	 * Wird nur für Hibernate benötigt 
+	 */
+	protected Aktie() {}
+	
+	/**
+	 * ein Konstruktor für die Klasse Aktien 
 	 * enthält alles, außer den Kursen
 	 * @param name Kurzname, Kürzel - intern wird immer mit LowerCase gearbeitet
 	 * @param firmenname offizieller Firmenname, zur Beschriftung verwendet 
@@ -116,7 +124,7 @@ public class Aktie extends Parameter {
 	}
 	/**
 	 * ermittelt den Kurs zu einem bestimmten Datum
-	 * Ist der Kurs nicht vorhanden, dann null. 
+	 * Ist der Kurs nicht vorhanden, dann bis zu 3 Tage davor
 	 * @param datum
 	 * @return der Kurs dieses Tages, oder null wenn nicht vorhanden 
 	 */
@@ -252,7 +260,7 @@ public class Aktie extends Parameter {
 	 * einen neuen Indikator hinzufügen 
 	 * Nachdem er über Konstruktor erzeugt wurde. 
 	 */
-	public IndikatorAlgorithmus createIndikatorAlgorithmus (IndikatorAlgorithmus indikator) {
+	public IndikatorAlgorithmus addIndikatorAlgorithmus (IndikatorAlgorithmus indikator) {
 		this.indikatorAlgorithmen.add(indikator);
 		return indikator;
 	}
@@ -273,6 +281,19 @@ public class Aktie extends Parameter {
 		}
 		
 	}
+	
+	/**
+	 * Rechnet die Performance der Aktie im gewünschten Zeitraum 
+	 */
+	public float rechnePerformance (Zeitraum zeitraum) {
+		if (zeitraum == null) log.error("Performance-Berechnung mit Zeitraum = null");
+		Kurs kursBeginn = this.getKurs(zeitraum.beginn);
+		if (kursBeginn == null) log.error("Performance-Berechnung mit Kursbeginn = null");
+		Kurs kursEnde = this.getKurs(zeitraum.ende);
+		if (kursEnde == null) log.error("Performance-Berechnung mit Kursende = null");
+		return Util.rechnePerformancePA(kursBeginn.getKurs(), kursEnde.getKurs(), zeitraum.getHandestage());
+	}
+	
 	/**
 	 * Bestehende SignalBeschreibugen werden entfernt. 
 	 * Indikatoren bleiben erhalten 
@@ -367,7 +388,7 @@ public class Aktie extends Parameter {
 			}
 			sBW.kaufKorrekt = (float) ((double) kaufKorrekt / sBW.kauf);
 			sBW.verkaufKorrekt = (float) ((double) verkaufKorrekt / sBW.verkauf);
-			
+			sBW.performance = rechnePerformance (zeitraum);
 			System.out.println(this.name + " B:" + tage + Util.separatorCSV + zeitraum.toStringJahre() + Util.separatorCSV + sBW.toString());
 		}
 	}
@@ -551,5 +572,17 @@ public class Aktie extends Parameter {
 	}
 	public String getName() {
 		return name;
+	}
+	public int getLand() {
+		return land;
+	}
+	public void setLand(int land) {
+		this.land = land;
+	}
+	public int getWaehrung() {
+		return waehrung;
+	}
+	public void setWaehrung(int waehrung) {
+		this.waehrung = waehrung;
 	}
 }

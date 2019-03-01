@@ -73,7 +73,7 @@ public class Trade {
 		this.status = getStatus();
 		// Dauer anpassen 
 		this.ende = order.datum;
-		this.dauer = DateUtil.anzahlTage(beginn, ende);
+		this.dauer = DateUtil.anzahlKalenderTage(beginn, ende);
 		
 		// die letzte Order schlieät den Trade 
 		if (this.status == Trade.STATUS_GESCHLOSSEN) {

@@ -16,8 +16,8 @@ import com.algotrading.util.Zeitraum;
 
 import junit.framework.TestCase;
 
-public class DBManagerTest extends TestCase {
-	private static final Logger log = LogManager.getLogger(DBManagerTest.class);
+public class TestDBManager extends TestCase {
+	private static final Logger log = LogManager.getLogger(TestDBManager.class);
 
 	GregorianCalendar cal = new GregorianCalendar(2018,01,01);
 

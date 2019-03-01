@@ -5,6 +5,8 @@ import java.util.GregorianCalendar;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.mockito.Mock;
+import org.mockito.Mock.*;
 
 import com.algotrading.aktie.Aktie;
 import com.algotrading.aktie.Aktien;
@@ -12,8 +14,8 @@ import com.algotrading.aktie.Kurs;
 
 import junit.framework.TestCase;
 
-public class AktieTest extends TestCase {
-	private static final Logger log = LogManager.getLogger(AktieTest.class);
+public class TestAktie extends TestCase {
+	private static final Logger log = LogManager.getLogger(TestAktie.class);
 
 	public void setUp() {
 		
@@ -23,6 +25,9 @@ public class AktieTest extends TestCase {
 		
 		Aktie aktie = Aktien.getInstance().getAktie("testaktie");
 		ArrayList<Kurs> kursreihe = aktie.getBoersenkurse(); 
+		
+		
+		
 		assertNotNull(kursreihe);
 		assertTrue(kursreihe.size() > 1);
 		Kurs kurs = kursreihe.get(100);

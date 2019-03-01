@@ -18,6 +18,15 @@ public class Zeitraum {
 		this.ende = DateUtil.createGregorianCalendar(31, 12, jahrEnde);
 	}
 	
+	/**
+	 * Anzahl der Handelstage innerhalb des Zeitraums
+	 * Geht von 5 Handelstage pro Woche aus
+	 */
+	public int getHandestage () {
+		int tage =  DateUtil.anzahlKalenderTage(beginn, ende);
+		return (int) (tage * 0.685f);
+	}
+	
 	public boolean equals (Object input) {
 		Zeitraum inputZS = (Zeitraum) input; 
 		if (DateUtil.istGleicherKalendertag(inputZS.beginn, this.beginn) && DateUtil.istGleicherKalendertag(inputZS.ende, this.ende)) {

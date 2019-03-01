@@ -17,11 +17,11 @@ public class SignalAuswertung extends TestCase {
 		Aktie aktie = Aktien.getInstance().getAktie("^gdaxi");
 		
 		// Indikator konfigurieren und an Aktie hängen
-		IndikatorAlgorithmus iB = aktie.createIndikatorAlgorithmus(new IndikatorMinMax());
+		IndikatorAlgorithmus iB = aktie.addIndikatorAlgorithmus(new IndikatorMinMax());
 		iB.addParameter("dauer", 30);
-		IndikatorAlgorithmus iB2 = aktie.createIndikatorAlgorithmus(new IndikatorVolatilitaet());
+		IndikatorAlgorithmus iB2 = aktie.addIndikatorAlgorithmus(new IndikatorVolatilitaet());
 		iB2.addParameter("dauer", 30);
-		IndikatorAlgorithmus iB3 = aktie.createIndikatorAlgorithmus(new IndikatorMultiplikation());
+		IndikatorAlgorithmus iB3 = aktie.addIndikatorAlgorithmus(new IndikatorMultiplikation());
 		iB3.addParameter("indikator1", iB);
 		iB3.addParameter("indikator2", iB2);
 		

@@ -38,6 +38,8 @@ public class SignalBewertung {
 	
 	public float summeBewertungen; // Bewertungs-Summe als Saldo positiver und negativer Prognosequalität. 
 	
+	public float performance; // die Performance des Kurses im betrachteten Zeitraum 
+	
 	public String toString () {
 		return this.sA + " Kauf:" + kauf + 
 				" korrekt:" + Util.rundeBetrag(kaufKorrekt, 3) + 
@@ -47,7 +49,8 @@ public class SignalBewertung {
 				" korrekt:" + Util.rundeBetrag(verkaufKorrekt, 3) + 
 				" Signal:" + Util.rundeBetrag(summeSVerkauf,3) +
 				" Bewertung:" + Util.rundeBetrag(summeBVerkauf,3) +
-				" BewSumme:" + Util.rundeBetrag(summeBewertungen,3);
+				" BewSumme:" + Util.rundeBetrag(summeBewertungen,3) + 
+				" Performance:" + Util.rundeBetrag(performance,3);
 	}
 	public Zeitraum getZeitraum() {
 		return zeitraum;

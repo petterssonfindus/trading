@@ -7,6 +7,7 @@ import java.sql.*;
 import java.util.ArrayList;
 import java.util.GregorianCalendar;
 import java.util.HashMap;
+import java.util.List;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -356,7 +357,7 @@ public class DBManager {
 			return null;
 		}
         // die nackte Liste ohne Key
-        ArrayList<Aktie> aktien = createVerzeichnisAusDBSelect(response);
+        List<Aktie> aktien = createVerzeichnisAusDBSelect(response);
         // das Verzeichnis mit Key
         result = new HashMap<String, Aktie>();
 		// den Wertpapier-Namen als Key setzen 
@@ -367,12 +368,11 @@ public class DBManager {
 	}
 	
 	/**
-	 * 
-	 * @param response
-	 * @return
+	 * Erzeugt aus der DB-Antwort ein vollständiges Verzeichnis 
+	 * Suchen werden auf diesem Verzeichnis ausgeführt. 
 	 */
-	private static ArrayList<Aktie> createVerzeichnisAusDBSelect (ResultSet response) {
-		ArrayList<Aktie> aktien = new ArrayList<Aktie>();
+	private static List<Aktie> createVerzeichnisAusDBSelect (ResultSet response) {
+		List<Aktie> aktien = new ArrayList<Aktie>();
     	
     	try {
 	        while (response.next())
@@ -380,9 +380,12 @@ public class DBManager {
 	        	String name = (response.getString("name"));
 	        	String firmenname = (response.getString("firmenname"));
 	        	String indexname = (response.getString("indexname"));
-	        	Integer quelle = response.getInt("quelle");
+	        	
+	        	// eine Aktie wird erzeugt mit den Minimal-Angaben 
 	        	Aktie aktie = new Aktie(name, firmenname, indexname, (byte) 0); 
-	        	aktie.setQuelle(quelle);
+	        	aktie.setLand(response.getInt("land"));
+	        	aktie.setWaehrung(response.getInt("waehrung"));
+	        	aktie.setQuelle(response.getInt("quelle"));
 	        	GregorianCalendar beginn = DateUtil.toGregorianCalendar(response.getDate("beginn"));
 	        	GregorianCalendar ende = DateUtil.toGregorianCalendar(response.getDate("ende"));
 	        	Zeitraum zeitraum = new Zeitraum(beginn, ende);

@@ -212,7 +212,7 @@ public class DateUtil {
 	 * @param ende
 	 * @return
 	 */
-	public static int anzahlTage (GregorianCalendar beginn, GregorianCalendar ende) {
+	public static int anzahlKalenderTage (GregorianCalendar beginn, GregorianCalendar ende) {
 		long dauer = ende.getTimeInMillis() - beginn.getTimeInMillis(); 
 		float test = (dauer / (1000 * 60 * 60 * 24));
 		int result = (int) (dauer / (1000 * 60 * 60 * 24));

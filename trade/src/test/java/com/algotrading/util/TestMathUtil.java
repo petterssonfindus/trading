@@ -16,13 +16,13 @@ public class TestMathUtil extends TestCase {
 	}
 	
 	public static void testRechneStandardabweichung() {
-		IndikatorAlgorithmus iA = aktie.createIndikatorAlgorithmus(new IndikatorAbweichung());
+		IndikatorAlgorithmus iA = aktie.addIndikatorAlgorithmus(new IndikatorAbweichung());
 		iA.addParameter("typ", 1);
 		aktie.rechneIndikatoren();
 		System.out.println("Kurs" + aktie.getBoersenkurse().get(13).getIndikatorWert(iA));
 		assertEquals(20.51f, aktie.getBoersenkurse().get(13).getIndikatorWert(iA));
 		
-		MathUtil.transformiereNachAbweichung(aktie, iA, 10, false);
+		MathUtil.transformiereIndikator(aktie, iA);
 		System.out.println("Kurs TrafoOhne" + aktie.getBoersenkurse().get(13).getIndikatorWert(iA));
 		assertEquals(0.39640743f, aktie.getBoersenkurse().get(13).getIndikatorWert(iA));
 		
@@ -30,13 +30,13 @@ public class TestMathUtil extends TestCase {
 	
 	public static void testRechneAbweichung() {
 		Aktie aktie = Aktien.getInstance().getAktie("testaktie");
-		IndikatorAlgorithmus iA = aktie.createIndikatorAlgorithmus(new IndikatorAbweichung());
+		IndikatorAlgorithmus iA = aktie.addIndikatorAlgorithmus(new IndikatorAbweichung());
 		iA.addParameter("typ", 1);
 		aktie.rechneIndikatoren();
 		System.out.println("Kurs" + aktie.getBoersenkurse().get(13).getIndikatorWert(iA));
 		assertEquals(20.51f, aktie.getBoersenkurse().get(13).getIndikatorWert(iA));
 		
-		MathUtil.transformiereNachAbweichung(aktie, iA, 10, true);
+		MathUtil.transformiereIndikator(aktie, iA);
 		System.out.println("KursAbweichung " + aktie.getBoersenkurse().get(13).getIndikatorWert(iA));
 		assertEquals(-0.26487976f, aktie.getBoersenkurse().get(13).getIndikatorWert(iA));
 		

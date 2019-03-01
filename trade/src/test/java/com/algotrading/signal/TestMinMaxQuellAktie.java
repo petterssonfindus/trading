@@ -18,7 +18,7 @@ public class TestMinMaxQuellAktie extends TestCase {
 		assertTrue(aktie.getBoersenkurse().size() > 1);
 		
 		// Indikator konfigurieren und an Aktie hängen
-		IndikatorAlgorithmus iB = aktie.createIndikatorAlgorithmus(new IndikatorAbweichung());
+		IndikatorAlgorithmus iB = aktie.addIndikatorAlgorithmus(new IndikatorAbweichung());
 		iB.addParameter("aktie", "vdax-new-3m");
 		iB.addParameter("typ", 1);  // Typ 1 = open
 		

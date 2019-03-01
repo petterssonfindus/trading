@@ -26,27 +26,27 @@ public class TestGleitenderDurchschnitt extends TestCase {
 		
 		aktie = Aktien.newInstance().getAktie("sardata5");
 		
-		iA10 = aktie.createIndikatorAlgorithmus(new IndikatorGD());
+		iA10 = aktie.addIndikatorAlgorithmus(new IndikatorGD());
 		iA10.addParameter("dauer", 10);
 		
-		iA20 = aktie.createIndikatorAlgorithmus(new IndikatorGD());
+		iA20 = aktie.addIndikatorAlgorithmus(new IndikatorGD());
 		iA20.addParameter("dauer", 20);
 		
-		iAstabw = aktie.createIndikatorAlgorithmus(new IndikatorGD());
+		iAstabw = aktie.addIndikatorAlgorithmus(new IndikatorGD());
 		iAstabw.addParameter("dauer", 10);
 		iAstabw.addParameter("stabw", 10);
 		
-		iArel = aktie.createIndikatorAlgorithmus(new IndikatorGD());
+		iArel = aktie.addIndikatorAlgorithmus(new IndikatorGD());
 		iArel.addParameter("dauer", 10);
 		iArel.addParameter("stabw", 10);
 		iArel.addParameter("relativ", 1);
 
-		iAfaktor = aktie.createIndikatorAlgorithmus(new IndikatorGD());
+		iAfaktor = aktie.addIndikatorAlgorithmus(new IndikatorGD());
 		iAfaktor.addParameter("dauer", 10);
 		iAfaktor.addParameter("stabw", 10);
 		iAfaktor.addParameter("faktor", 1);
 
-		iAlog = aktie.createIndikatorAlgorithmus(new IndikatorGD());
+		iAlog = aktie.addIndikatorAlgorithmus(new IndikatorGD());
 		iAlog.addParameter("dauer", 10);
 		iAlog.addParameter("stabw", 10);
 		iAlog.addParameter("log", 1);

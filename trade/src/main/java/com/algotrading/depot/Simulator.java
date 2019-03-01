@@ -52,7 +52,7 @@ public class Simulator {
 		for (Aktie aktie : aktien) {
 			for (IndikatorAlgorithmus indikator : indikatoren){
 				// die Indikator-Konfigurationen werden in jeder Aktie gespeichert
-				aktie.createIndikatorAlgorithmus(indikator);
+				aktie.addIndikatorAlgorithmus(indikator);
 			}
 			// für jede Aktie werden die benötigten Indikatoren berechnet 
 			aktie.rechneIndikatoren();

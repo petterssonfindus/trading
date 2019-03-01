@@ -32,13 +32,13 @@ public class TestGDDurchbruch extends TestCase {
 		assertTrue(aktie.getBoersenkurse().size() > 1);
 		
 		// Indikator1 konfigurieren und an aktie hängen
-		indikator10 = aktie.createIndikatorAlgorithmus(new IndikatorGDalt());
-		aktie.createIndikatorAlgorithmus(indikator10);
+		indikator10 = aktie.addIndikatorAlgorithmus(new IndikatorGDalt());
+		aktie.addIndikatorAlgorithmus(indikator10);
 		indikator10.addParameter("dauer", 10);
 
 		// Indikator3 konfigurieren
-		indikator30 = aktie.createIndikatorAlgorithmus(new IndikatorGDalt());
-		aktie.createIndikatorAlgorithmus(indikator30);
+		indikator30 = aktie.addIndikatorAlgorithmus(new IndikatorGDalt());
+		aktie.addIndikatorAlgorithmus(indikator30);
 		indikator30.addParameter("dauer", 30);
 		
 		// Indikatoren berechnen

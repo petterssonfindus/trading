@@ -1,4 +1,4 @@
-package com.algotrading.util;
+package spielwiese;
 
 import java.util.ArrayList;
 import java.util.HashMap;
