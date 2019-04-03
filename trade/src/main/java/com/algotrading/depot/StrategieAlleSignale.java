@@ -4,11 +4,10 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import com.algotrading.signal.Signal;
-import com.algotrading.signal.Signalsuche;
 import com.algotrading.aktie.Kurs;
 
 public class StrategieAlleSignale extends SignalStrategie {
-	static final Logger log = LogManager.getLogger(Signalsuche.class);
+	static final Logger log = LogManager.getLogger(StrategieAlleSignale.class);
 
 	/**
 	 * Nutzt jedes Kaufsignal zum Kauf und Verkaufsignal zum Verkauf

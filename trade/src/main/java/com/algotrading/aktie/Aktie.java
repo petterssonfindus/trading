@@ -4,6 +4,11 @@ import java.util.ArrayList;
 import java.util.GregorianCalendar;
 import java.util.List;
 
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -27,9 +32,12 @@ import com.algotrading.util.Zeitraum;
  * Erzeugung und Zugang findet über die Klasse Aktien statt 
  */
 
+@Entity
 public class Aktie extends Parameter {
 	private static final Logger log = LogManager.getLogger(Aktie.class);
-	
+	@Id
+    @GeneratedValue(strategy=GenerationType.AUTO)
+    private Integer id;
 	public String name; 
 	public String firmenname; 
 	// kein öffentlicher Zugriff auf kurse, weil Initialisierung über DB erfolgt. 

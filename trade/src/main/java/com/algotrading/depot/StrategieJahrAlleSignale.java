@@ -19,8 +19,8 @@ public class StrategieJahrAlleSignale extends SignalStrategie {
 		Kurs kurs = signal.getKurs();
 		String wertpapier = kurs.wertpapier;
 		Order order = null; 
-		
-		if (signal.getTyp() == Signal.Jahrestag) {
+		// wenn es ein Jahrestag-Signal ist 
+		if (signal.getSignalAlgorithmus().getClass().getName() == "signal.Jahrestag") {
 			
 			if (signal.getKaufVerkauf() == Order.KAUF) {
 				// Speichert an der Aktie äber einen Parameter die Phase

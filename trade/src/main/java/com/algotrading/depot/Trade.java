@@ -12,7 +12,7 @@ import com.algotrading.util.Util;
 	/**
 	 * ein Trade besteht aus einem oder mehreren Käufen und Verkäufen 
 	 * hat einen Beginn und ein Ende
-	 * am Ende ist nichts mehr äbrig. 
+	 * am Ende ist nichts mehr übrig. 
 	 * @author oskar
 	 *
 	 */
@@ -131,8 +131,35 @@ public class Trade {
 			this.orders.size() + Util.separatorCSV + 
 			DateUtil.formatDate(beginn) + Util.separatorCSV + 
 			DateUtil.formatDate(ende) + Util.separatorCSV + 
-			Integer.toString(dauer) + Util.separatorCSV + 
+			Integer.toString(getDauer()) + Util.separatorCSV + 
 			Util.toString(erfolg);
 		return result; 
+	}
+	public String getWertpapier() {
+		return wertpapier;
+	}
+	public ArrayList<Order> getOrders() {
+		return orders;
+	}
+	public GregorianCalendar getBeginn() {
+		return beginn;
+	}
+	public GregorianCalendar getEnde() {
+		return ende;
+	}
+	public int getDauer() {
+		return dauer;
+	}
+	public float getBestand() {
+		return bestand;
+	}
+	public float getInvestiertesKapital() {
+		return investiertesKapital;
+	}
+	public float getErfolg() {
+		return erfolg;
+	}
+	public boolean isErfolgreich() {
+		return erfolgreich;
 	}
 }

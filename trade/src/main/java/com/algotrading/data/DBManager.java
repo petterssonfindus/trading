@@ -391,6 +391,7 @@ public class DBManager {
 	        	Zeitraum zeitraum = new Zeitraum(beginn, ende);
 	        	aktie.setZeitraumKurse(zeitraum);
 	        	aktien.add(aktie);
+	        	
 	        }
 		} catch (SQLException e) {
 			e.printStackTrace();

@@ -444,7 +444,7 @@ public class Depot {
 	}
 	
 	/**
-	 * am Abend eines Handesltages wird der Ablauf protokolliert 
+	 * am Abend eines Handelstages wird der Ablauf protokolliert 
 	 * Datum - Depotwert - Aktienkurs / n*Indikator - 3*Signal
 	 * @param depotKurs
 	 * @return
@@ -467,11 +467,11 @@ public class Depot {
 				result.append(wert + Util.separatorCSV);
 			}
 		}
-		// fär jede Aktie die Signale 
+		// für jede Aktie die Signale 
 		for (Aktie aktie : this.aktien) {
 			Kurs kurs = aktie.getAktuellerKurs();
 			for (Signal signal : kurs.getSignale()) {
-				result.append(kurs.wertpapier + " _ " + signal.getKaufVerkauf() + " _ " + signal.getSignalAlgorithmus().getSignalTyp() + Util.separatorCSV);
+				result.append(kurs.wertpapier + " _ " + signal.getKaufVerkauf() + " _ " + signal.getSignalAlgorithmus().getKurzname() + Util.separatorCSV);
 			}
 		}
 		result.append(Util.getLineSeparator());

@@ -7,6 +7,7 @@ import java.util.List;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import com.algotrading.data.DBManager;
 import com.algotrading.indikator.IndikatorAlgorithmus;
@@ -25,7 +26,8 @@ import com.algotrading.util.Zeitraum;
 	 */
 public class Aktien {
 	private static final Logger log = LogManager.getLogger(Aktien.class);
-	
+	@Autowired
+	private AktieRepository aktieRepository;
 	public static final byte BOERSEDEPOT = 0;
 	public static final byte BOERSEINDEX = 1;
 	public static final byte BOERSENYSE = 2;
@@ -96,6 +98,8 @@ public class Aktien {
 		List<Aktie> result = new ArrayList<Aktie>();
 		for (Aktie aktie : verzeichnis.values()) {
 			result.add(aktie);
+		// ein Versuch, das Aktien-Verzeichnis über JPA zu persistieren wurde verworfen
+//			aktieRepository.save(aktie);
 		}
 		return result;
 	}
@@ -143,6 +147,7 @@ public class Aktien {
 	 */
 	private static void initialisiereVerzeichnis() {
 		verzeichnis = DBManager.getVerzeichnis();
+		
 	}
 
 }

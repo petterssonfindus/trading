@@ -1,5 +1,12 @@
 package com.algotrading.signal;
 
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
+import javax.persistence.Table;
+
+import org.hibernate.annotations.GenericGenerator;
+
 import com.algotrading.util.Util;
 import com.algotrading.util.Zeitraum;
 
@@ -9,6 +16,8 @@ import com.algotrading.util.Zeitraum;
  * @author oskar
  *
  */
+@Entity
+@Table( name = "SIGNALBEWERTUNGEN" )
 public class SignalBewertung {
 	
 	// der Zeithorizont in Tagen
@@ -18,14 +27,25 @@ public class SignalBewertung {
 	
 	private SignalAlgorithmus sA; 
 	
+	@Id
+	@GeneratedValue(generator="increment")
+	@GenericGenerator(name="increment", strategy = "increment")
+	private Long id;
+	public Long getId() {
+		return id;
+	}
+	
 	public int getTage() {
 		return tage;
 	}
+	
+	protected SignalBewertung() {}  // für JPA
 	
 	SignalBewertung(SignalAlgorithmus sA) {
 		this.sA = sA; 
 	}
 	
+
 	public int kauf; // Anzahl Kauf-Signale
 	public float kaufKorrekt; // Anzahl korrekter Kauf-Signale im Verhältnis zu Käufen 
 	public float summeBKauf; // Bewertungs-Summe als Saldo aller Kauf-Empfehlungen

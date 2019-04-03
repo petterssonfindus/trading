@@ -45,7 +45,7 @@ public class Strategiebewertung {
 	}
 	
 	/**
-	 * fährt die Bewertung durch anhand der Trades und gibt das Ergebnis als Instanz zuräck 
+	 * führt die Bewertung durch anhand der Trades und gibt das Ergebnis als Instanz zurück 
 	 * @param depot
 	 * @return
 	 */
@@ -60,12 +60,12 @@ public class Strategiebewertung {
 				// der Erfolg
 				sb.gewinnPositiv += trade.erfolg;
 				// die Dauer
-				sb.trenddauerpositiv += trade.dauer;
+				sb.trenddauerpositiv += trade.getDauer();
 			}
 			else {
 				sb.anzahlNegativ++;
 				sb.gewinnNegativ += trade.erfolg;
-				sb.trenddauernegativ += trade.dauer;
+				sb.trenddauernegativ += trade.getDauer();
 			}
 		}
 		sb.gewinnSaldo = Util.rundeBetrag(sb.gewinnPositiv + sb.gewinnNegativ);
@@ -91,7 +91,7 @@ public class Strategiebewertung {
 	}
 	
 	/** 
-	 * Simuliert mit den Wertpapieren und Datämern eine BuyAndHold-Strategie 
+	 * Simuliert mit den Wertpapieren und Datümern eine BuyAndHold-Strategie 
 	 * @return der Depotwert am Ende 
 	 */
 	private float simuliereBuyAndHold (Depot depot) {

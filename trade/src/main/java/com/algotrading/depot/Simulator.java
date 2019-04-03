@@ -10,6 +10,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import com.algotrading.indikator.IndikatorAlgorithmus;
+import com.algotrading.signal.SignalAlgorithmus;
 import com.algotrading.util.DateUtil;
 import com.algotrading.util.Util;
 import com.algotrading.util.Zeitraum;
@@ -40,7 +41,7 @@ public class Simulator {
 			int dauer, 
 			int rhythmus, 
 			ArrayList<IndikatorAlgorithmus> indikatoren, 
-			ArrayList<SignalBeschreibung> signalBeschreibungen, 
+			ArrayList<SignalAlgorithmus> signalBeschreibungen, 
 			SignalStrategie signalStrategie, 
 			TagesStrategie tagesStrategie, 
 			boolean writeOrders,
@@ -64,12 +65,12 @@ public class Simulator {
 			Depot depot = new Depot("Oskars", 10000f);
 			depot.aktien = aktien; 
 			// jede Signalbeschreibung wird in jeder Aktie gesetzt 
-			for (SignalBeschreibung signalBeschreibung : signalBeschreibungen) {
+			for (SignalAlgorithmus signalAlgorithmus : signalBeschreibungen) {
 				// wenn Zeitraum gesetzt wird, wird Signalsuche nur hier durchgefährt
-				signalBeschreibung.addParameter("zeitraum", zeitraum);
+				signalAlgorithmus.addParameter("zeitraum", zeitraum);
 				// Signalbeschreibung wird in jeder Aktie gespeichert
 				for (Aktie aktie : aktien) {
-					aktie.createSignalAlgorithmus(signalBeschreibung.getSignalTyp());
+					aktie.createSignalAlgorithmus(signalAlgorithmus);
 				}
 			}
 	
@@ -135,7 +136,7 @@ public class Simulator {
 			Zeitraum zeitraum,
 			ArrayList<Aktie> aktien,
 			ArrayList<IndikatorAlgorithmus> indikatoren, 
-			ArrayList<SignalBeschreibung> signalBeschreibungen, 
+			ArrayList<SignalAlgorithmus> signalAlgos, 
 			SignalStrategie signalStrategie, 
 			TagesStrategie tagesStrategie ) {
 		String zeile = ""; 
@@ -143,7 +144,7 @@ public class Simulator {
 		zeile = zeile.concat(DateUtil.formatDate(zeitraum.ende) + Util.separatorCSV);
 		zeile = zeile.concat(Integer.toString(aktien.size()) + Util.separatorCSV);
 		zeile = zeile.concat(indikatoren.toString() + Util.separatorCSV);
-		zeile = zeile.concat(signalBeschreibungen.toString() + Util.separatorCSV);
+		zeile = zeile.concat(signalAlgos.toString() + Util.separatorCSV);
 		zeile = zeile.concat(signalStrategie.toString() + Util.separatorCSV);
 		// falls eine tagesstrategie vorhanden ist 
 		if (tagesStrategie != null) {
