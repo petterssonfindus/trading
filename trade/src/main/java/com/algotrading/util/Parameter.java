@@ -1,7 +1,9 @@
 package com.algotrading.util;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.List;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -33,6 +35,19 @@ public class Parameter {
 	public HashMap<String, Object> getAllParameter () {
 		return this.parameter;
 	}
+	
+	/**
+	 * Alle Parameter als Liste mit Para-Objekten 
+	 */
+	public List<Para> getParameterList () {
+		ArrayList<Para> paras = new ArrayList<Para>();
+		for (String name : this.parameter.keySet()) {
+			// einen neuen Para erzeugen mit Name und zugehörigem Objekt 
+			paras.add(new Para(name, this.parameter.get(name)));
+		}
+		return paras; 
+	}
+	
 	/**
 	 * wenn es den Parameter bereits gibt, wird der Wert überschrieben 
 	 */
@@ -68,6 +83,21 @@ public class Parameter {
 			result = result.concat(Util.separatorCSV + key + ":" + value);
 		}
 		return result; 
+	}
+	
+	public class Para {
+		private String name; 
+		private Object object;
+		Para(String name, Object object){
+			this.name = name; 
+			this.object = object; 
+		}
+		public String getName() {
+			return name;
+		}
+		public Object getObject() {
+			return object;
+		} 
 	}
 	
 }

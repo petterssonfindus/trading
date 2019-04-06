@@ -14,12 +14,14 @@ import com.algotrading.util.Zeitraum;
  *
  */
 public abstract class SignalAlgorithmus extends Parameter {
+	// Referenz auf die Aktie - wird bei der Erzeugung gesetzt 
+	private Aktie aktie; 
 	
 	// eine Liste aller Signale, die von diesem Algorithmus erzeugt wurden
 	private List<Signal> signale = new ArrayList<Signal>();
 	
 	// eine Liste aller Bewertungen mit unterschiedlichen Tagen, Zeiträumen ...
-	private List<SignalBewertung> signalBewertung = new ArrayList<SignalBewertung>();
+	private List<SignalBewertung> signalBewertungen = new ArrayList<SignalBewertung>();
 
 	/**
 	 * Der Zeitraum, vom Beginn des ersten Signals bis zum letzten Signal
@@ -44,16 +46,21 @@ public abstract class SignalAlgorithmus extends Parameter {
 	 */
 	public SignalBewertung createBewertung () {
 		SignalBewertung sBW = new SignalBewertung(this);
-		this.signalBewertung.add(sBW);
+		this.signalBewertungen.add(sBW);
 		return sBW;
 	}
 	
 	public void addSignal (Signal signal) {
 		this.signale.add(signal);
 	}
-	
+	/*
+	 * Bevor die Liste der Bewertungen zurück gegeben wird, wird synchronisiert
+	 */
 	public List<SignalBewertung> getBewertungen () {
-		return this.signalBewertung;
+		for (SignalBewertung signalBewertung : this.signalBewertungen) {
+			signalBewertung.synchronize();
+		}
+		return this.signalBewertungen;
 	}
 	
 	public List<Signal> getSignale() {
@@ -69,6 +76,14 @@ public abstract class SignalAlgorithmus extends Parameter {
 			result = result + (Util.separatorCSV + name + ":" + this.getParameter(name));
 		}
 		return result; 
+	}
+
+	public Aktie getAktie() {
+		return aktie;
+	}
+
+	public void setAktie(Aktie aktie) {
+		this.aktie = aktie;
 	}
 
 }

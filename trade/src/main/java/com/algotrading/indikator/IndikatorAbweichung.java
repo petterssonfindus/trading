@@ -100,7 +100,7 @@ public class IndikatorAbweichung extends IndikatorAlgorithmus {
 
 	@Override
 	public String getKurzname() {
-		return "KW";
+		return "Kurswert";
 	}
 
 }

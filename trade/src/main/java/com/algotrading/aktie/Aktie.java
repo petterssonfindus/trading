@@ -4,11 +4,6 @@ import java.util.ArrayList;
 import java.util.GregorianCalendar;
 import java.util.List;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -30,14 +25,12 @@ import com.algotrading.util.Zeitraum;
  * Oder auch einen Index oder ein Depot mit täglichen Depotwerten
  * enthält eine Reihe von Kursen mit aufsteigender Sortierung 
  * Erzeugung und Zugang findet über die Klasse Aktien statt 
+ * Enthält auch Berechnungsvorschriften zu Indikatoren und Signalen 
+ * 
  */
 
-@Entity
 public class Aktie extends Parameter {
 	private static final Logger log = LogManager.getLogger(Aktie.class);
-	@Id
-    @GeneratedValue(strategy=GenerationType.AUTO)
-    private Integer id;
 	public String name; 
 	public String firmenname; 
 	// kein öffentlicher Zugriff auf kurse, weil Initialisierung über DB erfolgt. 
@@ -55,24 +48,15 @@ public class Aktie extends Parameter {
 	private int land;
 	private int waehrung; 
 	private String ISIN; 
-	public String getISIN() {
-		return ISIN;
-	}
-	public void setISIN(String iSIN) {
-		ISIN = iSIN;
-	}
 	// die Datenquelle 1=Yahoo
 	private int quelle; 
-	public int getQuelle() {
-		return quelle;
-	}
-	public void setQuelle(int quelle) {
-		this.quelle = quelle;
-	}
 	public byte boersenplatz; 
-	// die Indikator-Algorithmen, die an der Aktie hängen - Zugriff über Getter  
-	// die Liste stellt die Reihenfolge sicher
+	/*
+	 *  die Indikator-Algorithmen, die an der Aktie hängen - Zugriff über Getter  
+	 *  die Liste stellt die Reihenfolge sicher
+	 */
 	private List<IndikatorAlgorithmus> indikatorAlgorithmen = new ArrayList<IndikatorAlgorithmus>();
+	
 	private boolean indikatorenSindBerechnet = false; 
 	// die Signal-Algorithmen werden an der Aktie festgehalten und beim Berechnen an die Kurse gehängt
 	private List<SignalAlgorithmus> sAs = new ArrayList<SignalAlgorithmus>();
@@ -132,17 +116,27 @@ public class Aktie extends Parameter {
 	}
 	/**
 	 * ermittelt den Kurs zu einem bestimmten Datum
-	 * Ist der Kurs nicht vorhanden, dann bis zu 3 Tage davor
+	 * Ist die Tage-Gleichheit nicht vorhanden, dann der nächste Kurs nach Tage-Gleichheit
+	 * Liegt das gewünschte Datum vor dem ersten Kurs, -> null
 	 * @param datum
 	 * @return der Kurs dieses Tages, oder null wenn nicht vorhanden 
 	 */
 	public Kurs getKurs (GregorianCalendar datum) {
+		String testDatum = DateUtil.formatDate(datum);
+		// wenn das gewünschte Datum vor dem ersten Kurs liegt
+		if (datum.before(kurse.get(0).getDatum())) {
+			log.error("gewünschtes Kursdatum: " + testDatum + " liegt vor erstem vorhandenen Kurs: " + kurse.get(0));
+			return null; 
+		}
 		ArrayList<Kurs> kurse = this.getBoersenkurse();
 		for (Kurs kurs : kurse) {
-			if (DateUtil.istGleicherKalendertag(datum, kurs.datum)) {
+			// wenn die Tage exakt passen oder die Tage-Gleichheit übersprungen wurde
+			if (DateUtil.istGleicherKalendertag(datum, kurs.datum) || kurs.datum.before(datum)) {
 				return kurs; 
 			}
+
 		}
+		log.error("Kurs nicht gefunden zu Datum: " + DateUtil.formatDate(datum));
 		return null; 
 	}
 	
@@ -296,9 +290,13 @@ public class Aktie extends Parameter {
 	public float rechnePerformance (Zeitraum zeitraum) {
 		if (zeitraum == null) log.error("Performance-Berechnung mit Zeitraum = null");
 		Kurs kursBeginn = this.getKurs(zeitraum.beginn);
-		if (kursBeginn == null) log.error("Performance-Berechnung mit Kursbeginn = null");
+		if (kursBeginn == null) {
+			log.error("Performance-Berechnung mit Kursbeginn = null");
+		}
 		Kurs kursEnde = this.getKurs(zeitraum.ende);
-		if (kursEnde == null) log.error("Performance-Berechnung mit Kursende = null");
+		if (kursEnde == null) {
+			log.error("Performance-Berechnung mit Kursende = null");
+		}
 		return Util.rechnePerformancePA(kursBeginn.getKurs(), kursEnde.getKurs(), zeitraum.getHandestage());
 	}
 	
@@ -314,10 +312,12 @@ public class Aktie extends Parameter {
 	}
 	
 	/**
-	 * Ein neuer SignalAlgorithmus, der anschließend berechnet wird
+	 * Ein neuer SignalAlgorithmus wird an der Aktie registriert 
+	 * Der SignalAlgorithmus wird anschließend berechnet 
 	 * Die Berechnung darf noch nicht durchgeführt sein. 
 	 */
 	public SignalAlgorithmus createSignalAlgorithmus (SignalAlgorithmus sA) {
+		sA.setAktie(this);
 		this.sAs.add(sA);
 		return sA; 
 	}
@@ -593,4 +593,17 @@ public class Aktie extends Parameter {
 	public void setWaehrung(int waehrung) {
 		this.waehrung = waehrung;
 	}
+	public String getISIN() {
+		return ISIN;
+	}
+	public void setISIN(String iSIN) {
+		ISIN = iSIN;
+	}
+	public int getQuelle() {
+		return quelle;
+	}
+	public void setQuelle(int quelle) {
+		this.quelle = quelle;
+	}
+
 }

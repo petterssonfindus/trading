@@ -10,8 +10,8 @@ import com.algotrading.util.Util;
  *
  */
 public abstract class IndikatorAlgorithmus extends Parameter {
-	
-	boolean istBerechnet = false; 
+
+	private boolean istBerechnet = false; 
 	
 	/**
 	 * iteriert über alle Kurse dieser Aktie und berechnet die Indikatorenwerte, die dann am Kurs hängen

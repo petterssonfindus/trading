@@ -26,8 +26,6 @@ import com.algotrading.util.Zeitraum;
 	 */
 public class Aktien {
 	private static final Logger log = LogManager.getLogger(Aktien.class);
-	@Autowired
-	private AktieRepository aktieRepository;
 	public static final byte BOERSEDEPOT = 0;
 	public static final byte BOERSEINDEX = 1;
 	public static final byte BOERSENYSE = 2;
