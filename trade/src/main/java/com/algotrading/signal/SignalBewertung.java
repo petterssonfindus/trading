@@ -48,7 +48,7 @@ public class SignalBewertung {
 	@OrderColumn(name="type")  
 	private List<IndikatorAlgorithmusDAO> indikatorAlgorithmenDAO;
 	
-	@Transient  // die OriginalObjekte werden nicht persistiert
+	@Transient  // die Original-Indikator-Objekte werden nicht persistiert
 	private List<IndikatorAlgorithmus> indikatorAlgorithmen;
 	
 	@Transient

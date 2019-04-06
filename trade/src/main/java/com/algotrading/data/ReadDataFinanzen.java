@@ -59,7 +59,11 @@ import com.algotrading.util.Util;
 		// der letzte Kurs wird ermittelt
 		GregorianCalendar letzterKurs = DBManager.getLastKurs(aktie);
 		// bei einer ganz neuen Aktie gibt es keine Kurse
-		
+		if (letzterKurs == null) {
+			// TODO Abfrage aller Kurse mit maximaler Zeitspanne 
+			// wird derzeit manuell gemacht beim ersten Einlesen 
+			
+		}
 		GregorianCalendar letzterHandelstag = DateUtil.getLetzterHandelstag();
 		// der nächste erwartete Kurs wird einfach 1 Tag hoch gezählt. Das stimmt nicht genau, spielt aber keine Rolle. 
 		GregorianCalendar nextKurs = DateUtil.addTage(letzterKurs, 1);
@@ -216,9 +220,9 @@ import com.algotrading.util.Util;
 			con.setDoInput(true);
 			con.setDoOutput(true);
 			con.setUseCaches(false);
-			con.setRequestProperty("__ath", "jVe8cUoSQj9rDictciDnQj71/h1pd0fWMrbn4HFHc3A=");
-			con.setRequestProperty("__atts", "2018-12-21-18-28-42");
-			con.setRequestProperty("__atcrv", "318613846");
+			con.setRequestProperty("__ath", "7Cumv1jFnj7W8ZujjGvwAsRy9A1dQMAZmDbXp8xFSMk=");
+			con.setRequestProperty("__atts", "2019-04-06-13-39-00");
+			con.setRequestProperty("__atcrv", "669908818");
 			con.setRequestProperty("Host", "www.finanzen.net");
 			con.setRequestProperty("User-Agent", "Mozilla/5.0 (Windows NT 6.1; WOW64; rv:60.0) Gecko/20100101 Firefox/60.0");
 			con.setRequestProperty("Accept", "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8");

@@ -23,7 +23,7 @@ public class StrategieJahrAlleSignale extends SignalStrategie {
 		if (signal.getSignalAlgorithmus().getClass().getName() == "signal.Jahrestag") {
 			
 			if (signal.getKaufVerkauf() == Order.KAUF) {
-				// Speichert an der Aktie äber einen Parameter die Phase
+				// Speichert an der Aktie über einen Parameter die Phase
 				signal.getKurs().getAktie().addParameter("phase", 1);
 				log.debug("JahrestagSignal Kauf: " + signal.toString() );
 				order = depot.kaufe(depot.geld, kurs.getAktie());

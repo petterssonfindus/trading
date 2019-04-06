@@ -15,6 +15,7 @@ import com.algotrading.Application;
 import com.algotrading.aktie.Aktie;
 import com.algotrading.aktie.Aktien;
 import com.algotrading.indikator.IndikatorAlgorithmus;
+import com.algotrading.indikator.IndikatorGD;
 import com.algotrading.indikator.IndikatorAbweichung;
 import com.algotrading.util.Zeitraum;
 
@@ -39,6 +40,8 @@ public class TestSignalBewertung extends TestCase {
 		// Indikator konfigurieren und an Aktie hängen
 		IndikatorAlgorithmus iA = aktie.addIndikatorAlgorithmus(new IndikatorAbweichung());
 		iA.addParameter("typ", 1);  // Typ 1 = open
+		IndikatorAlgorithmus iA2 = aktie.addIndikatorAlgorithmus(new IndikatorGD());
+		iA2.addParameter("dauer", 30);
 		
 		// Indikator berechnen und ausgeben 
 		aktie.rechneIndikatoren();
