@@ -8,7 +8,7 @@ import org.apache.logging.log4j.Logger;
 import com.algotrading.util.DateUtil;
 import com.algotrading.util.Util;
 import com.algotrading.aktie.Aktie;
-import com.algotrading.aktie.Aktien;
+import com.algotrading.aktie.AktieVerzeichnis;
 /**
  * repräsentiert einen Wertpapierauftrag mit allen Ausfährungsinformationen
  * zusätzlich wird auf Gesamt-Depotbestand aggregiert zum aktuellen Zeitpunkt 
@@ -49,7 +49,7 @@ public class Order {
 		// Referenz auf das zugehärige Depot setzen
 		order.depot = depot; 
 		// zugehärige Kursreihe ermitteln 
-		Aktie kursreihe = Aktien.getInstance().getAktie(wertpapier);
+		Aktie kursreihe = AktieVerzeichnis.getInstance().getAktie(wertpapier);
 		// das Datum der Order stammt aus dem aktuellen Datum des Depot
 		order.datum = depot.heute;
 		order.datumString = DateUtil.formatDate(order.datum);

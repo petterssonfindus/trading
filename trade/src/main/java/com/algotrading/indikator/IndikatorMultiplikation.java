@@ -32,7 +32,7 @@ public class IndikatorMultiplikation extends IndikatorAlgorithmus {
 		if (reziprok2I != null) reziprok2 = reziprok2I; 
 
 		float ergebnis  = 0;
-		for (Kurs kurs : aktie.getBoersenkurse()) {
+		for (Kurs kurs : aktie.getKursListe()) {
 			// hole den Indikator-Wert1 an dem Kurs 
 			Float iA1V = kurs.getIndikatorWert(iA1);
 			if (iA1V == null) continue; 

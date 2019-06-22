@@ -13,7 +13,7 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import com.algotrading.Application;
 import com.algotrading.aktie.Aktie;
-import com.algotrading.aktie.Aktien;
+import com.algotrading.aktie.AktieVerzeichnis;
 import com.algotrading.indikator.IndikatorAlgorithmus;
 import com.algotrading.indikator.IndikatorGD;
 import com.algotrading.indikator.IndikatorAbweichung;
@@ -33,9 +33,9 @@ public class TestSignalBewertung extends TestCase {
 	
 	@Test
 	public void testKurswertMinMaxBewertung() {
-		Aktie aktie = Aktien.getInstance().getAktie("testaktie");
+		Aktie aktie = AktieVerzeichnis.getInstance().getAktie("testaktie");
 		assertNotNull(aktie);
-		assertTrue(aktie.getBoersenkurse().size() > 1);
+		assertTrue(aktie.getKursListe().size() > 1);
 		
 		// Indikator konfigurieren und an Aktie hängen
 		IndikatorAlgorithmus iA = aktie.addIndikatorAlgorithmus(new IndikatorAbweichung());
@@ -46,12 +46,12 @@ public class TestSignalBewertung extends TestCase {
 		// Indikator berechnen und ausgeben 
 		aktie.rechneIndikatoren();
 		// am ersten Tag 18.03.2015 ist der open-Kurs 19,50 
-		assertEquals(19.5f, aktie.getBoersenkurse().get(0).getIndikatorWert(iA));
+		assertEquals(19.5f, aktie.getKursListe().get(0).getIndikatorWert(iA));
 		// der close-Kurs ist 20.05
-		assertEquals(20.05f, aktie.getBoersenkurse().get(0).getKurs());
+		assertEquals(20.05f, aktie.getKursListe().get(0).getKurs());
 		
 		// Signal konfigurieren und an Aktie hängen 
-		SignalAlgorithmus sA = aktie.createSignalAlgorithmus(new SignalMinMax());
+		SignalAlgorithmus sA = aktie.addSignalAlgorithmus(new SignalMinMax());
 		sA.addParameter("indikator", iA);
 		sA.addParameter("dauer", 15);		// Min-Max-Berechnung 15 Tage zurück 
 		sA.addParameter("schwelle", 1f);		// 1-fache Standardabweichung

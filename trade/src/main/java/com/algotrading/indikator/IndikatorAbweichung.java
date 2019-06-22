@@ -4,7 +4,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import com.algotrading.aktie.Aktie;
-import com.algotrading.aktie.Aktien;
+import com.algotrading.aktie.AktieVerzeichnis;
 import com.algotrading.aktie.Kurs;
 import com.algotrading.util.MathUtil;
 
@@ -32,7 +32,7 @@ public class IndikatorAbweichung extends IndikatorAlgorithmus {
 		Kurs kurs2a = null;
 		Object oa = getParameter("aktie");
 		if (oa != null) {
-			aktie2 = Aktien.getInstance().getAktie(oa.toString());
+			aktie2 = AktieVerzeichnis.getInstance().getAktie(oa.toString());
 		}
 		else {
 			aktie2 = aktie; 
@@ -46,7 +46,7 @@ public class IndikatorAbweichung extends IndikatorAlgorithmus {
 
 		// alle Kurse werden ergänzt um den Indikator
 		
-		for (Kurs kurs : aktie.getBoersenkurse()) {	// der Kurs der Ziel-Aktie 
+		for (Kurs kurs : aktie.getKursListe()) {	// der Kurs der Ziel-Aktie 
 			if (oa != null) { // wenn der Quell-Kurs aus einer anderen Aktie stammt 
 				kurs2a = kurs2; // den Vortageskurs setzen 
 				kurs2 = aktie2.getKurs(kurs.getDatum()); // anhand des gleichen Datums den Quell-Kurs holen 

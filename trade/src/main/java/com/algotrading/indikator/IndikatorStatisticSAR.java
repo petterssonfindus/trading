@@ -42,7 +42,7 @@ public class IndikatorStatisticSAR extends IndikatorAlgorithmus {
 		afstufe = (Float) getParameter("stufe");
 		afmaximum = (Float) getParameter("maximum"); 
 
-		ArrayList<Kurs> kurse = aktie.getBoersenkurse();
+		ArrayList<Kurs> kurse = aktie.getKursListe();
 		Kurs kurs;
 		// die ersten 2 Tage finden Vorbereitungen statt. SAR wird nicht berechnet, sondern gesetzt
 		for (int i = 0 ; i <= 1 ; i++) {

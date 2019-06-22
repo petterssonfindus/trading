@@ -6,8 +6,7 @@ import com.algotrading.util.Parameter;
 /**
  * Bei einer Depot-Simulation wird eine Kauf- und Verkaufstrategie eingesetzt
  * Setzt Signale in Orders um.
- * Hat Zugriff auf die Aktie äber das Signal und den Zustand des Depots.  
- * @author oskar
+ * Hat Zugriff auf die Aktie über das Signal und den Zustand des Depots.  
  */
 public abstract class SignalStrategie extends Parameter {
 	

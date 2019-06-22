@@ -14,7 +14,7 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import com.algotrading.Application;
 import com.algotrading.aktie.Aktie;
-import com.algotrading.aktie.Aktien;
+import com.algotrading.aktie.AktieVerzeichnis;
 import com.algotrading.aktie.Kurs;
 import com.algotrading.util.DateUtil;
 import com.algotrading.util.Zeitraum;
@@ -32,7 +32,7 @@ public class TestAktien extends TestCase {
 	
 	public void setUp() {
 		
-		aktie = Aktien.newInstance().getAktie("testaktie");
+		aktie = AktieVerzeichnis.newInstance().getAktie("testaktie");
 		
 	}
 /*	
@@ -50,7 +50,7 @@ public class TestAktien extends TestCase {
 */
 	public void testVerzeichnis() {
 		assertNotNull(aktie);
-		List<Aktie> alleAktien = Aktien.getInstance().getAllAktien();
+		List<Aktie> alleAktien = AktieVerzeichnis.getInstance().getAllAktien();
 		assertNotNull(alleAktien);
 		assertTrue(alleAktien.size() > 10);
 		for (Aktie aktie : alleAktien) {

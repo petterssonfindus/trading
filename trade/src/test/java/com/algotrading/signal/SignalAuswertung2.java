@@ -1,7 +1,7 @@
 package com.algotrading.signal;
 
 import com.algotrading.aktie.Aktie;
-import com.algotrading.aktie.Aktien;
+import com.algotrading.aktie.AktieVerzeichnis;
 import com.algotrading.indikator.IndikatorAlgorithmus;
 import com.algotrading.indikator.IndikatorGDalt;
 import com.algotrading.indikator.IndikatorMinMax;
@@ -14,7 +14,7 @@ import junit.framework.TestCase;
 public class SignalAuswertung2 extends TestCase {
 
 	public void testSignalauswertung() {
-		Aktie aktie = Aktien.getInstance().getAktie("^gdaxi");
+		Aktie aktie = AktieVerzeichnis.getInstance().getAktie("^gdaxi");
 		
 		// Indikator konfigurieren und an Aktie hängen
 		IndikatorAlgorithmus iB = aktie.addIndikatorAlgorithmus(new IndikatorMinMax());
@@ -31,7 +31,7 @@ public class SignalAuswertung2 extends TestCase {
 		aktie.rechneIndikatoren();
 		
 		// Signal konfigurieren und an Aktie hängen 
-		SignalAlgorithmus sB = aktie.createSignalAlgorithmus(new SignalAlgorithmus() {
+		SignalAlgorithmus sB = aktie.addSignalAlgorithmus(new SignalAlgorithmus() {
 			
 			@Override
 			public int rechne(Aktie aktie) {

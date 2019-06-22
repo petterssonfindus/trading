@@ -3,7 +3,7 @@ package com.algotrading.indikator;
 import java.util.ArrayList;
 
 import com.algotrading.aktie.Aktie;
-import com.algotrading.aktie.Aktien;
+import com.algotrading.aktie.AktieVerzeichnis;
 import com.algotrading.aktie.Kurs;
 import com.algotrading.indikator.IndikatorAlgorithmus;
 
@@ -16,7 +16,7 @@ public class TestOnBalanceVolume extends TestCase {
 	@Override
 	protected void setUp() throws Exception {
 		super.setUp();
-		aktie = Aktien.newInstance().getAktie("testaktie");
+		aktie = AktieVerzeichnis.newInstance().getAktie("testaktie");
 	}
 	
 /*
@@ -61,7 +61,7 @@ public class TestOnBalanceVolume extends TestCase {
 
 		aktie.rechneIndikatoren();
 		
-		ArrayList<Kurs> kurse = aktie.getBoersenkurse();
+		ArrayList<Kurs> kurse = aktie.getKursListe();
 		Kurs testKurs = kurse.get(23);
 		System.out.println("IndikatorOBVabsolut " + testKurs.getIndikatorWert(iAOBVa));
 		System.out.println("IndikatorOBVStabw " + testKurs.getIndikatorWert(iAOBVs));

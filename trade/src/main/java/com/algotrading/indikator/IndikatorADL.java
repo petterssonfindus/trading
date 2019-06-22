@@ -28,7 +28,7 @@ public class IndikatorADL extends IndikatorAlgorithmus {
 	 */
 	public void rechne (Aktie aktie ) {
 		// holt die Kurse, an denen die Umsätze dran hängen.
-		ArrayList<Kurs> kurse = aktie.getBoersenkurse();
+		ArrayList<Kurs> kurse = aktie.getKursListe();
 		// holt den Parameter "dauer" aus dem Indikator 
 		int x = (Integer) getParameter("dauer");
 		// holt den Parameter "durchschnitt" aus dem Indikator, falls er vorhanden ist 

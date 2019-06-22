@@ -34,7 +34,7 @@ public class SteigendeBergeFallendeTaeler extends SignalAlgorithmus {
 		ArrayList<Kurs> alleBerge = new ArrayList<Kurs>();
 		IndikatorAlgorithmus iB = (IndikatorAlgorithmus) getParameter("indikator");
 		if (iB == null) log.error("am Signal SteigendeTälerFallendeBerge hängt kein Indikator");
-		for (Kurs kurs : aktie.getBoersenkurse()) {
+		for (Kurs kurs : aktie.getKursListe()) {
 			float staerke; 
 			// prüfe, ob Berg vorhanden
 			if (istBerg(kurs,iB)) {

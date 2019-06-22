@@ -18,7 +18,7 @@ public class BergTal extends IndikatorAlgorithmus {
 	public void rechne (Aktie aktie) {
 		
 		int dauer = (Integer) getParameter("dauer");
-		ArrayList<Kurs> kurse = aktie.getBoersenkurse();
+		ArrayList<Kurs> kurse = aktie.getKursListe();
 		float[] kursArray = aktie.getKursArray();
 		Kurs kurs; 
 		float kursdiffVorAlt = 0;

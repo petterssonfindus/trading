@@ -52,7 +52,7 @@ public class SignalMinMax extends SignalAlgorithmus {
 		boolean durchbruchOben = false;
 		boolean durchbruchUnten = false;
 		
-		ArrayList<Kurs> kurse = aktie.getBoersenkurse();
+		ArrayList<Kurs> kurse = aktie.getKursListe();
 		Kurs kurs; 
 		DescriptiveStatistics stats = new DescriptiveStatistics();
 		// beim Einfügen weiterer Werte fliegt automatisch der erst raus
@@ -65,7 +65,7 @@ public class SignalMinMax extends SignalAlgorithmus {
 			if (Value == null) continue; 
 			stats.addValue(Value);
 		}
-		for (int i = dauer ; i < aktie.getBoersenkurse().size() ; i++) {
+		for (int i = dauer ; i < aktie.getKursListe().size() ; i++) {
 			kurs = kurse.get(i);
 			Float Value = getValue(indikator, kurs); // der Einzel-Wert
 			if (Value == null) continue; 

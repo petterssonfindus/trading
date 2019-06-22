@@ -1,7 +1,7 @@
 package com.algotrading.signal;
 
 import com.algotrading.aktie.Aktie;
-import com.algotrading.aktie.Aktien;
+import com.algotrading.aktie.AktieVerzeichnis;
 import com.algotrading.indikator.IndikatorAlgorithmus;
 import com.algotrading.indikator.IndikatorGDalt;
 import com.algotrading.indikator.IndikatorMinMax;
@@ -14,7 +14,7 @@ import junit.framework.TestCase;
 public class SignalAuswertung extends TestCase {
 
 	public void testSignalauswertung() {
-		Aktie aktie = Aktien.getInstance().getAktie("^gdaxi");
+		Aktie aktie = AktieVerzeichnis.getInstance().getAktie("^gdaxi");
 		
 		// Indikator konfigurieren und an Aktie hängen
 		IndikatorAlgorithmus iB = aktie.addIndikatorAlgorithmus(new IndikatorMinMax());
@@ -29,13 +29,13 @@ public class SignalAuswertung extends TestCase {
 		aktie.rechneIndikatoren();
 		
 		// Signal konfigurieren und an Aktie hängen 
-		SignalAlgorithmus sA = aktie.createSignalAlgorithmus(new SignalMinMax());
+		SignalAlgorithmus sA = aktie.addSignalAlgorithmus(new SignalMinMax());
 		sA.addParameter("indikator", iB);
 		sA.addParameter("dauer", 30);		// Min-Max-Berechnung x Tage zurück 
 		sA.addParameter("schwelle", 1f);		// 1-fache Standardabweichung
 		sA.addParameter("durchbruch", 0);	// tägliches Signal in der Extremzone
 		
-		SignalAlgorithmus sA2 = aktie.createSignalAlgorithmus(new SignalMinMax());
+		SignalAlgorithmus sA2 = aktie.addSignalAlgorithmus(new SignalMinMax());
 		sA2.addParameter("indikator", iB);
 		sA2.addParameter("dauer", 30);		// Min-Max-Berechnung x Tage zurück 
 		sA2.addParameter("schwelle", 1f);		// 1-fache Standardabweichung

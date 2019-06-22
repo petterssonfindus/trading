@@ -4,7 +4,7 @@ import java.util.GregorianCalendar;
 import java.util.List;
 
 import com.algotrading.aktie.Aktie;
-import com.algotrading.aktie.Aktien;
+import com.algotrading.aktie.AktieVerzeichnis;
 import com.algotrading.indikator.IndikatorAlgorithmus;
 import com.algotrading.indikator.IndikatorGDalt;
 import com.algotrading.util.Zeitraum;
@@ -27,9 +27,9 @@ public class TestGDDurchbruch extends TestCase {
 		// TODO Auto-generated method stub
 		super.setUp();
 		
-		aktie = Aktien.newInstance().getAktie("testaktie");
+		aktie = AktieVerzeichnis.newInstance().getAktie("testaktie");
 		assertNotNull(aktie);
-		assertTrue(aktie.getBoersenkurse().size() > 1);
+		assertTrue(aktie.getKursListe().size() > 1);
 		
 		// Indikator1 konfigurieren und an aktie hängen
 		indikator10 = aktie.addIndikatorAlgorithmus(new IndikatorGDalt());
@@ -45,22 +45,22 @@ public class TestGDDurchbruch extends TestCase {
 		aktie.rechneIndikatoren();
 		
 		// Signal1 Schwelle 0.01
-		signal = aktie.createSignalAlgorithmus(new SignalGDDurchbruch());
+		signal = aktie.addSignalAlgorithmus(new SignalGDDurchbruch());
 		signal.addParameter("indikator", indikator10);
 		signal.addParameter("zeitraum", new Zeitraum(beginn, ende));
 		signal.addParameter("schwelle", 0.01f);
 		// Signal2 Schwelle 0.02
-		signal2 = aktie.createSignalAlgorithmus(new SignalGDDurchbruch());
+		signal2 = aktie.addSignalAlgorithmus(new SignalGDDurchbruch());
 		signal2.addParameter("indikator", indikator10);
 		signal2.addParameter("zeitraum", new Zeitraum(beginn, ende));
 		signal2.addParameter("schwelle", 0.02f);
 		// Signal3 Schwelle 0.03
-		signal3 = aktie.createSignalAlgorithmus(new SignalGDDurchbruch());
+		signal3 = aktie.addSignalAlgorithmus(new SignalGDDurchbruch());
 		signal3.addParameter("indikator", indikator10);
 		signal3.addParameter("zeitraum", new Zeitraum(beginn, ende));
 		signal3.addParameter("schwelle", 0.03f);
 		// Signal4 Dauer 30 Tage
-		signal4 = aktie.createSignalAlgorithmus(new SignalGDDurchbruch());
+		signal4 = aktie.addSignalAlgorithmus(new SignalGDDurchbruch());
 		signal4.addParameter("indikator", indikator30);
 		signal4.addParameter("zeitraum", new Zeitraum(beginn, ende));
 		signal4.addParameter("schwelle", 0.01f);

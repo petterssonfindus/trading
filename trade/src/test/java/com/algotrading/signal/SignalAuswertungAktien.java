@@ -3,7 +3,7 @@ package com.algotrading.signal;
 import java.util.List;
 
 import com.algotrading.aktie.Aktie;
-import com.algotrading.aktie.Aktien;
+import com.algotrading.aktie.AktieVerzeichnis;
 import com.algotrading.indikator.IndikatorAlgorithmus;
 import com.algotrading.indikator.IndikatorGDalt;
 import com.algotrading.indikator.IndikatorOBV;
@@ -16,8 +16,8 @@ public class SignalAuswertungAktien extends TestCase {
 
 
 	public static void testSignalAuswertungAktien () {
-		List<Aktie> aktien = Aktien.getInstance().getAktien(DateUtil.createGregorianCalendar(01, 01, 2010));
-		Aktie aktie = Aktien.getInstance().getAktie("^gdaxi");
+		List<Aktie> aktien = AktieVerzeichnis.getInstance().getAktien(DateUtil.createGregorianCalendar(01, 01, 2010));
+		Aktie aktie = AktieVerzeichnis.getInstance().getAktie("^gdaxi");
 		
 		IndikatorAlgorithmus iA = aktie.addIndikatorAlgorithmus(new IndikatorGDalt());
 		iA.addParameter("dauer", 10);
@@ -33,7 +33,7 @@ public class SignalAuswertungAktien extends TestCase {
 //		sB.addParameter("dauer", 30);
 //		sB.addParameter("indikator" , iA);
 //		sB.addParameter("schwelle" , 2f);
-		SignalAlgorithmus sA2 = aktie.createSignalAlgorithmus(new SignalMinMax());
+		SignalAlgorithmus sA2 = aktie.addSignalAlgorithmus(new SignalMinMax());
 		sA2.addParameter("dauer", 30);
 		sA2.addParameter("indikator" , iA2);
 		sA2.addParameter("schwelle" , 1.5f);

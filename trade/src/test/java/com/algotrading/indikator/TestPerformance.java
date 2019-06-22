@@ -1,7 +1,7 @@
 package com.algotrading.indikator;
 
 import com.algotrading.aktie.Aktie;
-import com.algotrading.aktie.Aktien;
+import com.algotrading.aktie.AktieVerzeichnis;
 import com.algotrading.util.Util;
 
 import junit.framework.TestCase;
@@ -10,11 +10,11 @@ public class TestPerformance extends TestCase {
 
 
 	public void testPerformancePositiv() {
-		Aktie aktie = Aktien.getInstance().getAktie("testaktie");
+		Aktie aktie = AktieVerzeichnis.getInstance().getAktie("testaktie");
 		IndikatorAlgorithmus performance = aktie.addIndikatorAlgorithmus(new IndikatorPerformance());
-		float kurs = aktie.getBoersenkurse().get(50).getKurs();
+		float kurs = aktie.getKursListe().get(50).getKurs();
 		System.out.println("Performancekurs " + kurs);
-		float kurs2 = aktie.getBoersenkurse().get(40).getKurs();
+		float kurs2 = aktie.getKursListe().get(40).getKurs();
 		System.out.println("Performancekurs2 " + kurs2);
 		float ergebnis = ((kurs - kurs2) / kurs2) * 25;
 		System.out.println("Performance " + ergebnis);
@@ -27,11 +27,11 @@ public class TestPerformance extends TestCase {
 	}
 
 	public void testPerformanceNegativ() {
-		Aktie aktie = Aktien.getInstance().getAktie("testaktie");
+		Aktie aktie = AktieVerzeichnis.getInstance().getAktie("testaktie");
 		IndikatorAlgorithmus performance = aktie.addIndikatorAlgorithmus(new IndikatorPerformance());
-		float kurs = aktie.getBoersenkurse().get(50).getKurs();
+		float kurs = aktie.getKursListe().get(50).getKurs();
 		System.out.println("NPerformancekurs " + kurs);
-		float kurs2 = aktie.getBoersenkurse().get(63).getKurs();
+		float kurs2 = aktie.getKursListe().get(63).getKurs();
 		System.out.println("NPerformancekurs2 " + kurs2);
 		float ergebnis = ((kurs - kurs2) / kurs2) * 19.23f;
 		System.out.println("NPerformance " + ergebnis);

@@ -28,7 +28,7 @@ public class IndikatorOBV extends IndikatorAlgorithmus {
 	@Override
 	public void rechne (Aktie aktie) {
 		// holt die Kurse, an denen die Umsätze dran hängen.
-		ArrayList<Kurs> kurse = aktie.getBoersenkurse();
+		ArrayList<Kurs> kurse = aktie.getKursListe();
 		
 		// holt den Parameter aus dem Indikator 
 		int dauer = (Integer) getParameter("dauer");

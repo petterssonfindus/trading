@@ -7,7 +7,6 @@ import java.util.List;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import com.algotrading.aktie.Kurs;
 import com.algotrading.data.DBManager;
 import com.algotrading.depot.Order;
 import com.algotrading.indikator.IndikatorAlgorithmus;
@@ -48,8 +47,9 @@ public class Aktie extends Parameter {
 	private int land;
 	private int waehrung; 
 	private String ISIN; 
-	// die Datenquelle 1=Yahoo
+	// die Datenquelle 1=Yahoo 2=Finanzen 3=Ariva
 	private int quelle; 
+	// 2 = Xetra
 	public byte boersenplatz; 
 	/*
 	 *  die Indikator-Algorithmen, die an der Aktie hängen - Zugriff über Getter  
@@ -59,7 +59,7 @@ public class Aktie extends Parameter {
 	
 	private boolean indikatorenSindBerechnet = false; 
 	// die Signal-Algorithmen werden an der Aktie festgehalten und beim Berechnen an die Kurse gehängt
-	private List<SignalAlgorithmus> sAs = new ArrayList<SignalAlgorithmus>();
+	private List<SignalAlgorithmus> signalAlgorithmen = new ArrayList<SignalAlgorithmus>();
 	private boolean signaleSindBerechnet = false; 
 	
 	/**
@@ -128,7 +128,7 @@ public class Aktie extends Parameter {
 			log.error("gewünschtes Kursdatum: " + testDatum + " liegt vor erstem vorhandenen Kurs: " + kurse.get(0));
 			return null; 
 		}
-		ArrayList<Kurs> kurse = this.getBoersenkurse();
+		ArrayList<Kurs> kurse = this.getKursListe();
 		for (Kurs kurs : kurse) {
 			// wenn die Tage exakt passen oder die Tage-Gleichheit übersprungen wurde
 			if (DateUtil.istGleicherKalendertag(datum, kurs.datum) || kurs.datum.before(datum)) {
@@ -142,6 +142,7 @@ public class Aktie extends Parameter {
 	
 	/**
 	 * ermittelt und initialisiert eine Kursreihe innerhalb eines Zeitraums
+	 * ist Zeitraum = null, werden alle Kurse zurück gegeben. 
 	 * Ein Cache für einen Zeitraum wird verwendet. 
 	 * @param beginn
 	 * @param ende
@@ -149,7 +150,7 @@ public class Aktie extends Parameter {
 	 */
 	public ArrayList<Kurs> getKurse(Zeitraum zeitraum) {
 		ArrayList<Kurs> result = null;
-		if (zeitraum == null) log.error("Inputvariable Zeispanne ist null");
+		if (zeitraum == null) return this.getKursListe();
 		// wenn es bereits einen Zeitraum gibt und dieser ist identisch mit der angeforderten
 		if (this.zeitraum != null && this.zeitraum.equals(zeitraum)) {
 			result = this.kurseZeitraum;
@@ -165,7 +166,7 @@ public class Aktie extends Parameter {
 	
 	private ArrayList<Kurs> sucheBoersenkurse (Zeitraum zeitraum) {
 		ArrayList<Kurs> kurse = new ArrayList<Kurs>();
-		for (Kurs kurs : this.getBoersenkurse()) {
+		for (Kurs kurs : this.getKursListe()) {
 			if (DateUtil.istInZeitraum(kurs.datum, zeitraum)) {
 				kurse.add(kurs);
 			}
@@ -180,12 +181,31 @@ public class Aktie extends Parameter {
 	 * @param ende
 	 * @return
 	 */
-	public ArrayList<Kurs> getBoersenkurse () {
+	public ArrayList<Kurs> getKursListe () {
 		if (this.kurse == null) {
 			this.kurse = DBManager.getKursreihe(name);
 		}
 		return kurse;
 	}
+	/**
+	 * Ein Tag nach dem letzten vorhandenen Kurs in der DB 
+	 * Ab diesem Tag muss eingelesen werden. 
+	 */
+	public GregorianCalendar ermittleNextKurs () {
+		// der letzte Kurs wird ermittelt
+		GregorianCalendar letzterKurs = DBManager.getLastKurs(this);
+		// bei einer ganz neuen Aktie gibt es keine Kurse. 
+			// das Beginn-Datum muss dann manuell gesetzt werden. 
+		if (letzterKurs == null) {
+			log.error("Aktie ohne Kurse! BeginnDatum muss manuell vorgegeben werden: " + this.getName());
+			return null; 
+		}
+		// der nächste erwartete Kurs wird einfach 1 Tag hoch gezählt. Das stimmt nicht genau, spielt aber keine Rolle. 
+		GregorianCalendar result = DateUtil.addTage(letzterKurs, 1);
+		return result; 
+	}
+	
+
 	/**
 	 * der nächste Kurs im Ablauf einer Simulation 
 	 * darf/muss für jeden Handelstag genau ein Mal aufgerufen werden. 
@@ -251,7 +271,7 @@ public class Aktie extends Parameter {
 	 * @return
 	 */
 	public float[] getKursArray () {
-		int anzahl = this.getBoersenkurse().size();
+		int anzahl = this.getKursListe().size();
 		float[] floatKurse = new float[anzahl];
 		for (int i = 0 ; i < kurse.size() ; i++) {
 			floatKurse[i] = this.kurse.get(i).getKurs();
@@ -307,7 +327,7 @@ public class Aktie extends Parameter {
 	 */
 	public void clearSignale () {
 		this.deleteSignale();
-		this.sAs = new ArrayList<SignalAlgorithmus>();
+		this.signalAlgorithmen = new ArrayList<SignalAlgorithmus>();
 		this.signaleSindBerechnet = false; 
 	}
 	
@@ -316,9 +336,9 @@ public class Aktie extends Parameter {
 	 * Der SignalAlgorithmus wird anschließend berechnet 
 	 * Die Berechnung darf noch nicht durchgeführt sein. 
 	 */
-	public SignalAlgorithmus createSignalAlgorithmus (SignalAlgorithmus sA) {
+	public SignalAlgorithmus addSignalAlgorithmus (SignalAlgorithmus sA) {
 		sA.setAktie(this);
-		this.sAs.add(sA);
+		this.signalAlgorithmen.add(sA);
 		return sA; 
 	}
 	
@@ -329,8 +349,8 @@ public class Aktie extends Parameter {
 	 */
 	public void rechneSignale () {
 		
-		if (! this.signaleSindBerechnet && this.sAs.size() > 0) {
-			for (SignalAlgorithmus sA : this.sAs) {
+		if (! this.signaleSindBerechnet && this.signalAlgorithmen.size() > 0) {
+			for (SignalAlgorithmus sA : this.signalAlgorithmen) {
 				int anzahl = sA.rechne(this);
 				log.debug("Signale berechnet: " + sA.getKurzname() + " Aktie: " + this.name + " Anzahl: " + anzahl);
 			}
@@ -352,7 +372,7 @@ public class Aktie extends Parameter {
 	 */
 	public void bewerteSignale (Zeitraum zeitraum, int tage) {
 		// alle Signal-Typen an der Aktie
-		for (SignalAlgorithmus sA : this.sAs) {
+		for (SignalAlgorithmus sA : this.signalAlgorithmen) {
 			// an der Beschreibung eine neue Gesamt-Bewertung erzeugen 
 			SignalBewertung sBW = sA.createBewertung();
 			sBW.setTage(tage);
@@ -476,7 +496,7 @@ public class Aktie extends Parameter {
 		if ( this.kurse == null) log.error("keine Kurse vorhanden in Aktie " + this.name);
 		ArrayList<Signal> signale = new ArrayList<Signal>();
 		// geht durch alle SignalAlgorithmen und holt alle angehängten Signale
-		for (SignalAlgorithmus sA : this.sAs) {
+		for (SignalAlgorithmus sA : this.signalAlgorithmen) {
 			signale.addAll(sA.getSignale());
 		}
 		return signale;
@@ -491,7 +511,7 @@ public class Aktie extends Parameter {
 		List<Signal> signale = new ArrayList<Signal>();
 		Signal signal; 
 		// geht durch alle Kurse und holt die gewünschten Signale
-		for (Kurs kurs : this.getBoersenkurse()) {
+		for (Kurs kurs : this.getKursListe()) {
 			signal = kurs.getSignal(signalAlgo);
 			if ( signal != null) {
 				signale.add(signal);
@@ -514,11 +534,21 @@ public class Aktie extends Parameter {
 	 * @return
 	 */
 	public List<SignalAlgorithmus> getSignalAlgorithmen() {
-		return this.sAs;
+		return this.signalAlgorithmen;
 	}
 	
+	/**
+	 * Ermittelt den Zeitraum, in dem Kurse vorhanden sind.
+	 * Entweder ist er in der DB gesetzt. 
+	 * Oder er wird über die Kurs-Liste ermittelt. 
+	 * Annahme ist, dass die Kurse nach Datum sortiert sind
+	 * @return der Zeitraum in dem Kurse vorhanden sind 
+	 */
 	public Zeitraum getZeitraumKurse() {
-		return zeitraumKurse;
+		Zeitraum result = null; 
+		if (this.zeitraumKurse != null) result = this.zeitraumKurse;
+		else result = new Zeitraum(this.kurse.get(0).datum, this.kurse.get(this.kurse.size()).datum);
+		return result; 
 	}
 	
 	/**

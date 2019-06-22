@@ -11,7 +11,7 @@ import com.algotrading.aktie.Kurs;
  */
 public class ImportKursreihe {
 	
-	protected String kuerzel; // wird aus dem Dateinamen erzeugt
+	protected String kuerzel; 
 	protected ArrayList<Kurs> kurse = new ArrayList<Kurs>();
 	
 	ImportKursreihe (String kuerzel) {

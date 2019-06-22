@@ -18,7 +18,7 @@ public class IndikatorVolatilitaet extends IndikatorAlgorithmus {
 	public void rechne (Aktie aktie) {
 		int x = (Integer) getParameter("dauer");
 		// wenn weniger Kurse vorhanden sind, als die Zeitraum 
-		if (aktie.getBoersenkurse().size() <= x) return;
+		if (aktie.getKursListe().size() <= x) return;
 		
 		Kurs kurs; 
 		DescriptiveStatistics stats = new DescriptiveStatistics();
@@ -26,10 +26,10 @@ public class IndikatorVolatilitaet extends IndikatorAlgorithmus {
 		stats.setWindowSize(x);
 		// die Werte auffüllen ohne Berechnung
 		for (int i = 0 ; i < x ; i++) {
-			stats.addValue(aktie.getBoersenkurse().get(i).getKurs());
+			stats.addValue(aktie.getKursListe().get(i).getKurs());
 		}
-		for (int i = x ; i < aktie.getBoersenkurse().size() ; i++) {
-			kurs = aktie.getBoersenkurse().get(i);
+		for (int i = x ; i < aktie.getKursListe().size() ; i++) {
+			kurs = aktie.getKursListe().get(i);
 			stats.addValue(kurs.getKurs());
 			// Ermittlung der StandardAbweichung 
 			double vola = stats.getStandardDeviation();

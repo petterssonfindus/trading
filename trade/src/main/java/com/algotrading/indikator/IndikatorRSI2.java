@@ -24,7 +24,7 @@ public class IndikatorRSI2 extends IndikatorAlgorithmus {
 	@Override
 	public void rechne (Aktie aktie) {
 		int tage = (Integer) getParameter("dauer"); 
-		ArrayList<Kurs> kurse = aktie.getBoersenkurse();
+		ArrayList<Kurs> kurse = aktie.getKursListe();
 		float sumUp = 0;  // Summe der positiven Wertveränderung 
 		float sumDown = 0; // Summe der negativen Wertveränderung 
 		float sumUpA = 0; // Summe Up Average

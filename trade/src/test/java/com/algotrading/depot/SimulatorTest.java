@@ -7,15 +7,17 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import com.algotrading.aktie.Aktie;
+import com.algotrading.aktie.AktieVerzeichnis;
 import com.algotrading.aktie.Aktien;
-
 import com.algotrading.indikator.IndikatorAlgorithmus;
-import com.algotrading.indikator.IndikatorGDalt;
-
-import junit.framework.TestCase;
-import com.algotrading.signal.Signal;
+import com.algotrading.indikator.IndikatorGD;
+import com.algotrading.signal.SignalAlgorithmus;
+import com.algotrading.signal.SignalGDDurchbruch;
+import com.algotrading.signal.Signale;
 import com.algotrading.util.Util;
 import com.algotrading.util.Zeitraum;
+
+import junit.framework.TestCase;
 
 public class SimulatorTest extends TestCase {
 	private static final Logger log = LogManager.getLogger(Util.class);
@@ -31,30 +33,25 @@ public class SimulatorTest extends TestCase {
 		Zeitraum zeitraum = new Zeitraum(beginn, ende);
 		int dauer = 0;
 		int rhythmus = 0;
-		// Aktienliste bestimmen
-
-		ArrayList<Aktie> aktien = new ArrayList<Aktie>();
-		aktien.add(Aktien.getInstance().getAktie("xxxdja"));
-//		aktien.add(Aktien.getInstance().getAktie("aa"));
-
+		
+		// Aktienliste erzeugen und befüllen
+		Aktien aktien = Aktien.create();
+		Aktie aktie = aktien.addAktie("xxxdja");
+		
 		// Indikatoren konfigurieren 
-		ArrayList<IndikatorAlgorithmus> indikatoren = new ArrayList<IndikatorAlgorithmus>();
-
-		IndikatorAlgorithmus adl = new IndikatorAlgorithmus(new IndikatorGDalt());
-		indikatoren.add(adl);
-		adl.addParameter("dauer", 10f);
-		adl.addParameter("durchschnitt", 2f);
+		// Indikator am Aktien-Behälter ist für alle Aktien gültig. 
+		IndikatorAlgorithmus iA1 = aktien.addIndikator(new IndikatorGD());
+		iA1.addParameter("dauer", 10);
+		iA1.addParameter("durchschnitt", 2f);
 		// MInimim der Dauer ist 1 Tag. 
 
 		// Signalbeschreibungen bestimmen
 		// anhand der Signalbeschreibungen werden dann die Signale ermittelt
-		// die erforderlichen Indikatoren mässen vorhanden sein. 
-		ArrayList<SignalBeschreibung> signalBeschreibungen = new ArrayList<SignalBeschreibung>();
-		SignalBeschreibung sb1 = new SignalBeschreibung(Signal.GDDurchbruch);
-		signalBeschreibungen.add(sb1);
-		sb1.addParameter("indikator", adl);
-		sb1.addParameter("schwelle", 0f);
-		sb1.addParameter("schwelledurchbruch", 0.01f);
+		// die erforderlichen Indikatoren müssen vorhanden sein. 
+		SignalAlgorithmus sA = aktien.addSignalAlgorithmus(new SignalGDDurchbruch());
+		sA.addParameter("indikator", iA1);
+		sA.addParameter("schwelle", 0f);
+		sA.addParameter("schwelledurchbruch", 0.01f);
 
 		// die Strategien werden festgelegt
 		SignalStrategie signalStrategie = new StrategieJahrAlleSignale();
@@ -69,15 +66,13 @@ public class SimulatorTest extends TestCase {
 		boolean writeOrders = true;
 		boolean writeHandelstag = true; 
 		
-		// Simulation ausfähren
+		// Simulation ausführen
 		Simulator.simuliereDepots(
 				aktien, 
 				beginn, 
 				ende, 
 				dauer, 
 				rhythmus, 
-				indikatoren, 
-				signalBeschreibungen, 
 				signalStrategie, 
 				tagesStrategie,
 				writeOrders,
@@ -93,8 +88,8 @@ public class SimulatorTest extends TestCase {
 		int rhythmus = 0;
 		// Aktienliste bestimmen
 
-		ArrayList<Aktie> aktien = new ArrayList<Aktie>();
-		aktien.add(Aktien.getInstance().getAktie("xxxdja"));
+		Aktien aktien = Aktien.create();
+		aktien.add(AktieVerzeichnis.getInstance().getAktie("xxxdja"));
 //		aktien.add(Aktien.getInstance().getAktie("aa"));
 
 //		ArrayList<Aktie> aktien = Aktien.getInstance().getAktien(zeitraum, false);
@@ -110,7 +105,7 @@ public class SimulatorTest extends TestCase {
 		// Signalbeschreibungen bestimmen
 		// anhand der Signalbeschreibungen werden dann die Signale ermittelt
 		// die erforderlichen Indikatoren mässen vorhanden sein. 
-		ArrayList<SignalBeschreibung> signalBeschreibungen = new ArrayList<SignalBeschreibung>();
+		Signale signalBeschreibungen = new Signale();
 		
 /*		SignalBeschreibung sb1 = new SignalBeschreibung(Signal.ADL);
 		signalBeschreibungen.add(sb1);
@@ -118,8 +113,7 @@ public class SimulatorTest extends TestCase {
 		sb1.addParameter("schwelle", 0f);
 		sb1.addParameter("gd2", obv10);
 		sb1.addParameter("schwelledurchbruch", 0.01f);
- */
-		SignalBeschreibung sb2 = new SignalBeschreibung(Signal.Jahrestag);
+		SignalAlgorithmus sb2 = aktien.addSignalAlgorithmus(new Signal;
 		signalBeschreibungen.add(sb2);
 		sb2.addParameter("tage", 120);
 		sb2.addParameter("kaufverkauf", Order.VERKAUF);
@@ -127,6 +121,7 @@ public class SimulatorTest extends TestCase {
 		signalBeschreibungen.add(sb3);
 		sb3.addParameter("tage", 240);
 		sb3.addParameter("kaufverkauf", Order.KAUF);
+ */
 
 		// die Strategien werden festgelegt
 		SignalStrategie signalStrategie = new StrategieJahrAlleSignale();
@@ -148,8 +143,6 @@ public class SimulatorTest extends TestCase {
 				ende, 
 				dauer, 
 				rhythmus, 
-				indikatoren, 
-				signalBeschreibungen, 
 				signalStrategie, 
 				tagesStrategie,
 				writeOrders,

@@ -6,7 +6,8 @@ public class TestReadYahooEinzeln extends TestCase {
 	
 
 	public void testReadYahoo () {
-		ReadDataYahoo.YahooWSController("^VIX1Y");
+		ReadDataYahoo.YahooWSController("abt");
+		assertTrue(true);
 	}
 
 }

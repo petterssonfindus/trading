@@ -58,7 +58,7 @@ public class IndikatorPerformance extends IndikatorAlgorithmus {
 			float kapitalEnde, int i) {
 		float rendite;
 		rendite = Util.rechnePerformancePA(kapitalBeginn, kapitalEnde, x);
-		aktie.getBoersenkurse().get(i).addIndikator(this, rendite); 
+		aktie.getKursListe().get(i).addIndikator(this, rendite); 
 		log.trace("GD: " + x + " - " + rendite);
 	}
 

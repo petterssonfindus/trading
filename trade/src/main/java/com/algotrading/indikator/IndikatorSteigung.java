@@ -58,7 +58,7 @@ public class IndikatorSteigung extends IndikatorAlgorithmus {
 			float kapitalEnde, int i) {
 		float steigung;
 		steigung = (kapitalEnde / kapitalBeginn) - 1;
-		aktie.getBoersenkurse().get(i).addIndikator(this, steigung); 
+		aktie.getKursListe().get(i).addIndikator(this, steigung); 
 		log.trace("Steigung: " + dauer + " - " + steigung);
 	}
 

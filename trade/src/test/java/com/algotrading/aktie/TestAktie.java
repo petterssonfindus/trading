@@ -9,7 +9,7 @@ import org.mockito.Mock;
 import org.mockito.Mock.*;
 
 import com.algotrading.aktie.Aktie;
-import com.algotrading.aktie.Aktien;
+import com.algotrading.aktie.AktieVerzeichnis;
 import com.algotrading.aktie.Kurs;
 
 import junit.framework.TestCase;
@@ -23,8 +23,8 @@ public class TestAktie extends TestCase {
 	
 	public void testGetKursZukunft() {
 		
-		Aktie aktie = Aktien.getInstance().getAktie("testaktie");
-		ArrayList<Kurs> kursreihe = aktie.getBoersenkurse(); 
+		Aktie aktie = AktieVerzeichnis.getInstance().getAktie("testaktie");
+		ArrayList<Kurs> kursreihe = aktie.getKursListe(); 
 		
 		
 		
@@ -40,8 +40,8 @@ public class TestAktie extends TestCase {
 	}
 	
 	public void testGetKurse () {
-		Aktie aktie = Aktien.getInstance().getAktie("AA");
-		ArrayList<Kurs> kursreihe = aktie.getBoersenkurse(); 
+		Aktie aktie = AktieVerzeichnis.getInstance().getAktie("AA");
+		ArrayList<Kurs> kursreihe = aktie.getKursListe(); 
 		assertNotNull(kursreihe);
 		assertTrue(kursreihe.size() > 1);
 		log.info("Kursreihe hat Kurse: " + kursreihe.size());

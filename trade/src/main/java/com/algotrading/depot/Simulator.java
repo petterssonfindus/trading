@@ -9,12 +9,10 @@ import java.util.GregorianCalendar;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import com.algotrading.indikator.IndikatorAlgorithmus;
-import com.algotrading.signal.SignalAlgorithmus;
+import com.algotrading.aktie.Aktien;
 import com.algotrading.util.DateUtil;
 import com.algotrading.util.Util;
 import com.algotrading.util.Zeitraum;
-import com.algotrading.aktie.Aktie;
 
 /**
  * Führt Depot-Simulationen durch
@@ -28,6 +26,8 @@ public class Simulator {
 	ArrayList<Depot> depots = new ArrayList<Depot>();
 	/**
 	 * Führt eine Reihe von Simulationen durch
+	 * An den Aktien hängen die benötigten Indikatoren und die Signalstrategie 
+	 * @param aktien Liste von Aktien incl. Indikatoren und Signale 
 	 * @param wertpapier
 	 * @param beginn
 	 * @param ende
@@ -35,13 +35,11 @@ public class Simulator {
 	 * @param rhythmus
 	 */
 	public static void simuliereDepots (
-			ArrayList<Aktie> aktien, 
+			Aktien aktien, 
 			GregorianCalendar beginn, 
 			GregorianCalendar ende, 
 			int dauer, 
 			int rhythmus, 
-			ArrayList<IndikatorAlgorithmus> indikatoren, 
-			ArrayList<SignalAlgorithmus> signalBeschreibungen, 
 			SignalStrategie signalStrategie, 
 			TagesStrategie tagesStrategie, 
 			boolean writeOrders,
@@ -50,30 +48,15 @@ public class Simulator {
 		
 		// die Zeitintervalle ermitteln
 		ArrayList<Zeitraum> zeitraeume = ermittleZeitraum(beginn, ende, dauer, rhythmus);
-		for (Aktie aktie : aktien) {
-			for (IndikatorAlgorithmus indikator : indikatoren){
-				// die Indikator-Konfigurationen werden in jeder Aktie gespeichert
-				aktie.addIndikatorAlgorithmus(indikator);
-			}
-			// für jede Aktie werden die benötigten Indikatoren berechnet 
-			aktie.rechneIndikatoren();
-		}
+		// Alle Indikatoren und Signale an allen Aktien setzen und danach berechnen
+		aktien.rechneIndikatorenUndSignale();
 		// für jeden Zeitraum wird eine Simulation durchgeführt 
 		// dabei werden alle Objekte neu angelegt: Kurse, Aktien, Depot 
 		for (Zeitraum zeitraum : zeitraeume) {
 			// bereite Depot vor
 			Depot depot = new Depot("Oskars", 10000f);
 			depot.aktien = aktien; 
-			// jede Signalbeschreibung wird in jeder Aktie gesetzt 
-			for (SignalAlgorithmus signalAlgorithmus : signalBeschreibungen) {
-				// wenn Zeitraum gesetzt wird, wird Signalsuche nur hier durchgefährt
-				signalAlgorithmus.addParameter("zeitraum", zeitraum);
-				// Signalbeschreibung wird in jeder Aktie gespeichert
-				for (Aktie aktie : aktien) {
-					aktie.createSignalAlgorithmus(signalAlgorithmus);
-				}
-			}
-	
+
 			// die Depot-Simulation wird durchgeführt, dabei werden auch Signale berechnet 
 			depot.simuliereDepot(signalStrategie, tagesStrategie, aktien, zeitraum.beginn, zeitraum.ende, writeHandelstag);
 			
@@ -87,7 +70,7 @@ public class Simulator {
 					Util.separatorCSV + DateUtil.formatDate(zeitraum.ende) + 
 					depot.strategieBewertung.toString());
 			FileWriter fileWriter = openInputOutput();
-			writeInputParameter(fileWriter, zeitraum, aktien, indikatoren, signalBeschreibungen, signalStrategie, tagesStrategie);
+			writeInputParameter(fileWriter, zeitraum, aktien, signalStrategie, tagesStrategie);
 			writeErgebnis(fileWriter, zeitraum, depot);
 			closeInputOutput(fileWriter);
 		}
@@ -134,17 +117,16 @@ public class Simulator {
 	private static void writeInputParameter (
 			FileWriter fileWriter, 
 			Zeitraum zeitraum,
-			ArrayList<Aktie> aktien,
-			ArrayList<IndikatorAlgorithmus> indikatoren, 
-			ArrayList<SignalAlgorithmus> signalAlgos, 
+			Aktien aktien,
 			SignalStrategie signalStrategie, 
 			TagesStrategie tagesStrategie ) {
 		String zeile = ""; 
+		String indikatoren = aktien.getIndikatoren().toString();
 		zeile = zeile.concat(DateUtil.formatDate(zeitraum.beginn) + Util.separatorCSV);
 		zeile = zeile.concat(DateUtil.formatDate(zeitraum.ende) + Util.separatorCSV);
 		zeile = zeile.concat(Integer.toString(aktien.size()) + Util.separatorCSV);
 		zeile = zeile.concat(indikatoren.toString() + Util.separatorCSV);
-		zeile = zeile.concat(signalAlgos.toString() + Util.separatorCSV);
+//		zeile = zeile.concat(signalAlgos.toString() + Util.separatorCSV);
 		zeile = zeile.concat(signalStrategie.toString() + Util.separatorCSV);
 		// falls eine tagesstrategie vorhanden ist 
 		if (tagesStrategie != null) {

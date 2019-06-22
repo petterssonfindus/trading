@@ -3,7 +3,7 @@ package com.algotrading.signal;
 import java.util.List;
 
 import com.algotrading.aktie.Aktie;
-import com.algotrading.aktie.Aktien;
+import com.algotrading.aktie.AktieVerzeichnis;
 import com.algotrading.indikator.IndikatorAlgorithmus;
 import com.algotrading.indikator.IndikatorAbweichung;
 import com.algotrading.util.Zeitraum;
@@ -13,9 +13,9 @@ import junit.framework.TestCase;
 public class TestMinMaxQuellAktie extends TestCase {
 	
 	public void testKurswertMinMax() {
-		Aktie aktie = Aktien.getInstance().getAktie("testaktie");
+		Aktie aktie = AktieVerzeichnis.getInstance().getAktie("testaktie");
 		assertNotNull(aktie);
-		assertTrue(aktie.getBoersenkurse().size() > 1);
+		assertTrue(aktie.getKursListe().size() > 1);
 		
 		// Indikator konfigurieren und an Aktie hängen
 		IndikatorAlgorithmus iB = aktie.addIndikatorAlgorithmus(new IndikatorAbweichung());
@@ -25,12 +25,12 @@ public class TestMinMaxQuellAktie extends TestCase {
 		// Indikator berechnen und ausgeben 
 		aktie.rechneIndikatoren();
 		// am ersten Tag 18.03.2015 ist der open-Kurs 19,50 
-		assertEquals(29.18f, aktie.getBoersenkurse().get(0).getIndikatorWert(iB));
+		assertEquals(29.18f, aktie.getKursListe().get(0).getIndikatorWert(iB));
 		// der close-Kurs ist 20.05
-		assertEquals(20.05f, aktie.getBoersenkurse().get(0).getKurs());
+		assertEquals(20.05f, aktie.getKursListe().get(0).getKurs());
 		
 		// Signal konfigurieren und an Aktie hängen 
-		SignalAlgorithmus sA = aktie.createSignalAlgorithmus(new SignalMinMax());
+		SignalAlgorithmus sA = aktie.addSignalAlgorithmus(new SignalMinMax());
 		sA.addParameter("indikator", iB);
 		sA.addParameter("dauer", 15);		// Min-Max-Berechnung 15 Tage zurück 
 		sA.addParameter("schwelle", 1f);		// 1-fache Standardabweichung

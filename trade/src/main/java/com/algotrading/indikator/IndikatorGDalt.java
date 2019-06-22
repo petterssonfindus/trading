@@ -55,7 +55,7 @@ public class IndikatorGDalt extends IndikatorAlgorithmus {
 				ergebnis = (kursneu - ergebnis) / kursneu; 
 			}
 			// das GD-Ergebnis in den Kurs eintragen
-			aktie.getBoersenkurse().get(i).addIndikator(this, ergebnis); 
+			aktie.getKursListe().get(i).addIndikator(this, ergebnis); 
 			log.trace("GD: " + x + " - " + ergebnis);
 		}
 

@@ -55,11 +55,11 @@ public class MathUtil {
 		// die Werte auffüllen ohne Berechnung
 		int anzahl = 0;
 		int i = 0;  // Zähler durch die Kurse
-		int anzahlKurse = aktie.getBoersenkurse().size();
+		int anzahlKurse = aktie.getKursListe().size();
 		
 		// füllt den Kursspeicher, bis es voll ist
 		while (anzahl < stabwDauer) {
-			kurs = aktie.getBoersenkurse().get(i ++);
+			kurs = aktie.getKursListe().get(i ++);
 			if (kurs.getIndikatorWert(iA) != null) {
 				anzahl ++;
 				stats.addValue(kurs.getIndikatorWert(iA));
@@ -69,7 +69,7 @@ public class MathUtil {
 		}
 		for ( ; i < anzahlKurse ; i++) {
 			// den Kurs holen 
-			kurs = aktie.getBoersenkurse().get(i);
+			kurs = aktie.getKursListe().get(i);
 			// den bisherigen Indikator-Wert der Stats-Liste hinzu fügen. 
 			Float indikatorWert = kurs.getIndikatorWert(iA);
 			if (indikatorWert == null) {

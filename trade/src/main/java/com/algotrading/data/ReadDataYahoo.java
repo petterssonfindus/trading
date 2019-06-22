@@ -18,7 +18,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import com.algotrading.aktie.Aktie;
-import com.algotrading.aktie.Aktien;
+import com.algotrading.aktie.AktieVerzeichnis;
 import com.algotrading.aktie.Kurs;
 import com.algotrading.util.DateUtil;
 
@@ -64,7 +64,7 @@ public class ReadDataYahoo {
 	 * Liest für alle Aktien mit Quelle=Yahoo aktuelle Kurse ein. 
 	 */
 	public static void YahooWSAktienController () {
-		Aktien aktien = Aktien.getInstance(); 
+		AktieVerzeichnis aktien = AktieVerzeichnis.getInstance(); 
 		List<Aktie> alleAktien = aktien.getAllAktien();
 		for (Aktie aktie : alleAktien) {
 			if (aktie.getQuelle() == 1) {
@@ -81,31 +81,24 @@ public class ReadDataYahoo {
 	public static void YahooWSController (String name) {
 		
 		// die Aktie 
-		Aktie aktie = Aktien.getInstance().getAktie(name);
-		// der letzte Kurs wird ermittelt
-		GregorianCalendar letzterKurs = DBManager.getLastKurs(aktie);
-		// bei einer ganz neuen Aktie gibt es keine Kurse
-		
-		GregorianCalendar letzterHandelstag = DateUtil.getLetzterHandelstag();
-		// der nächste erwartete Kurs wird einfach 1 Tag hoch gezählt. Das stimmt nicht genau, spielt aber keine Rolle. 
-		GregorianCalendar nextKurs = DateUtil.addTage(letzterKurs, 1);
+		Aktie aktie = AktieVerzeichnis.getInstance().getAktie(name);
+
+		GregorianCalendar nextKurs = aktie.ermittleNextKurs();
 		// wenn es noch keine Kurse gibt, muss das Datum manuell bestimmt werden. 
 		if (nextKurs == null) {
 			nextKurs = new GregorianCalendar(1980, 1, 1);
 		}
-		int diff = DateUtil.anzahlKalenderTage(nextKurs, letzterHandelstag);
-		System.out.println(name + ": Anfrage von: " + DateUtil.formatDate(nextKurs) + " bis: " + DateUtil.formatDate(letzterHandelstag) + " Diff " + diff);
+		GregorianCalendar endeEinlesen = DateUtil.getLetzterHandelstag();
+		int diff = DateUtil.anzahlKalenderTage(nextKurs, endeEinlesen);
+		System.out.println(name + ": Anfrage von: " + DateUtil.formatDate(nextKurs) + " bis: " + DateUtil.formatDate(endeEinlesen) + " Diff " + diff);
 		// wenn der letzte Kurs vor dem letzten Handelstag liegt
 		if (diff >= 1) {	
 			// die Kurse werden geholt und in ein String-Array gesteckt.
-			ArrayList<String> stringKurse = readYahooWS(name, nextKurs, letzterHandelstag);
+			ArrayList<String> stringKurse = readYahooWS(name, nextKurs, endeEinlesen);
 			// dann wird aus dem String-Array ein ImportKursreihe gemacht. 
 			ImportKursreihe importKursreihe = transformYahooWSToKursreihe(stringKurse, name);
 			// dann wird die ImportKursreihe in die Kurs-DB geschrieben
 			DBManager.schreibeKurse(importKursreihe);
-		}
-		else {
-			System.out.println(name + " letzter Kurs: " + DateUtil.formatDate(letzterKurs));
 		}
 	}
 	

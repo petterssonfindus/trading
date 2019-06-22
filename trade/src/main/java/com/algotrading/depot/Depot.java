@@ -15,7 +15,7 @@ import com.algotrading.signal.Signal;
 import com.algotrading.util.DateUtil;
 import com.algotrading.util.Util;
 import com.algotrading.aktie.Aktie;
-import com.algotrading.aktie.Aktien;
+import com.algotrading.aktie.AktieVerzeichnis;
 import com.algotrading.aktie.Kurs;
 import com.algotrading.indikator.IndikatorAlgorithmus;
 
@@ -82,7 +82,7 @@ public class Depot {
 		this.tagesStrategie = tagesStrategie;
 		this.signalStrategie = signalStratgie; 
 		// eine Aktie mit Zeitreihe wird angelegt, um die Depotwerte zu speichern 
-		this.depotwert = new Aktie(this.name, "Depot " + this.name, Aktien.INDEXDAX,Aktien.BOERSEDEPOT);
+		this.depotwert = new Aktie(this.name, "Depot " + this.name, AktieVerzeichnis.INDEXDAX,AktieVerzeichnis.BOERSEDEPOT);
 		
 		// die Berechnungen an den Aktien werden durchgeführt
 		for (Aktie aktie : aktien ) {
@@ -223,7 +223,7 @@ public class Depot {
 	 * @return die Kauf-Order falls gekauft wurde - ansonsten null 
 	 */
 	protected Order kaufe (float betrag, String wertpapier) {
-		Aktie aktie = Aktien.getInstance().getAktie(wertpapier);
+		Aktie aktie = AktieVerzeichnis.getInstance().getAktie(wertpapier);
 		return this.kaufe(betrag, aktie);
 	}
 
@@ -255,7 +255,7 @@ public class Depot {
 	}
 
 	protected Order verkaufe (String wertpapier) {
-		Aktie aktie = Aktien.getInstance().getAktie(wertpapier);
+		Aktie aktie = AktieVerzeichnis.getInstance().getAktie(wertpapier);
 		return verkaufe (aktie);
 	}
 	/**
@@ -299,7 +299,7 @@ public class Depot {
 		float result = 0;
 		if (this.wertpapierbestand.keySet().size() > 0) {
 			for (Wertpapierbestand wertpapierbestand : this.wertpapierbestand.values()) {
-				float kurs = Aktien.getInstance().getAktie(wertpapierbestand.wertpapier).getAktuellerKurs().getKurs();
+				float kurs = AktieVerzeichnis.getInstance().getAktie(wertpapierbestand.wertpapier).getAktuellerKurs().getKurs();
 				result += kurs * wertpapierbestand.bestand;
 			}
 		}

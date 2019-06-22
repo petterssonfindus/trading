@@ -7,7 +7,7 @@ import java.io.ObjectOutputStream;
 import java.io.OutputStream;
 
 import com.algotrading.aktie.Aktie;
-import com.algotrading.aktie.Aktien;
+import com.algotrading.aktie.AktieVerzeichnis;
 import com.algotrading.aktie.Kurs;
 
 import junit.framework.TestCase;
@@ -15,7 +15,7 @@ import junit.framework.TestCase;
 public class TestMinMax extends TestCase {
 	
 	public void testMinMax() {
-		Aktie aktie = Aktien.getInstance().getAktie("testaktie");
+		Aktie aktie = AktieVerzeichnis.getInstance().getAktie("testaktie");
 		IndikatorAlgorithmus iA = aktie.addIndikatorAlgorithmus(new IndikatorMinMax());
 		iA.addParameter("dauer", 10);
 		aktie.rechneIndikatoren();

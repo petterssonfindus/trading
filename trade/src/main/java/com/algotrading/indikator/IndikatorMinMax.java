@@ -30,7 +30,7 @@ public class IndikatorMinMax extends IndikatorAlgorithmus {
 		int dauer = (Integer) getParameter("dauer");
 		if (dauer == 0) log.error("IndikatorMinMax enthält keine Dauer" );
 		
-		ArrayList<Kurs> kurse = aktie.getBoersenkurse();
+		ArrayList<Kurs> kurse = aktie.getKursListe();
 		Kurs kurs; 
 		DescriptiveStatistics stats = new DescriptiveStatistics();
 		// beim Einfügen weiterer Werte fliegt automatisch der erst raus
@@ -41,7 +41,7 @@ public class IndikatorMinMax extends IndikatorAlgorithmus {
 			Float Value = kurs.getKurs();
 			stats.addValue(Value);
 		}
-		for (int i = dauer ; i < aktie.getBoersenkurse().size() ; i++) {
+		for (int i = dauer ; i < aktie.getKursListe().size() ; i++) {
 			kurs = kurse.get(i);
 			float value = kurs.getKurs(); 
 			

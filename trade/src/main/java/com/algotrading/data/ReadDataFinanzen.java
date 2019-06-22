@@ -21,7 +21,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import com.algotrading.aktie.Aktie;
-import com.algotrading.aktie.Aktien;
+import com.algotrading.aktie.AktieVerzeichnis;
 import com.algotrading.aktie.Kurs;
 import com.algotrading.util.DateUtil;
 import com.algotrading.util.FileUtil;
@@ -34,14 +34,16 @@ import com.algotrading.util.Util;
 
 	/**
 	 * Liest für alle Aktien mit Quelle=Finanzen aktuelle Kurse ein. 
-	 * Schreibt die Ergebnisse in das Log-Verzeichnis 
+	 * Schreibt die Ergebnisse in das Log-Verzeichnis und in die Kurse-DB
+	 * Jede Aktie muss Kurse haben. Neue Aktie muss manuell mit Kurse versorgt werden. 
 	 */
 	public static void FinanzenWSAktienController () {
-		Aktien aktien = Aktien.getInstance(); 
+		AktieVerzeichnis aktien = AktieVerzeichnis.getInstance(); 
 		List<Aktie> alleAktien = aktien.getAllAktien();
 		for (Aktie aktie : alleAktien) {
+			// wenn die Quelle 2 ist, dann Kurs über Finanzen aktualisieren 
 			if (aktie.getQuelle() == 2) {
-				FinanzenWSController(aktie.name, false);
+				FinanzenWSController(aktie.name, true, true, null);
 			}
 		}
 	}
@@ -50,49 +52,50 @@ import com.algotrading.util.Util;
 	 * Steuert das Einlesen der Kurse aus dem Finanzen-WebService mit bestehender Aktie
 	 * Ermittelt die benötigte Zeitspanne 
 	 * @param name
-	 * @param writeDB steuert, ob direkt in die DB geschrieben wird, oder eine Datei geschrieben wird. 
+	 * @param writeDB: true schreibt in die DB, 
+	 * 					false: schreibt in eine Datei kann dann mit ReadFileWriteDB in die DB geschrieben werden 
+	 * @param writeFile: true schreibt ein File mit dem Inhalt des Service-Response
+	 * @param beginn: der Tag, ab dem das Einlesen beginnt. Wenn null, dann ab letztem vorhandenem Kurs 
 	 */
-	public static String FinanzenWSController (String name, boolean writeDB) {
+	public static String FinanzenWSController (String name, boolean writeFile, boolean writeDB, GregorianCalendar beginn) {
 		String result = null; 
+		GregorianCalendar beginnEinlesen;	// der Beginn des einzulesenden Kurs-Zeitraums
 		// die Aktie 
-		Aktie aktie = Aktien.getInstance().getAktie(name);
-		// der letzte Kurs wird ermittelt
-		GregorianCalendar letzterKurs = DBManager.getLastKurs(aktie);
-		// bei einer ganz neuen Aktie gibt es keine Kurse
-		if (letzterKurs == null) {
-			// TODO Abfrage aller Kurse mit maximaler Zeitspanne 
-			// wird derzeit manuell gemacht beim ersten Einlesen 
+		Aktie aktie = AktieVerzeichnis.getInstance().getAktie(name);
+		// wenn ein Beginn-Datum vorgegeben ist, wird dieses verwendet
+		if (beginn != null) {
+			beginnEinlesen = beginn;
+		}
+		else {	// das Beginn-Datum wird berechnet
+			beginnEinlesen = aktie.ermittleNextKurs();
+		}
+		
+		GregorianCalendar endeEinlesen = DateUtil.getLetzterHandelstag();
+		
+		int diff = DateUtil.anzahlKalenderTage(beginnEinlesen, endeEinlesen);
+		System.out.println(name + ": Anfrage von: " + DateUtil.formatDate(beginnEinlesen) + " bis: " + DateUtil.formatDate(endeEinlesen) + " Diff " + diff);
+		// wenn eine Aktualisierung notwendig ist 
+		// der letzte Kurs liegt vor dem letzten Handelstag 
+		if (diff >= 3) {	
 			
-		}
-		GregorianCalendar letzterHandelstag = DateUtil.getLetzterHandelstag();
-		// der nächste erwartete Kurs wird einfach 1 Tag hoch gezählt. Das stimmt nicht genau, spielt aber keine Rolle. 
-		GregorianCalendar nextKurs = DateUtil.addTage(letzterKurs, 1);
-		// wenn es noch keine Kurse gibt, muss das Datum manuell bestimmt werden. 
-		if (nextKurs == null) {
-			nextKurs = new GregorianCalendar(1998, 01, 01);
-		}
-		int diff = DateUtil.anzahlKalenderTage(nextKurs, letzterHandelstag);
-		System.out.println(name + ": Anfrage von: " + DateUtil.formatDate(nextKurs) + " bis: " + DateUtil.formatDate(letzterHandelstag) + " Diff " + diff);
-		// wenn der letzte Kurs vor dem letzten Handelstag liegt
-		if (diff >= 1) {	
-			// die Kurse werden geholt und in ein String-Array gesteckt.
-			ArrayList<String> stringKurse = readFinanzenWS(name, nextKurs, letzterHandelstag);
-			// entweder wird direkt in die DB geschrieben 
-			if (writeDB) {
-				// dann wird aus dem String-Array ein ImportKursreihe gemacht. 
-				ImportKursreihe importKursreihe = transformFinanzenWSToKursreihe(stringKurse, name);
-				// dann wird die ImportKursreihe in die Kurs-DB geschrieben
-				DBManager.schreibeKurse(importKursreihe);
-			}
-			// oder es wird ein txt-File geschrieben 
-			else {
+			// Aufruf des Finanzen-Service und in ein String-Array stecken.
+			ArrayList<String> stringKurse = readFinanzenWS(name, beginnEinlesen, endeEinlesen);
+			// in ein txt-File schreiben
+			if (writeFile){
 				// schreibt das Ergebnis in eine csv-Datei
-				File file = FileUtil.writeCSVFile(stringKurse, name + letzterHandelstag.getTimeInMillis());
+				File file = FileUtil.writeCSVFile(stringKurse, name + "%" + endeEinlesen.getTimeInMillis());
 				result = file.getName();
+			}
+			// in die DB schreiben
+			if (writeDB) {
+				// aus dem String-Array ein ImportKursreihe transformieren 
+				ImportKursreihe importKursreihe = transformFinanzenWSToKursreihe(stringKurse, name);
+				// ImportKursreihe in die Kurs-DB schreiben
+				DBManager.schreibeKurse(importKursreihe);
 			}
 		}
 		else {
-			System.out.println(name + " letzter Kurs: " + DateUtil.formatDate(letzterKurs));
+			System.out.println("Kein Einlesen notwendig für " + name + " Erster fehlender Kurs: " + DateUtil.formatDate(beginnEinlesen));
 		}
 		return result; 
 	}
@@ -107,6 +110,14 @@ import com.algotrading.util.Util;
 		ImportKursreihe importKursreihe = transformFinanzenWSToKursreihe(kurse, kursname);
 		// die Kursreihe in die DB schreiben
 		DBManager.schreibeKurse(importKursreihe);
+	}
+	
+	/**
+	 * Ermittelt den Aktien-Namen aus dem Dateinamen anhand des %-Zeichens
+	 */
+	public static void readFileWriteDB (String dateiname) {
+		
+		
 	}
 	
 	private static ImportKursreihe transformFinanzenWSToKursreihe (ArrayList<String> response, String name) {
@@ -204,7 +215,12 @@ import com.algotrading.util.Util;
 		}
 		// die URL zusammen bauen 
 		try {
-			finanzenURL = new URL (getFinanzenURL(name, beginn, ende));
+			if (beginn == null) {
+				finanzenURL = new URL (getFinanzenURL(name));
+			}
+			else {
+				finanzenURL = new URL (getFinanzenURL(name, beginn, ende));
+			}
 		} catch (MalformedURLException e1) {
 			e1.printStackTrace();
 		}
@@ -293,6 +309,23 @@ import com.algotrading.util.Util;
 		return uri.toString();
 		
 	}
+	private static String getFinanzenURL (String name) {
+	//  https://www.finanzen.net/historische-kurse/Fresenius
+			URI uri = null;
+			try {
+				uri = new URIBuilder()
+				        .setScheme("https")
+				        .setHost("www.finanzen.net")
+				        .setPath("/historische-kurse/" + name )
+				        .build();
+			} catch (URISyntaxException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+
+			return uri.toString();
+			
+		}
 	
 	
 }

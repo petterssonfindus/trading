@@ -15,7 +15,7 @@ import org.apache.logging.log4j.Logger;
 import com.algotrading.util.DateUtil;
 import com.algotrading.util.Zeitraum;
 import com.algotrading.aktie.Aktie;
-import com.algotrading.aktie.Aktien;
+import com.algotrading.aktie.AktieVerzeichnis;
 import com.algotrading.aktie.Kurs;
 
 /**
@@ -158,9 +158,14 @@ public class DBManager {
 			anweisung = (Statement) connection.createStatement();
 			anweisung.execute(insert);
 		} catch (SQLException e) {
+			if (e.getSQLState().matches("23000")) {
+				return true; 
+			}
+			else {
 			log.error("Fehler beim Schreiben von Kurs " + kurs.wertpapier + kurs.toString() );
 			log.error(insert);
 			return false;
+			}
 		}
 //		log.info("Kurs " + kurs + " in DB geschrieben ");
 		return true;
@@ -220,10 +225,10 @@ public class DBManager {
 	 * @param name
 	 */
 	protected static void checkKursreiheTage (String name) {
-		Aktie aktie = Aktien.getInstance().getAktie(name);
-		Aktie dow = Aktien.getInstance().getAktie("xxxdja");
-		ArrayList<Kurs> aktieKurse = aktie.getBoersenkurse();
-		ArrayList<Kurs> dowKurse = dow.getBoersenkurse();
+		Aktie aktie = AktieVerzeichnis.getInstance().getAktie(name);
+		Aktie dow = AktieVerzeichnis.getInstance().getAktie("xxxdja");
+		ArrayList<Kurs> aktieKurse = aktie.getKursListe();
+		ArrayList<Kurs> dowKurse = dow.getKursListe();
 		// Kurs zum Beginn der Zeitreihe
 		Kurs kurs1 = aktieKurse.get(0);
 		Kurs dow1 = dowKurse.get(0);

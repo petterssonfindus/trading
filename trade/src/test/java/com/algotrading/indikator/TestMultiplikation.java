@@ -1,7 +1,7 @@
 package com.algotrading.indikator;
 
 import com.algotrading.aktie.Aktie;
-import com.algotrading.aktie.Aktien;
+import com.algotrading.aktie.AktieVerzeichnis;
 import com.algotrading.util.Util;
 
 import junit.framework.TestCase;
@@ -12,7 +12,7 @@ public class TestMultiplikation extends TestCase {
 	
 	protected void setUp() throws Exception {
 		super.setUp();
-		aktie = Aktien.newInstance().getAktie("testaktie");
+		aktie = AktieVerzeichnis.newInstance().getAktie("testaktie");
 	}	
 	
 	/**
@@ -28,9 +28,9 @@ public class TestMultiplikation extends TestCase {
 		iB3.addParameter("indikator2", iB2);
 		aktie.rechneIndikatoren();
 		
-		assertEquals(21.39f, aktie.getBoersenkurse().get(20).getIndikatorWert(iB));
-		assertEquals("0,51", Util.toString(aktie.getBoersenkurse().get(20).getIndikatorWert(iB2)));
-		assertEquals("10,909", Util.toString(aktie.getBoersenkurse().get(20).getIndikatorWert(iB3)));
+		assertEquals(21.39f, aktie.getKursListe().get(20).getIndikatorWert(iB));
+		assertEquals("0,51", Util.toString(aktie.getKursListe().get(20).getIndikatorWert(iB2)));
+		assertEquals("10,909", Util.toString(aktie.getKursListe().get(20).getIndikatorWert(iB3)));
 	}
 	
 	/**
@@ -65,9 +65,9 @@ public class TestMultiplikation extends TestCase {
 		iB3.addParameter("reziprok2", 1);
 		aktie.rechneIndikatoren();
 
-		assertEquals(21.39f, aktie.getBoersenkurse().get(20).getIndikatorWert(iB));
-		assertEquals("0,51", Util.toString(aktie.getBoersenkurse().get(20).getIndikatorWert(iB2)));
-		assertEquals("41,942", Util.toString(aktie.getBoersenkurse().get(20).getIndikatorWert(iB3)));
+		assertEquals(21.39f, aktie.getKursListe().get(20).getIndikatorWert(iB));
+		assertEquals("0,51", Util.toString(aktie.getKursListe().get(20).getIndikatorWert(iB2)));
+		assertEquals("41,942", Util.toString(aktie.getKursListe().get(20).getIndikatorWert(iB3)));
 	}
 
 }

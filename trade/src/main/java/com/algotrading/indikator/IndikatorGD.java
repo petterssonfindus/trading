@@ -1,12 +1,16 @@
 package com.algotrading.indikator;
 
 import org.apache.commons.math3.stat.descriptive.DescriptiveStatistics;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import com.algotrading.aktie.Aktie;
 import com.algotrading.aktie.Kurs;
 import com.algotrading.util.MathUtil;
 
 public class IndikatorGD extends IndikatorAlgorithmus {
+	
+	private static final Logger log = LogManager.getLogger(IndikatorGD.class);
 
 	/**
 	 * Gleitender Durchschnitt mit Hilfe der apache.math.statistic-Komponente
@@ -20,7 +24,7 @@ public class IndikatorGD extends IndikatorAlgorithmus {
 		Object dauerO = getParameter("dauer");
 		int x = (Integer) dauerO;
 		// wenn weniger Kurse vorhanden sind, als die Zeitraum 
-		if (aktie.getBoersenkurse().size() <= x) return;
+		if (aktie.getKursListe().size() <= x) return;
 		
 		Object mittelwertO = getParameter("mittelwert");
 		int mittelwert = 0;	// Default-Wert = geometrisch
@@ -34,10 +38,10 @@ public class IndikatorGD extends IndikatorAlgorithmus {
 		stats.setWindowSize(x);
 		// die Werte auffüllen ohne Berechnung
 		for (int i = 0 ; i < x ; i++) {
-			stats.addValue(aktie.getBoersenkurse().get(i).getKurs());
+			stats.addValue(aktie.getKursListe().get(i).getKurs());
 		}
-		for (int i = x ; i < aktie.getBoersenkurse().size() ; i++) {
-			kurs = aktie.getBoersenkurse().get(i);
+		for (int i = x ; i < aktie.getKursListe().size() ; i++) {
+			kurs = aktie.getKursListe().get(i);
 			stats.addValue(kurs.getKurs());
 			// Ermittlung des Durchschnitts
 			double gd = 0;

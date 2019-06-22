@@ -62,9 +62,7 @@ public class ImportCSVsimple {
 	}
 	
 	/**
-	 * Liest eine einzelne Datei aus dem Pfad. 
-	 * Erzeugt Tabellen mit dem Dateinamen als Kürzel mit allen enthaltenen Kursen. 
-	 * @param name
+	 * Liest eine einzelne Datei aus dem Standard-csv-Pfad. 
 	 */
 	public static File getCSVFile (String name) {
 		String pfad = getPfadCSV() + Util.getFileSeparator() + name + ".csv";
@@ -78,6 +76,114 @@ public class ImportCSVsimple {
 		// die Liste aller Files 
 		return dir.listFiles();
 		
+	}
+	
+	/**
+	 * Liest eine csv-Datei mit Kursen von Ariva ein 
+	 * @param file die csv-Datei 
+	 * @param name Name der Aktie in den Kurse-Stammdaten
+	 * @return die Kursreihe aus der man DB-Einträge erzeugen kann 
+	 */
+	public static ImportKursreihe readKurseArivaCSV(File file, String name) {
+        String line = "";
+        String cvsSplitBy = ";";
+		ImportKursreihe importKursreihe = new ImportKursreihe(name);
+		importKursreihe.kuerzel = name; 
+		ArrayList<Kurs> kursreihe = importKursreihe.kurse;
+		String[] zeile = null; 
+		
+        try (BufferedReader br = new BufferedReader(new FileReader(file))) {
+        	log.info("CSV-Datei einlesen: " + file.getName());
+        	// erste Zeile enthält die Überschriften
+        	br.readLine();
+        	
+            while ((line = br.readLine()) != null) {
+            	if (line.length() < 5) continue; 
+            	// erst die Tausender-Punkte entfernen 
+            	line = line.replace(".", "");
+            	// dann die Dezmal-Trennung "," durch Punkt ersetzen 
+            	line = line.replaceAll(",", ".");
+            	// die Zeile aufteilen nahnd der Trennzeichen 
+                zeile = line.split(cvsSplitBy);
+                // wenn die erste Spalte "null" enthält wird die Zeile ignoriert 
+                if ( ! zeile[1].contains("null")) {
+                	Kurs kurs = new Kurs();
+                	kurs.wertpapier = name;
+                	
+                	try {
+						kurs.datum = DateUtil.parseDatum(zeile[0]);
+					} catch (Exception e1) {
+						// Pflicht Zeile 
+						continue;
+					}
+                	
+                	try {
+						kurs.open = parseFloat(zeile[1]);
+					} catch (Exception e1) {
+
+					}
+                	
+                	try {
+						kurs.high = parseFloat(zeile[2]);
+					} catch (Exception e1) {
+					}
+                	
+                	try {
+						kurs.low = parseFloat(zeile[3]);
+					} catch (Exception e1) {
+					}
+                	
+                	try {
+						kurs.close = parseFloat(zeile[4]);
+					} catch (Exception e1) {
+						continue; 
+					}
+                	
+                	// nicht immer sind die Spalten AdjClose und Volume vorhanden 
+                	if (zeile.length > 5) {
+                		try {
+                			kurs.adjClose = parseFloat(zeile[5]);
+                		} catch (Exception e) {
+                			// kein Problem, wenn das nicht funktioniert 
+                		}
+                		// Indizes haben als Volume Gleitkommazahlen, deshalb wird gecasted 
+                		/*
+                		try {
+                			kurs.volume = (int) Float.parseFloat(zeile[6]);
+                		} catch (NumberFormatException e) {
+                			// keine Problem, wenn das nicht funktioniert 
+                		}
+                		*/
+                	}
+
+                	kursreihe.add(kurs);
+                }
+            }
+
+        } catch (IOException e) {
+        	log.error("Feher beim Einlesen Datei: " + file.getAbsolutePath());
+            e.printStackTrace();
+        }
+	    catch (NumberFormatException e) {
+	    	log.error("NumberFormatException beim String: " + zeile.toString());
+	        e.printStackTrace();
+	    }
+        
+		return importKursreihe;
+	}
+	
+	private static Float parseFloat (String input) {
+		// Prüfung auf leeren Inhalt
+		if (input == null || input.length() == 0 || input.compareTo(" ")==0) return null; 
+		Float result = null; 
+		
+			try {
+				result = Float.parseFloat(input);
+			} catch (NumberFormatException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		return result; 
 	}
 	
 	/**

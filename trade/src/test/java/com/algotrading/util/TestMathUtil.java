@@ -1,7 +1,7 @@
 package com.algotrading.util;
 
 import com.algotrading.aktie.Aktie;
-import com.algotrading.aktie.Aktien;
+import com.algotrading.aktie.AktieVerzeichnis;
 import com.algotrading.indikator.IndikatorAlgorithmus;
 import com.algotrading.indikator.IndikatorAbweichung;
 
@@ -12,33 +12,33 @@ public class TestMathUtil extends TestCase {
 	static Aktie aktie; 
 	
 	public void setUp() {
-		aktie = Aktien.newInstance().getAktie("testaktie");
+		aktie = AktieVerzeichnis.newInstance().getAktie("testaktie");
 	}
 	
 	public static void testRechneStandardabweichung() {
 		IndikatorAlgorithmus iA = aktie.addIndikatorAlgorithmus(new IndikatorAbweichung());
 		iA.addParameter("typ", 1);
 		aktie.rechneIndikatoren();
-		System.out.println("Kurs" + aktie.getBoersenkurse().get(13).getIndikatorWert(iA));
-		assertEquals(20.51f, aktie.getBoersenkurse().get(13).getIndikatorWert(iA));
+		System.out.println("Kurs" + aktie.getKursListe().get(13).getIndikatorWert(iA));
+		assertEquals(20.51f, aktie.getKursListe().get(13).getIndikatorWert(iA));
 		
 		MathUtil.transformiereIndikator(aktie, iA);
-		System.out.println("Kurs TrafoOhne" + aktie.getBoersenkurse().get(13).getIndikatorWert(iA));
-		assertEquals(0.39640743f, aktie.getBoersenkurse().get(13).getIndikatorWert(iA));
+		System.out.println("Kurs TrafoOhne" + aktie.getKursListe().get(13).getIndikatorWert(iA));
+		assertEquals(0.39640743f, aktie.getKursListe().get(13).getIndikatorWert(iA));
 		
 	}
 	
 	public static void testRechneAbweichung() {
-		Aktie aktie = Aktien.getInstance().getAktie("testaktie");
+		Aktie aktie = AktieVerzeichnis.getInstance().getAktie("testaktie");
 		IndikatorAlgorithmus iA = aktie.addIndikatorAlgorithmus(new IndikatorAbweichung());
 		iA.addParameter("typ", 1);
 		aktie.rechneIndikatoren();
-		System.out.println("Kurs" + aktie.getBoersenkurse().get(13).getIndikatorWert(iA));
-		assertEquals(20.51f, aktie.getBoersenkurse().get(13).getIndikatorWert(iA));
+		System.out.println("Kurs" + aktie.getKursListe().get(13).getIndikatorWert(iA));
+		assertEquals(20.51f, aktie.getKursListe().get(13).getIndikatorWert(iA));
 		
 		MathUtil.transformiereIndikator(aktie, iA);
-		System.out.println("KursAbweichung " + aktie.getBoersenkurse().get(13).getIndikatorWert(iA));
-		assertEquals(-0.26487976f, aktie.getBoersenkurse().get(13).getIndikatorWert(iA));
+		System.out.println("KursAbweichung " + aktie.getKursListe().get(13).getIndikatorWert(iA));
+		assertEquals(-0.26487976f, aktie.getKursListe().get(13).getIndikatorWert(iA));
 		
 	}
 

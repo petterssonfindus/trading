@@ -7,7 +7,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import com.algotrading.aktie.Aktie;
-import com.algotrading.aktie.Aktien;
+import com.algotrading.aktie.AktieVerzeichnis;
 import com.algotrading.aktie.Kurs;
 
 import com.algotrading.signal.Signal;
@@ -93,7 +93,7 @@ public class TestDBManager extends TestCase {
 	}
 	
 	public void testGetZeitraumAktie () {
-		Zeitraum zeitraum = DBManager.getZeitraumVorhandeneKurse(Aktien.getInstance().getAktie("testaktie"));
+		Zeitraum zeitraum = DBManager.getZeitraumVorhandeneKurse(AktieVerzeichnis.getInstance().getAktie("testaktie"));
 		assertNotNull(zeitraum);
 		assertEquals(1426633200000L, zeitraum.beginn.getTimeInMillis());
 		assertEquals(1518130800000L, zeitraum.ende.getTimeInMillis());
@@ -104,7 +104,7 @@ public class TestDBManager extends TestCase {
 	 * Der letzte gespeicherte Kurs
 	 */
 	public void testGetLastKurs () {
-		GregorianCalendar test = DBManager.getLastKurs(Aktien.getInstance().getAktie("testaktie"));
+		GregorianCalendar test = DBManager.getLastKurs(AktieVerzeichnis.getInstance().getAktie("testaktie"));
 		assertNotNull(test);
 		assertEquals("2018-02-09", DateUtil.formatDate(test));
 	}

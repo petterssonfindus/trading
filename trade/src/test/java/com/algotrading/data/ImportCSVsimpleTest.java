@@ -6,14 +6,14 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import com.algotrading.aktie.Aktie;
-import com.algotrading.aktie.Aktien;
+import com.algotrading.aktie.AktieVerzeichnis;
 
 import junit.framework.TestCase;
 import com.algotrading.util.Util;
 
 public class ImportCSVsimpleTest extends TestCase {
 	private static final Logger log = LogManager.getLogger(ImportCSVsimple.class);
-	private static String name = "sardata5";
+	private static String name = "wkn_846931_historic";
 
 /*
 	public void testAllesEinlesen() {
@@ -21,14 +21,26 @@ public class ImportCSVsimpleTest extends TestCase {
 	}
 */	
 	
-
-	public void testImportCSV() {
+/*
+	public void testImportCSVYahoo() {
 		// holt sich ein File der gewünschten Datei
 		File file = ImportCSVsimple.getCSVFile(name);
 		ImportKursreihe kursreihe = ImportCSVsimple.readKurseYahooCSV(file);
 		assertNotNull(kursreihe);
 		log.info("Kursreihe wurde eingelesen: " + kursreihe.kuerzel);
 		DBManager.schreibeNeueAktieTabelle(kursreihe.kuerzel);
+		DBManager.schreibeKurse(kursreihe);
+	}
+*/
+	
+	public void testImportCSVAriva() {
+		// holt sich ein File der gewünschten Datei
+		File file = ImportCSVsimple.getCSVFile("wkn__historic");
+		String aktiename= "umlaufrendite-de-oeffentliche-hand";
+		ImportKursreihe kursreihe = ImportCSVsimple.readKurseArivaCSV(file, aktiename);
+		assertNotNull(kursreihe);
+		log.info("Kursreihe wurde eingelesen: " + kursreihe.kuerzel);
+//		DBManager.schreibeNeueAktieTabelle(kursreihe.kuerzel);
 		DBManager.schreibeKurse(kursreihe);
 	}
 

@@ -3,7 +3,7 @@ package com.algotrading.indikator;
 import java.util.List;
 
 import com.algotrading.aktie.Aktie;
-import com.algotrading.aktie.Aktien;
+import com.algotrading.aktie.AktieVerzeichnis;
 
 import junit.framework.TestCase;
 
@@ -12,7 +12,7 @@ public class TestIndikatorBerechnung extends TestCase {
 	static Aktie aktie; 
 	
 	public void setUp() {
-		aktie = Aktien.newInstance().getAktie("testaktie");
+		aktie = AktieVerzeichnis.newInstance().getAktie("testaktie");
 	}
 	
 	/**

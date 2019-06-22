@@ -7,13 +7,13 @@ import junit.framework.TestCase;
 public class NeueAktie extends TestCase {
 	
 	public static void testNeueAktie() {
-		String kuerzel = "^VIX1Y";
-		String firmenname = "Volatilität Chicago Options CBOE 1 Jahr";
+		String kuerzel = "umlaufrendite-de-oeffentliche-hand";
+		String firmenname = "Umlaufrendite Deutschland";
 		String indexname = "";
-		byte boersenplatz = 1;
+		byte boersenplatz = 0;
 		
 		Aktie aktie = new Aktie(kuerzel, firmenname, indexname, boersenplatz);
-		aktie.setQuelle(1);
+		aktie.setQuelle(3);
 		aktie.setISIN("");
 		
 		DBManager.neueAktie(aktie);
@@ -23,8 +23,7 @@ public class NeueAktie extends TestCase {
 			ReadDataYahoo.YahooWSController(kuerzel);
 		}
 		else if(aktie.getQuelle() == 2) {
-			String datei = ReadDataFinanzen.FinanzenWSController(kuerzel, false);
-			ReadDataFinanzen.readFileWriteDB(datei ,kuerzel);
+			System.out.println("Kurse für Finanzen müssen manuell Beginndatum vorgegeben werden.");
 
 		}
 
