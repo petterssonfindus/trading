@@ -13,7 +13,7 @@ import com.algotrading.indikator.IndikatorAlgorithmus;
 import com.algotrading.indikator.IndikatorGD;
 import com.algotrading.signal.SignalAlgorithmus;
 import com.algotrading.signal.SignalGDDurchbruch;
-import com.algotrading.signal.Signale;
+import com.algotrading.signal.SignalAlgorithmen;
 import com.algotrading.util.Util;
 import com.algotrading.util.Zeitraum;
 
@@ -105,7 +105,7 @@ public class SimulatorTest extends TestCase {
 		// Signalbeschreibungen bestimmen
 		// anhand der Signalbeschreibungen werden dann die Signale ermittelt
 		// die erforderlichen Indikatoren mässen vorhanden sein. 
-		Signale signalBeschreibungen = new Signale();
+		SignalAlgorithmen signalBeschreibungen = new SignalAlgorithmen();
 		
 /*		SignalBeschreibung sb1 = new SignalBeschreibung(Signal.ADL);
 		signalBeschreibungen.add(sb1);

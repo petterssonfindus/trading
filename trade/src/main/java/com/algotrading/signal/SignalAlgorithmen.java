@@ -2,12 +2,12 @@ package com.algotrading.signal;
 
 import java.util.ArrayList;
 
-public class Signale extends ArrayList<SignalAlgorithmus> {
+public class SignalAlgorithmen extends ArrayList<SignalAlgorithmus> {
 	
 	private static final long serialVersionUID = 1L;
 
-	public static Signale getNew () {
-		return new Signale();
+	public static SignalAlgorithmen getNew () {
+		return new SignalAlgorithmen();
 	}
 	
 	public SignalAlgorithmus addSignnal (SignalAlgorithmus sA) {

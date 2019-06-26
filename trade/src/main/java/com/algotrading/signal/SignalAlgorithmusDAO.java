@@ -1,4 +1,4 @@
-package com.algotrading.indikator;
+package com.algotrading.signal;
 
 import java.util.Date;
 import java.util.List;
@@ -15,17 +15,9 @@ import javax.persistence.Transient;
 
 import com.algotrading.util.Parameter.Para;
 
-/**
- * JPA-Persistenz für abstrakte Oberklasse IndikatorAlgorithmus 
- * Die Liste der Parameter wird aufgelöst in einzelne Attribute, die zu Spalten in der Tabelle werden. 
- * Der Name des IndikatorAlgorithmus wird als String gehalten. 
- * @author oskar
- */
-
 @Entity
-@Table( name = "INDIKATOR" )
-public class IndikatorAlgorithmusDAO {
-	
+@Table( name = "SignalAlgorithmus" )
+public class SignalAlgorithmusDAO {
 	@Id
 	@GeneratedValue(strategy=GenerationType.AUTO)
 	private Long id;
@@ -36,7 +28,7 @@ public class IndikatorAlgorithmusDAO {
 
 	// Referenz auf das Original-Objekt
 	@Transient
-	private IndikatorAlgorithmus indikatorAlgorithmus; 
+	private SignalAlgorithmus signalAlgorithmus; 
 	
 	private String name; 
 	
@@ -51,16 +43,16 @@ public class IndikatorAlgorithmusDAO {
 	private String p5name; 
 	private String p5wert;
 	
-	protected IndikatorAlgorithmusDAO () {}
+	protected SignalAlgorithmusDAO () {}
 	
 	/**
 	 * Anhand der Referenz auf das Original-Objekt werden die Werte im DAO-Objekt gesetzt 
 	 */
-	public IndikatorAlgorithmusDAO(IndikatorAlgorithmus iA) {
-		this.indikatorAlgorithmus = iA; 
-		this.name = iA.getKurzname();
+	public SignalAlgorithmusDAO(SignalAlgorithmus sA) {
+		this.signalAlgorithmus = sA; 
+		this.name = sA.getKurzname();
 		// Parameter auslesen 
-		List<Para> paras = iA.getParameterList();
+		List<Para> paras = sA.getParameterList();
 		switch (paras.size()) {
 			case 5: 
 				p5name = paras.get(4).getName();
@@ -79,64 +71,84 @@ public class IndikatorAlgorithmusDAO {
 				p1wert = paras.get(0).getObject().toString();
 		}
 	}
-	
-	public Long getId() {
-		return id;
-	}
-	public void setId(Long id) {
-		this.id = id;
-	}
-	
-	public IndikatorAlgorithmus getIndikatorAlgorithmus() {
-		return indikatorAlgorithmus;
-	}
-	public void setIndikatorAlgorithmus(IndikatorAlgorithmus indikatorAlgorithmus) {
-		this.indikatorAlgorithmus = indikatorAlgorithmus;
-	}
-	
-	public String getName() {
-		return name;
-	}
 
 	public String getP1name() {
 		return p1name;
 	}
 
-	public String getP2name() {
-		return p2name;
-	}
-
-	public String getP3name() {
-		return p3name;
-	}
-
-	public String getP4name() {
-		return p4name;
-	}
-
-	public String getP5name() {
-		return p5name;
+	public void setP1name(String p1name) {
+		this.p1name = p1name;
 	}
 
 	public String getP1wert() {
 		return p1wert;
 	}
 
+	public void setP1wert(String p1wert) {
+		this.p1wert = p1wert;
+	}
+
+	public String getP2name() {
+		return p2name;
+	}
+
+	public void setP2name(String p2name) {
+		this.p2name = p2name;
+	}
+
 	public String getP2wert() {
 		return p2wert;
+	}
+
+	public void setP2wert(String p2wert) {
+		this.p2wert = p2wert;
+	}
+
+	public String getP3name() {
+		return p3name;
+	}
+
+	public void setP3name(String p3name) {
+		this.p3name = p3name;
 	}
 
 	public String getP3wert() {
 		return p3wert;
 	}
 
+	public void setP3wert(String p3wert) {
+		this.p3wert = p3wert;
+	}
+
+	public String getP4name() {
+		return p4name;
+	}
+
+	public void setP4name(String p4name) {
+		this.p4name = p4name;
+	}
+
 	public String getP4wert() {
 		return p4wert;
+	}
+
+	public void setP4wert(String p4wert) {
+		this.p4wert = p4wert;
+	}
+
+	public String getP5name() {
+		return p5name;
+	}
+
+	public void setP5name(String p5name) {
+		this.p5name = p5name;
 	}
 
 	public String getP5wert() {
 		return p5wert;
 	}
 
-	
-}
+	public void setP5wert(String p5wert) {
+		this.p5wert = p5wert;
+	}
+}	

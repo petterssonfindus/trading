@@ -4,8 +4,8 @@ import java.util.ArrayList;
 
 import com.algotrading.indikator.IndikatorAlgorithmus;
 import com.algotrading.indikator.Indikatoren;
+import com.algotrading.signal.SignalAlgorithmen;
 import com.algotrading.signal.SignalAlgorithmus;
-import com.algotrading.signal.Signale;
 
 /**
  * Mehrere Aktien als Behälter
@@ -18,7 +18,7 @@ public class Aktien extends ArrayList<Aktie> {
 	
 	private Indikatoren indikatoren = new Indikatoren(); 
 	
-	private Signale signalAlgorithmen = new Signale ();
+	private SignalAlgorithmen signalAlgorithmen = new SignalAlgorithmen ();
 	
 	private Aktien() {}
 
@@ -81,7 +81,7 @@ public class Aktien extends ArrayList<Aktie> {
 		return indikatoren;
 	}
 
-	public Signale getSignale() {
+	public SignalAlgorithmen getSignale() {
 		return signalAlgorithmen;
 	}
 

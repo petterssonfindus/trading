@@ -1,8 +1,10 @@
 package com.algotrading.signal;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.List;
+import java.util.Optional;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -12,9 +14,13 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.OneToMany;
-import javax.persistence.OrderColumn;
+import javax.persistence.OneToOne;
 import javax.persistence.Table;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
 import javax.persistence.Transient;
+
+import org.springframework.beans.factory.annotation.Autowired;
 
 import com.algotrading.indikator.IndikatorAlgorithmus;
 import com.algotrading.indikator.IndikatorAlgorithmusDAO;
@@ -32,6 +38,10 @@ import com.algotrading.util.Zeitraum;
 @Table( name = "SIGNALBEWERTUNGEN" )
 public class SignalBewertung {
 	
+	@Transient
+	@Autowired
+	SignalBewertungRepository sBR; 
+	
 	// der Zeithorizont in Tagen
 	@Column(name = "tage")
 	private int tage;
@@ -45,22 +55,31 @@ public class SignalBewertung {
 	
 	@OneToMany(cascade = CascadeType.ALL)  
 	@JoinColumn(name="bewertungID")  
-	@OrderColumn(name="type")  
 	private List<IndikatorAlgorithmusDAO> indikatorAlgorithmenDAO;
 	
 	@Transient  // die Original-Indikator-Objekte werden nicht persistiert
 	private List<IndikatorAlgorithmus> indikatorAlgorithmen;
 	
+	@JoinColumn(name="signalAlgoID")
+	@OneToOne(cascade={CascadeType.MERGE, CascadeType.PERSIST})
+	private SignalAlgorithmusDAO signalAlgorithmusDAO; 
+	
+	// das Original Signal-Algorithmus-Objekt wird nicht persistiert 
+	@Transient 
+	private SignalAlgorithmus sA; 
+	
 	@Transient
 	private Zeitraum zeitraum; 
 	private GregorianCalendar zeitraumBeginn; 
 	private GregorianCalendar zeitraumEnde; 
-	@Transient
-	private SignalAlgorithmus sA; 
 	
 	@Id
 	@GeneratedValue(strategy=GenerationType.AUTO)  
 	private Long id;
+	
+    @Column(name = "timestamp", columnDefinition = "TIMESTAMP DEFAULT CURRENT_TIMESTAMP", insertable = false, updatable = false, nullable = false)
+    @Temporal(TemporalType.TIMESTAMP)
+    private Date timestamp;
 
 	public int kauf; // Anzahl Kauf-Signale
 	public float kaufKorrekt; // Anzahl korrekter Kauf-Signale im Verhältnis zu Käufen 
@@ -101,7 +120,41 @@ public class SignalBewertung {
 		for (IndikatorAlgorithmus iA : this.indikatorAlgorithmen) {
 			this.indikatorAlgorithmenDAO.add(new IndikatorAlgorithmusDAO(iA));
 		}
+		if (this.sA == null) System.out.println("SignalBewertung ohne SignalAlgorithmus");
+		else System.out.println("SignalBewertung hat einen SignalAlgorithmus");
+		// die Referenz auf den Signal-AlgorithmusDAO setzen 
+		this.signalAlgorithmusDAO = new SignalAlgorithmusDAO(this.sA);
 		
+	}
+	
+	/**
+	 * alle Parameter müssen gleich sein 
+	 * und die IndikatorParameter
+	 */
+	public boolean equals (SignalBewertung sB) {
+		boolean result = false;
+		
+		
+		
+		return result; 
+	}
+	
+	public SignalBewertung save () {
+		return this.sBR.save(this);
+	}
+	
+	public boolean delete (Long id) {
+		this.sBR.deleteById(id);
+		return true; 
+	}
+	
+	public SignalBewertung get (Long id) {
+		SignalBewertung result = null; 
+		Optional<SignalBewertung> optional = this.sBR.findById(id);
+		if (optional.isPresent()) {
+			result = optional.get();
+		}
+		return result;
 	}
 	
 	public String toString () {
