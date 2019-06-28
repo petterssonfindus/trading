@@ -14,9 +14,9 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import com.algotrading.Application;
 import com.algotrading.aktie.Aktie;
 import com.algotrading.aktie.AktieVerzeichnis;
+import com.algotrading.indikator.IndikatorAbweichung;
 import com.algotrading.indikator.IndikatorAlgorithmus;
 import com.algotrading.indikator.IndikatorGD;
-import com.algotrading.indikator.IndikatorAbweichung;
 import com.algotrading.util.Zeitraum;
 
 import junit.framework.TestCase;
@@ -28,8 +28,8 @@ import junit.framework.TestCase;
 
 public class TestSignalBewertung extends TestCase {
 	
-	@Autowired
-	SignalBewertungRepository sBR; 
+	@Autowired 
+	Signalverwaltung sV;
 	
 	@Test
 	public void testKurswertMinMaxBewertung() {
@@ -70,7 +70,7 @@ public class TestSignalBewertung extends TestCase {
 		List<SignalBewertung> sBs = sA.getBewertungen();
 		// die Bewertungen werden gespeichert
 		for (SignalBewertung sB : sBs) {
-			sBR.save(sB);
+			sV.signalBewertungSave(sB);
 			
 		}
 		assertTrue(true);

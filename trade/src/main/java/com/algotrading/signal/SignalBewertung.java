@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.List;
-import java.util.Optional;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -20,8 +19,6 @@ import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.persistence.Transient;
 
-import org.springframework.beans.factory.annotation.Autowired;
-
 import com.algotrading.indikator.IndikatorAlgorithmus;
 import com.algotrading.indikator.IndikatorAlgorithmusDAO;
 import com.algotrading.util.Util;
@@ -34,13 +31,10 @@ import com.algotrading.util.Zeitraum;
  * @author oskar
  *
  */
+
 @Entity
 @Table( name = "SIGNALBEWERTUNGEN" )
 public class SignalBewertung {
-	
-	@Transient
-	@Autowired
-	SignalBewertungRepository sBR; 
 	
 	// der Zeithorizont in Tagen
 	@Column(name = "tage")
@@ -104,6 +98,7 @@ public class SignalBewertung {
 	SignalBewertung(SignalAlgorithmus sA) {
 		this.sA = sA; 
 	}
+	
 	/**
 	 * sorgt für die Aktualisierung aller Daten vor der Persistierung 
 	 */
@@ -133,28 +128,7 @@ public class SignalBewertung {
 	 */
 	public boolean equals (SignalBewertung sB) {
 		boolean result = false;
-		
-		
-		
 		return result; 
-	}
-	
-	public SignalBewertung save () {
-		return this.sBR.save(this);
-	}
-	
-	public boolean delete (Long id) {
-		this.sBR.deleteById(id);
-		return true; 
-	}
-	
-	public SignalBewertung get (Long id) {
-		SignalBewertung result = null; 
-		Optional<SignalBewertung> optional = this.sBR.findById(id);
-		if (optional.isPresent()) {
-			result = optional.get();
-		}
-		return result;
 	}
 	
 	public String toString () {
