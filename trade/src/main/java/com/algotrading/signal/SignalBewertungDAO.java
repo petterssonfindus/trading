@@ -30,6 +30,7 @@ public class SignalBewertungDAO {
 	public SignalBewertung find (Long id) {
 		Optional<SignalBewertung> optional = sBR.findById(id);
 		SignalBewertung signalBewertung = optional.get();
+		
 		if (signalBewertung != null) {
 			for (IndikatorAlgorithmus iA : signalBewertung.getIndikatorAlgorithmen()) {
 				iA.synchronizeLOAD();

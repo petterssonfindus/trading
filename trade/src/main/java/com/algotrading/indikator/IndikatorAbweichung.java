@@ -1,5 +1,8 @@
 package com.algotrading.indikator;
 
+import javax.persistence.DiscriminatorValue;
+import javax.persistence.Entity;
+
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -22,6 +25,8 @@ import com.algotrading.util.MathUtil;
  * @author oskar
  *
  */
+@Entity(name = "IndikatorAbweichung")
+@DiscriminatorValue("Abweichung")
 public class IndikatorAbweichung extends IndikatorAlgorithmus {
 	static final Logger log = LogManager.getLogger(IndikatorAbweichung.class);
 	

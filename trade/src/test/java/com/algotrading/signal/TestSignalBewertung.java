@@ -32,15 +32,15 @@ public class TestSignalBewertung extends TestCase {
 	@Autowired 
 	Signalverwaltung sV;
 	
-	@Ignore
+//	@Ignore
 	@Test 
 	public void testFindSignalBewertungByID() {
-		SignalBewertung test = sV.find(Long.valueOf(82));
+		SignalBewertung test = sV.find(Long.valueOf(23));
 		assertNotNull(test);
 	}
 	
 	
-//	@Ignore
+	@Ignore
 	@Test
 	public void testKurswertMinMaxBewertung() {
 		Aktie aktie = AktieVerzeichnis.getInstance().getAktie("testaktie");
