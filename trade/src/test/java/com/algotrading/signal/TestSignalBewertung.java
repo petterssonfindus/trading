@@ -2,6 +2,7 @@ package com.algotrading.signal;
 
 import java.util.List;
 
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,6 +32,15 @@ public class TestSignalBewertung extends TestCase {
 	@Autowired 
 	Signalverwaltung sV;
 	
+	@Ignore
+	@Test 
+	public void testFindSignalBewertungByID() {
+		SignalBewertung test = sV.find(Long.valueOf(82));
+		assertNotNull(test);
+	}
+	
+	
+//	@Ignore
 	@Test
 	public void testKurswertMinMaxBewertung() {
 		Aktie aktie = AktieVerzeichnis.getInstance().getAktie("testaktie");
@@ -70,7 +80,7 @@ public class TestSignalBewertung extends TestCase {
 		List<SignalBewertung> sBs = sA.getBewertungen();
 		// die Bewertungen werden gespeichert
 		for (SignalBewertung sB : sBs) {
-			sV.signalBewertungSave(sB);
+			sV.save(sB);
 			
 		}
 		assertTrue(true);

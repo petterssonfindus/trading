@@ -53,13 +53,8 @@ public abstract class SignalAlgorithmus extends Parameter {
 	public void addSignal (Signal signal) {
 		this.signale.add(signal);
 	}
-	/*
-	 * Bevor die Liste der Bewertungen zurück gegeben wird, wird synchronisiert
-	 */
+
 	public List<SignalBewertung> getBewertungen () {
-		for (SignalBewertung signalBewertung : this.signalBewertungen) {
-			signalBewertung.synchronize();
-		}
 		return this.signalBewertungen;
 	}
 	

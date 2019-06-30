@@ -1,6 +1,5 @@
 package com.algotrading.signal;
 
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.List;
@@ -20,7 +19,6 @@ import javax.persistence.TemporalType;
 import javax.persistence.Transient;
 
 import com.algotrading.indikator.IndikatorAlgorithmus;
-import com.algotrading.indikator.IndikatorAlgorithmusDAO;
 import com.algotrading.util.Util;
 import com.algotrading.util.Zeitraum;
 
@@ -47,11 +45,8 @@ public class SignalBewertung {
 	@Column(name = "SAName")
 	private String SAName;
 	
-	@OneToMany(cascade = CascadeType.ALL)  
+	@OneToMany(cascade = CascadeType.PERSIST)  
 	@JoinColumn(name="bewertungID")  
-	private List<IndikatorAlgorithmusDAO> indikatorAlgorithmenDAO;
-	
-	@Transient  // die Original-Indikator-Objekte werden nicht persistiert
 	private List<IndikatorAlgorithmus> indikatorAlgorithmen;
 	
 	@JoinColumn(name="signalAlgoID")
@@ -94,32 +89,14 @@ public class SignalBewertung {
 	/**
 	 * Bei der Erzeugung wird der zugehörige SignalAlgorithmus gesetzt
 	 * Damit können Informationen aus der Aktie geholt werden 
+	 * Die Indikator-Algorithmen werden aus der Aktie geholt
 	 */
 	SignalBewertung(SignalAlgorithmus sA) {
-		this.sA = sA; 
-	}
-	
-	/**
-	 * sorgt für die Aktualisierung aller Daten vor der Persistierung 
-	 */
-	public void synchronize () {
-		this.setAktieName();
-		this.setISIN();
-		this.setIndikatorAlgorithmen();
-		this.setZeitraumBeginn();
-		this.setZeitraumEnde();
-		this.setSAName();
-		
-		// für jeden IndikatorAlgorithmus ein DAO-Objekt erzeugen. 
-		this.indikatorAlgorithmenDAO = new ArrayList<IndikatorAlgorithmusDAO>();
-		for (IndikatorAlgorithmus iA : this.indikatorAlgorithmen) {
-			this.indikatorAlgorithmenDAO.add(new IndikatorAlgorithmusDAO(iA));
-		}
-		if (this.sA == null) System.out.println("SignalBewertung ohne SignalAlgorithmus");
-		else System.out.println("SignalBewertung hat einen SignalAlgorithmus");
-		// die Referenz auf den Signal-AlgorithmusDAO setzen 
-		this.signalAlgorithmusDAO = new SignalAlgorithmusDAO(this.sA);
-		
+		this.sA = sA;
+		this.aktieName = sA.getAktie().getName();
+		this.ISIN = sA.getAktie().getISIN();
+		this.indikatorAlgorithmen = sA.getAktie().getIndikatorAlgorithmen();
+		this.signalAlgorithmusDAO = new SignalAlgorithmusDAO(sA);
 	}
 	
 	/**
@@ -331,7 +308,7 @@ public class SignalBewertung {
 	/*
 	 * die Liste der verwendeten IndikatorAlgos werden über die Referenz zur Aktie gesetzt 
 	 */
-	private void setIndikatorAlgorithmen() {
+	public void setIndikatorAlgorithmen() {
 		this.indikatorAlgorithmen = this.sA.getAktie().getIndikatorAlgorithmen();
 	}
 
