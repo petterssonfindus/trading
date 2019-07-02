@@ -2,6 +2,9 @@ package com.algotrading.signal;
 
 import java.util.ArrayList;
 
+import javax.persistence.DiscriminatorValue;
+import javax.persistence.Entity;
+
 import org.apache.commons.math3.stat.descriptive.DescriptiveStatistics;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -26,6 +29,8 @@ import com.algotrading.indikator.IndikatorAlgorithmus;
  * @author Oskar
  *
  */
+@Entity(name = "SignalstrategieMinMax")
+@DiscriminatorValue("SignalstrategieMinMax")
 public class SignalMinMax extends SignalAlgorithmus {
 	static final Logger log = LogManager.getLogger(SignalMinMax.class);
 

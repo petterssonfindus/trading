@@ -12,7 +12,7 @@ import com.algotrading.aktie.Kurs;
 import com.algotrading.util.MathUtil;
 
 @Entity(name = "GleitenderDurchschnitt")
-@DiscriminatorValue("GD")
+@DiscriminatorValue("GleitenderDurchschnitt")
 public class IndikatorGD extends IndikatorAlgorithmus {
 	
 	

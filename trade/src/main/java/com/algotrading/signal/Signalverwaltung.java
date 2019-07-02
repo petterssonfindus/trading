@@ -14,6 +14,7 @@ public class Signalverwaltung {
 		return signalBewertungDAO.save(sB);
 	}
 	
+	
 	@Transactional
 	public SignalBewertung find (Long id) {
 		SignalBewertung result = null;

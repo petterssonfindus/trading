@@ -1,8 +1,11 @@
 package com.algotrading.signal;
 
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
+
 import java.util.List;
 
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,27 +23,20 @@ import com.algotrading.indikator.IndikatorAlgorithmus;
 import com.algotrading.indikator.IndikatorGD;
 import com.algotrading.util.Zeitraum;
 
-import junit.framework.TestCase;
+	@ActiveProfiles("test")
+	@RunWith(SpringJUnit4ClassRunner.class)
+	@SpringBootTest(classes = Application.class, webEnvironment=WebEnvironment.RANDOM_PORT)
+	@DirtiesContext
+	public class TestSignalBewertungCreate {
 
-@ActiveProfiles("test")
-@RunWith(SpringJUnit4ClassRunner.class)
-@SpringBootTest(classes = Application.class, webEnvironment=WebEnvironment.RANDOM_PORT)
-@DirtiesContext
-
-public class TestSignalBewertung extends TestCase {
 	
 	@Autowired 
 	Signalverwaltung sV;
 	
+	@Autowired 
+	SignalBewertungDAO sBDAO; 
+
 //	@Ignore
-	@Test 
-	public void testFindSignalBewertungByID() {
-		SignalBewertung test = sV.find(Long.valueOf(23));
-		assertNotNull(test);
-	}
-	
-	
-	@Ignore
 	@Test
 	public void testKurswertMinMaxBewertung() {
 		Aktie aktie = AktieVerzeichnis.getInstance().getAktie("testaktie");
@@ -56,9 +52,9 @@ public class TestSignalBewertung extends TestCase {
 		// Indikator berechnen und ausgeben 
 		aktie.rechneIndikatoren();
 		// am ersten Tag 18.03.2015 ist der open-Kurs 19,50 
-		assertEquals(19.5f, aktie.getKursListe().get(0).getIndikatorWert(iA));
+		assertThat(19.5f == aktie.getKursListe().get(0).getIndikatorWert(iA));
 		// der close-Kurs ist 20.05
-		assertEquals(20.05f, aktie.getKursListe().get(0).getKurs());
+		assertThat(20.05f == aktie.getKursListe().get(0).getKurs());
 		
 		// Signal konfigurieren und an Aktie hängen 
 		SignalAlgorithmus sA = aktie.addSignalAlgorithmus(new SignalMinMax());
@@ -94,4 +90,5 @@ public class TestSignalBewertung extends TestCase {
 //		aktie.writeFileSignale();
 	}
 	
+
 }

@@ -18,6 +18,8 @@ import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.persistence.Transient;
 
+import org.springframework.data.annotation.CreatedDate;
+
 import com.algotrading.indikator.IndikatorAlgorithmus;
 import com.algotrading.util.Util;
 import com.algotrading.util.Zeitraum;
@@ -51,11 +53,7 @@ public class SignalBewertung {
 	
 	@JoinColumn(name="signalAlgoID")
 	@OneToOne(cascade={CascadeType.MERGE, CascadeType.PERSIST})
-	private SignalAlgorithmusDAO signalAlgorithmusDAO; 
-	
-	// das Original Signal-Algorithmus-Objekt wird nicht persistiert 
-	@Transient 
-	private SignalAlgorithmus sA; 
+	private SignalAlgorithmus signalAlgorithmus; 
 	
 	@Transient
 	private Zeitraum zeitraum; 
@@ -69,6 +67,9 @@ public class SignalBewertung {
     @Column(name = "timestamp", columnDefinition = "TIMESTAMP DEFAULT CURRENT_TIMESTAMP", insertable = false, updatable = false, nullable = false)
     @Temporal(TemporalType.TIMESTAMP)
     private Date timestamp;
+    
+    @CreatedDate
+    private Date createdDate;
 
 	public int kauf; // Anzahl Kauf-Signale
 	public float kaufKorrekt; // Anzahl korrekter Kauf-Signale im Verhältnis zu Käufen 
@@ -92,11 +93,10 @@ public class SignalBewertung {
 	 * Die Indikator-Algorithmen werden aus der Aktie geholt
 	 */
 	SignalBewertung(SignalAlgorithmus sA) {
-		this.sA = sA;
+		this.signalAlgorithmus = sA;
 		this.aktieName = sA.getAktie().getName();
 		this.ISIN = sA.getAktie().getISIN();
 		this.indikatorAlgorithmen = sA.getAktie().getIndikatorAlgorithmen();
-		this.signalAlgorithmusDAO = new SignalAlgorithmusDAO(sA);
 	}
 	
 	/**
@@ -109,7 +109,7 @@ public class SignalBewertung {
 	}
 	
 	public String toString () {
-		return this.sA + " Kauf:" + kauf + 
+		return this.signalAlgorithmus + " Kauf:" + kauf + 
 				" korrekt:" + Util.rundeBetrag(kaufKorrekt, 3) + 
 				" Signal:" + Util.rundeBetrag(summeSKauf,3) + 
 				" Bewertung:" + Util.rundeBetrag(summeBKauf,3) + 
@@ -150,14 +150,6 @@ public class SignalBewertung {
 
 	public void setZeitraumEnde(GregorianCalendar zeitraumEnde) {
 		this.zeitraumEnde = zeitraumEnde;
-	}
-
-	public SignalAlgorithmus getsA() {
-		return sA;
-	}
-
-	public void setsA(SignalAlgorithmus sA) {
-		this.sA = sA;
 	}
 
 	public int getKauf() {
@@ -252,7 +244,7 @@ public class SignalBewertung {
 	 * Verwendung während der Simulation 
 	 */
 	private void setAktieName() {
-		this.aktieName = this.sA.getAktie().getName();
+		this.aktieName = this.signalAlgorithmus.getAktie().getName();
 	}
 	/*
 	 * Verwendung zur Reproduktion der Bewertung aus der DB
@@ -268,6 +260,8 @@ public class SignalBewertung {
 
 	public void setZeitraum(Zeitraum zeitraum) {
 		this.zeitraum = zeitraum;
+		this.zeitraumBeginn = zeitraum.getBeginn();
+		this.zeitraumEnde = zeitraum.getEnde();
 	}
 
 	public String getISIN() {
@@ -281,7 +275,7 @@ public class SignalBewertung {
 	 * die ISIN wird anhand der Referenz zur SignalAlgo und zur Aktie gesetzt 
 	 */
 	private void setISIN () {
-		ISIN = this.sA.getAktie().getISIN();
+		ISIN = this.signalAlgorithmus.getAktie().getISIN();
 	}
 
 	public String getSAName() {
@@ -295,7 +289,7 @@ public class SignalBewertung {
 	 * der SA-Name wird anhand der Referenz zum SA gesetzt. 
 	 */
 	private void setSAName() {
-		SAName = this.sA.getKurzname();
+		SAName = this.signalAlgorithmus.getKurzname();
 	}
 
 	public List<IndikatorAlgorithmus> getIndikatorAlgorithmen() {
@@ -309,7 +303,19 @@ public class SignalBewertung {
 	 * die Liste der verwendeten IndikatorAlgos werden über die Referenz zur Aktie gesetzt 
 	 */
 	public void setIndikatorAlgorithmen() {
-		this.indikatorAlgorithmen = this.sA.getAktie().getIndikatorAlgorithmen();
+		this.indikatorAlgorithmen = this.signalAlgorithmus.getAktie().getIndikatorAlgorithmen();
+	}
+
+	public Date getCreatedDate() {
+		return createdDate;
+	}
+
+	public void setCreatedDate(Date createdDate) {
+		this.createdDate = createdDate;
+	}
+
+	public SignalAlgorithmus getSignalAlgorithmus() {
+		return signalAlgorithmus;
 	}
 
 }

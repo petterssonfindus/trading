@@ -30,7 +30,6 @@ import com.algotrading.util.Util;
 @Table( name = "INDIKATORALGO" )
 @Inheritance(strategy = InheritanceType.SINGLE_TABLE)
 @DiscriminatorColumn(name = "typ", discriminatorType = DiscriminatorType.STRING)
-// @DiscriminatorValue ("test")
 
  public abstract class IndikatorAlgorithmus extends Parameter {
 	

@@ -380,7 +380,7 @@ public class Aktie extends Parameter {
 				// maximaler Zeitraum ermitteln 
 				zeitraum = sA.getZeitraumSignale(); 
 			}
-			
+		
 			sBW.setZeitraum(zeitraum);
 			// alle zugehörigen Signale 
 			// TODO: hier könnte man den Zeitraum bereits berücksichtigen

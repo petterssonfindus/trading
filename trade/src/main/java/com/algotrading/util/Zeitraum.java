@@ -41,5 +41,11 @@ public class Zeitraum {
 	public String toStringJahre () {
 		return (DateUtil.getJahr(this.beginn) + "-" + DateUtil.getJahr(this.ende));
 	}
+	public GregorianCalendar getBeginn() {
+		return beginn;
+	}
+	public GregorianCalendar getEnde() {
+		return ende;
+	}
 }
 	
