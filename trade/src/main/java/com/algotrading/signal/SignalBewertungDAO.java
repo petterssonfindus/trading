@@ -62,4 +62,38 @@ public class SignalBewertungDAO {
 		List<SignalBewertung> result = sBR.findByAktieNameAndTageAndZeitraumBeginn(aktie,tage, beginn);
 		return result;
 	}
+	
+	/**
+	 * Sucht im Datenbestand eine SignalBewertung, die identisch ist zum Objekt 
+	 * Incl. Signal-Parameter und Indikator-Parameter
+	 * @param sB
+	 * @return
+	 */
+	@Transactional
+	public List<SignalBewertung> findEquals (SignalBewertung sB) {
+		// es muss immer einen SignalAlgorithmus geben und 0 - n Indikator Algos 
+		List<SignalBewertung> result = null;
+		List<IndikatorAlgorithmus> indiAlgos = sB.getIndikatorAlgorithmen();
+		switch (indiAlgos.size()) {
+			case 0: {  // es gibt keinen IndikatorAlgorithmus
+				result = sBR.findBySignalAND1Indikator(sB.getSignalAlgorithmus().getKurzname(),
+						sB.getSignalAlgorithmus().getParameterList().get(0).getName(), 
+						sB.getSignalAlgorithmus().getParameterList().get(0).getObject(),
+						sB.getIndikatorAlgorithmen().get(0).getKurzname(), 
+						sB.getIndikatorAlgorithmen().get(0).getParameterList().get(0).getName(),
+						sB.getIndikatorAlgorithmen().get(0).getParameterList().get(0).getObject());
+				
+			}
+			case 1: { // es gibt 1 Indikator Algorithmus 
+				
+			}
+			case 2: {  // es gibt 2 Indikator Algorithmen 
+				
+			}
+		}
+		
+		return result;
+	}
+	
+	
 }

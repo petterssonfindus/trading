@@ -40,6 +40,8 @@ import com.algotrading.util.Util;
     @Column(name = "timestamp", columnDefinition = "TIMESTAMP DEFAULT CURRENT_TIMESTAMP", insertable = false, updatable = false, nullable = false)
     @Temporal(TemporalType.TIMESTAMP)
     private Date timestamp;
+    
+    private String name;  // der Name des IndikatorAlgorithmus
 
 	private String p1name; 
 	private String p1wert; 
@@ -63,6 +65,7 @@ import com.algotrading.util.Util;
 	
 	public void synchronizeSAVE () {
 		this.id = null; // bei doppelter Verwendung muss die bestehende ID gelöscht werden. 
+		this.name = this.getKurzname(); 
 		List<Para> paras = getParameterList();
 		switch (paras.size()) {
 			case 5: 
@@ -227,6 +230,10 @@ import com.algotrading.util.Util;
 
 	public void setP5wert(String p5wert) {
 		this.p5wert = p5wert;
+	}
+
+	public String getName() {
+		return name;
 	}
 
 }

@@ -71,6 +71,7 @@ public abstract class SignalAlgorithmus extends Parameter {
 	
 	public void synchronizeSAVE () {
 		this.id = null; // bei doppelter Verwendung muss die bestehende ID gelöscht werden. 
+		this.name = this.getKurzname();
 		List<Para> paras = getParameterList();
 		switch (paras.size()) {
 			case 5: 
