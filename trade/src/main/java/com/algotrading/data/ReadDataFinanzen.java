@@ -61,7 +61,7 @@ import com.algotrading.util.Util;
 		String result = null; 
 		GregorianCalendar beginnEinlesen;	// der Beginn des einzulesenden Kurs-Zeitraums
 		// die Aktie 
-		Aktie aktie = AktieVerzeichnis.getInstance().getAktie(name);
+		Aktie aktie = AktieVerzeichnis.getInstance().getAktieOhneKurse(name);
 		// wenn ein Beginn-Datum vorgegeben ist, wird dieses verwendet
 		if (beginn != null) {
 			beginnEinlesen = beginn;

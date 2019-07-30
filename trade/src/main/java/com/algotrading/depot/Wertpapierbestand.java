@@ -57,7 +57,7 @@ public class Wertpapierbestand {
 	}
 	
 	Aktie getAktie () {
-		return AktieVerzeichnis.getInstance().getAktie(this.wertpapier);
+		return AktieVerzeichnis.getInstance().getAktieOhneKurse(this.wertpapier);
 	}
 
 }

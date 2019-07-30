@@ -93,7 +93,7 @@ public class TestDBManager extends TestCase {
 	}
 	
 	public void testGetZeitraumAktie () {
-		Zeitraum zeitraum = DBManager.getZeitraumVorhandeneKurse(AktieVerzeichnis.getInstance().getAktie("testaktie"));
+		Zeitraum zeitraum = DBManager.getZeitraumVorhandeneKurse(AktieVerzeichnis.getInstance().getAktieOhneKurse("testaktie"));
 		assertNotNull(zeitraum);
 		assertEquals(1426633200000L, zeitraum.beginn.getTimeInMillis());
 		assertEquals(1518130800000L, zeitraum.ende.getTimeInMillis());
@@ -104,7 +104,7 @@ public class TestDBManager extends TestCase {
 	 * Der letzte gespeicherte Kurs
 	 */
 	public void testGetLastKurs () {
-		GregorianCalendar test = DBManager.getLastKurs(AktieVerzeichnis.getInstance().getAktie("testaktie"));
+		GregorianCalendar test = DBManager.getLastKurs(AktieVerzeichnis.getInstance().getAktieOhneKurse("testaktie"));
 		assertNotNull(test);
 		assertEquals("2018-02-09", DateUtil.formatDate(test));
 	}

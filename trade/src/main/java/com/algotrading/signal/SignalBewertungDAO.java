@@ -22,24 +22,23 @@ public class SignalBewertungDAO {
 	@Transactional
 	public SignalBewertung save(SignalBewertung signalBewertung) {
 		signalBewertung.setIndikatorAlgorithmen();
-		signalBewertung.getSignalAlgorithmus().synchronizeSAVE();
+		// erst die IAs synchronisieren, damit die IDs generiert werden. 
 		for (IndikatorAlgorithmus iA : signalBewertung.getIndikatorAlgorithmen()) {
 			iA.synchronizeSAVE();
 		}
+		// die IDs der IAs werden benötigt um die Paras mit Referenzen zu speichern. 
+		signalBewertung.getSignalAlgorithmus().synchronizeSAVE();
 		return sBR.save(signalBewertung);
 	}
 	
 	@Transactional
 	public SignalBewertung find (Long id) {
+		SignalBewertung result = null; 
 		Optional<SignalBewertung> optional = sBR.findById(id);
-		SignalBewertung signalBewertung = optional.get();
-		signalBewertung.getSignalAlgorithmus().synchronizeLOAD();
-		if (signalBewertung != null) {
-			for (IndikatorAlgorithmus iA : signalBewertung.getIndikatorAlgorithmen()) {
-				iA.synchronizeLOAD();
-			}
+		if (optional.isPresent()) {
+			result = optional.get();
 		}
-		return signalBewertung;
+		return result;
 	}
 	
 	@Transactional
@@ -71,23 +70,37 @@ public class SignalBewertungDAO {
 	 */
 	@Transactional
 	public List<SignalBewertung> findEquals (SignalBewertung sB) {
+		if (sB == null) return null;
 		// es muss immer einen SignalAlgorithmus geben und 0 - n Indikator Algos 
 		List<SignalBewertung> result = null;
 		List<IndikatorAlgorithmus> indiAlgos = sB.getIndikatorAlgorithmen();
 		switch (indiAlgos.size()) {
 			case 0: {  // es gibt keinen IndikatorAlgorithmus
+				result = sBR.findBySignal(sB.getSignalAlgorithmus().getKurzname(),
+						sB.getSignalAlgorithmus().getParameterList().get(0).getName(), 
+						sB.getSignalAlgorithmus().getParameterList().get(0).getObject());
+				break;
+			}
+			case 1: { // es gibt 1 Indikator Algorithmus 
 				result = sBR.findBySignalAND1Indikator(sB.getSignalAlgorithmus().getKurzname(),
 						sB.getSignalAlgorithmus().getParameterList().get(0).getName(), 
 						sB.getSignalAlgorithmus().getParameterList().get(0).getObject(),
 						sB.getIndikatorAlgorithmen().get(0).getKurzname(), 
 						sB.getIndikatorAlgorithmen().get(0).getParameterList().get(0).getName(),
 						sB.getIndikatorAlgorithmen().get(0).getParameterList().get(0).getObject());
-				
-			}
-			case 1: { // es gibt 1 Indikator Algorithmus 
-				
+				break;
 			}
 			case 2: {  // es gibt 2 Indikator Algorithmen 
+				result = sBR.findBySignalAND2Indikator(sB.getSignalAlgorithmus().getKurzname(),
+						sB.getSignalAlgorithmus().getParameterList().get(0).getName(), 
+						sB.getSignalAlgorithmus().getParameterList().get(0).getObject(),
+						sB.getIndikatorAlgorithmen().get(0).getKurzname(), 
+						sB.getIndikatorAlgorithmen().get(0).getParameterList().get(0).getName(),
+						sB.getIndikatorAlgorithmen().get(0).getParameterList().get(0).getObject(),
+						sB.getIndikatorAlgorithmen().get(1).getKurzname(), 
+						sB.getIndikatorAlgorithmen().get(1).getParameterList().get(0).getName(),
+						sB.getIndikatorAlgorithmen().get(1).getParameterList().get(0).getObject());
+				break;
 				
 			}
 		}

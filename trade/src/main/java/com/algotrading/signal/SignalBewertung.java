@@ -13,6 +13,7 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
+import javax.persistence.PrePersist;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
@@ -47,7 +48,7 @@ public class SignalBewertung {
 	@Column(name = "SAName")
 	private String SAName;
 	
-	@OneToMany(cascade = CascadeType.PERSIST)  
+	@OneToMany(cascade = CascadeType.ALL)  
 	@JoinColumn(name="bewertungID")  
 	private List<IndikatorAlgorithmus> indikatorAlgorithmen;
 	
@@ -96,15 +97,98 @@ public class SignalBewertung {
 		this.signalAlgorithmus = sA;
 		this.aktieName = sA.getAktie().getName();
 		this.ISIN = sA.getAktie().getISIN();
+		if (sA.getAktie().getIndikatorAlgorithmen() == null)
+			// IndikatorAQlgorithmen sind an der aktie nie null 
 		this.indikatorAlgorithmen = sA.getAktie().getIndikatorAlgorithmen();
 	}
+	
+	@PrePersist
+	public void generateID () {
+		
+	}
+	
+	/**
+	 * erzeugt aus den Parametern mit UUID-Referenz echte Objekte durch Nach-Lesen 
+	 */
+	public void instanziiereParameter () {
+		SignalAlgorithmus sA = this.getSignalAlgorithmus();
+	}
+	
 	
 	/**
 	 * alle Parameter müssen gleich sein 
 	 * und die IndikatorParameter
 	 */
 	public boolean equals (SignalBewertung sB) {
-		boolean result = false;
+		// erst die eigenen Parameter vergleichen 
+		if (! this.aktieName.matches(sB.aktieName)) return false;
+		if (this.kauf != sB.kauf) return false;
+		if (this.verkauf != sB.verkauf) return false;
+		if (! floatEquals(this.kaufKorrekt, sB.kaufKorrekt)) return false;
+		if (! floatEquals(this.verkaufKorrekt, sB.verkaufKorrekt)) return false;
+		if (! floatEquals(this.performance, sB.performance)) return false;
+		if (! floatEquals(this.summeBewertungen, sB.summeBewertungen)) return false;
+		if (! floatEquals(this.summeBKauf, sB.summeBKauf)) return false;
+		if (! floatEquals(this.summeBVerkauf, sB.summeBVerkauf)) return false;
+		if (! floatEquals(this.summeSKauf, sB.summeSKauf)) return false;
+		if (! floatEquals(this.summeSVerkauf, sB.summeSVerkauf)) return false;
+		if (tage != sB.tage) return false; 
+		if (! this.getZeitraum().equals(sB.getZeitraum())) return false;
+		// SignalAlgorithmus muss gleich sein 
+		if (! this.signalAlgorithmus.equals(sB.getSignalAlgorithmus())) return false;
+		// IndikatorAlgorithmen werden nicht verglichen 
+		// über die Parameter der SignalAlgorithmen werden die IAs implizit verglichen
+// 		if (! this.equalsIndikatoren(sB.indikatorAlgorithmen)) return false; 
+		return true; 
+	}
+	
+	/**
+	 * Indikatoren müssen identisch sein, Reihenfolge spielt keine Rolle  
+	 */
+	public boolean equalsIndikatoren (List<IndikatorAlgorithmus> indikatoren) {
+		if (this.indikatorAlgorithmen == null && indikatoren == null) return true; 
+		if (this.indikatorAlgorithmen == null && indikatoren != null) return false;
+		if (this.indikatorAlgorithmen != null && indikatoren == null) return false;
+		// die Anzahl muss identisch sein 
+		if (this.indikatorAlgorithmen.size() != indikatoren.size()) return false; 
+		for (IndikatorAlgorithmus iA : this.indikatorAlgorithmen) {
+			boolean gefunden = false; 
+			for (IndikatorAlgorithmus iAVergleich : indikatoren) {
+				if (iA.equals(iAVergleich)) {
+					gefunden = true; 
+					break; 
+				}
+			}
+			// ein Indikator konnte nicht gefunden werden 
+			if (gefunden == false) {
+				return false; 
+			}
+		}
+		// wenn Ausführung bis hier her kommt, sind alle Indikatoren gefunden worden. 
+		return true;
+	}
+
+	/**
+	 * die beiden float-Werte sind gleich, wenn sie innerhalb einer Bandbreite von X % sind
+	 * @param para1
+	 * @param para2
+	 * @return
+	 */
+	private boolean floatEquals (float para1, float para2) {
+		if (para1 == para2) return true; 
+		boolean result = false; 
+		float test1; 
+		float test2;
+		float testAbs = 0.05f * Math.abs(para1);
+		float bandbreite = 0.05f * testAbs;
+		if (para1 > para2) {  // para1 ist > als para2
+			test1 = para1 - bandbreite;  // para1 reduzieren um bandbreite
+			if (test1 < para2) result = true; // ist para1 jetzt kleiner ? 
+		}
+		else {
+			test1 = para1 + bandbreite;
+			if (test1 > para2) result = true;
+		}
 		return result; 
 	}
 	
@@ -255,7 +339,10 @@ public class SignalBewertung {
 	
 
 	public Zeitraum getZeitraum() {
-		return zeitraum;
+		if (this.zeitraum == null) {
+			this.zeitraum = new Zeitraum(this.zeitraumBeginn, this.zeitraumEnde);
+		}
+		return this.zeitraum;
 	}
 
 	public void setZeitraum(Zeitraum zeitraum) {
@@ -293,7 +380,7 @@ public class SignalBewertung {
 	}
 
 	public List<IndikatorAlgorithmus> getIndikatorAlgorithmen() {
-		return indikatorAlgorithmen;
+		return this.indikatorAlgorithmen;
 	}
 
 	public void setIndikatorAlgorithmen(List<IndikatorAlgorithmus> indikatorAlgorithmen) {

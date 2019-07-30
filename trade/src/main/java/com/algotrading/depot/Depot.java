@@ -223,7 +223,7 @@ public class Depot {
 	 * @return die Kauf-Order falls gekauft wurde - ansonsten null 
 	 */
 	protected Order kaufe (float betrag, String wertpapier) {
-		Aktie aktie = AktieVerzeichnis.getInstance().getAktie(wertpapier);
+		Aktie aktie = AktieVerzeichnis.getInstance().getAktieOhneKurse(wertpapier);
 		return this.kaufe(betrag, aktie);
 	}
 
@@ -255,7 +255,7 @@ public class Depot {
 	}
 
 	protected Order verkaufe (String wertpapier) {
-		Aktie aktie = AktieVerzeichnis.getInstance().getAktie(wertpapier);
+		Aktie aktie = AktieVerzeichnis.getInstance().getAktieOhneKurse(wertpapier);
 		return verkaufe (aktie);
 	}
 	/**
@@ -299,7 +299,7 @@ public class Depot {
 		float result = 0;
 		if (this.wertpapierbestand.keySet().size() > 0) {
 			for (Wertpapierbestand wertpapierbestand : this.wertpapierbestand.values()) {
-				float kurs = AktieVerzeichnis.getInstance().getAktie(wertpapierbestand.wertpapier).getAktuellerKurs().getKurs();
+				float kurs = AktieVerzeichnis.getInstance().getAktieOhneKurse(wertpapierbestand.wertpapier).getAktuellerKurs().getKurs();
 				result += kurs * wertpapierbestand.bestand;
 			}
 		}

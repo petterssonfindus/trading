@@ -23,7 +23,7 @@ public class TestAktie extends TestCase {
 	
 	public void testGetKursZukunft() {
 		
-		Aktie aktie = AktieVerzeichnis.getInstance().getAktie("testaktie");
+		Aktie aktie = AktieVerzeichnis.getInstance().getAktieOhneKurse("testaktie");
 		ArrayList<Kurs> kursreihe = aktie.getKursListe(); 
 		
 		
@@ -40,7 +40,7 @@ public class TestAktie extends TestCase {
 	}
 	
 	public void testGetKurse () {
-		Aktie aktie = AktieVerzeichnis.getInstance().getAktie("AA");
+		Aktie aktie = AktieVerzeichnis.getInstance().getAktieOhneKurse("AA");
 		ArrayList<Kurs> kursreihe = aktie.getKursListe(); 
 		assertNotNull(kursreihe);
 		assertTrue(kursreihe.size() > 1);

@@ -32,7 +32,7 @@ public class TestAktien extends TestCase {
 	
 	public void setUp() {
 		
-		aktie = AktieVerzeichnis.newInstance().getAktie("testaktie");
+		aktie = AktieVerzeichnis.newInstance().getAktieOhneKurse("testaktie");
 		
 	}
 /*	

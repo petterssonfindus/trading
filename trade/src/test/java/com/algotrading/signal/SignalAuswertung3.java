@@ -20,7 +20,7 @@ import junit.framework.TestCase;
 public class SignalAuswertung3 extends TestCase {
 	
 	public static void testSignalAuswertung () {
-		Aktie aktie = AktieVerzeichnis.getInstance().getAktie("^gdaxi");
+		Aktie aktie = AktieVerzeichnis.getInstance().getAktieOhneKurse("^gdaxi");
 		List<Aktie> aktien = AktieVerzeichnis.getInstance().getAktien(DateUtil.createGregorianCalendar(1, 1, 2000));
 		IndikatorAlgorithmus iA = new IndikatorGDalt();
 		iA.addParameter("dauer", 10);

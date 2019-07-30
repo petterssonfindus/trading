@@ -12,7 +12,7 @@ public class TestIndikatorBerechnung extends TestCase {
 	static Aktie aktie; 
 	
 	public void setUp() {
-		aktie = AktieVerzeichnis.newInstance().getAktie("testaktie");
+		aktie = AktieVerzeichnis.newInstance().getAktieOhneKurse("testaktie");
 	}
 	
 	/**

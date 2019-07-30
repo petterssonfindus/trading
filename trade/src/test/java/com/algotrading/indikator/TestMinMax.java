@@ -15,7 +15,7 @@ import junit.framework.TestCase;
 public class TestMinMax extends TestCase {
 	
 	public void testMinMax() {
-		Aktie aktie = AktieVerzeichnis.getInstance().getAktie("testaktie");
+		Aktie aktie = AktieVerzeichnis.getInstance().getAktieOhneKurse("testaktie");
 		IndikatorAlgorithmus iA = aktie.addIndikatorAlgorithmus(new IndikatorMinMax());
 		iA.addParameter("dauer", 10);
 		aktie.rechneIndikatoren();

@@ -17,7 +17,7 @@ public class SignalAuswertungAktien extends TestCase {
 
 	public static void testSignalAuswertungAktien () {
 		List<Aktie> aktien = AktieVerzeichnis.getInstance().getAktien(DateUtil.createGregorianCalendar(01, 01, 2010));
-		Aktie aktie = AktieVerzeichnis.getInstance().getAktie("^gdaxi");
+		Aktie aktie = AktieVerzeichnis.getInstance().getAktieOhneKurse("^gdaxi");
 		
 		IndikatorAlgorithmus iA = aktie.addIndikatorAlgorithmus(new IndikatorGDalt());
 		iA.addParameter("dauer", 10);

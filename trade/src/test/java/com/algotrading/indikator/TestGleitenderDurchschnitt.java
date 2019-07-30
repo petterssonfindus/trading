@@ -23,7 +23,7 @@ public class TestGleitenderDurchschnitt extends TestCase {
 		// TODO Auto-generated method stub
 		super.setUp();
 		
-		aktie = AktieVerzeichnis.newInstance().getAktie("sardata5");
+		aktie = AktieVerzeichnis.newInstance().getAktieOhneKurse("sardata5");
 		
 		iA10 = aktie.addIndikatorAlgorithmus(new IndikatorGD());
 		iA10.addParameter("dauer", 10);

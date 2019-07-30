@@ -414,8 +414,9 @@ public class Aktie extends Parameter {
 					if (b > 0) verkaufKorrekt ++;
 				}
 			}
-			sBW.kaufKorrekt = (float) ((double) kaufKorrekt / sBW.kauf);
-			sBW.verkaufKorrekt = (float) ((double) verkaufKorrekt / sBW.verkauf);
+			// Prüfung auf Division 0, da ansonsten NaN entsteht
+			if (sBW.kauf > 0) sBW.kaufKorrekt = (float) ((double) kaufKorrekt / sBW.kauf);
+			if (sBW.verkauf > 0) sBW.verkaufKorrekt = (float) ((double) verkaufKorrekt / sBW.verkauf);
 			sBW.performance = rechnePerformance (zeitraum);
 			System.out.println(this.name + " B:" + tage + Util.separatorCSV + zeitraum.toStringJahre() + Util.separatorCSV + sBW.toString());
 		}

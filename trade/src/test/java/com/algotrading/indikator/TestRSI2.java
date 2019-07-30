@@ -12,7 +12,7 @@ public class TestRSI2 extends TestCase {
 
 	public static void testRSI2() { 
 		
-		Aktie aktie = AktieVerzeichnis.getInstance().getAktie("testaktie");
+		Aktie aktie = AktieVerzeichnis.getInstance().getAktieOhneKurse("testaktie");
 		IndikatorAlgorithmus iA = aktie.addIndikatorAlgorithmus(new IndikatorRSI2());
 		iA.addParameter("dauer", 10);
 		

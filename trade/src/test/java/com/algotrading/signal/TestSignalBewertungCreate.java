@@ -37,10 +37,50 @@ import com.algotrading.util.Zeitraum;
 	@Autowired 
 	SignalBewertungDAO sBDAO; 
 
-// 	@Ignore
+ 	@Ignore
+	@Test
+	public void test1SA() {
+		Aktie aktie = AktieVerzeichnis.getInstance().getAktieOhneKurse("testaktie");
+		assertNotNull(aktie);
+		assertTrue(aktie.getKursListe().size() > 1);
+		
+		// Signal konfigurieren und an Aktie hängen 
+		SignalAlgorithmus sA = aktie.addSignalAlgorithmus(new SignalMinMax());
+		sA.addParameter("dauer", 15);		// Min-Max-Berechnung 15 Tage zurück 
+		sA.addParameter("schwelle", 1f);		// 1-fache Standardabweichung
+		sA.addParameter("durchbruch", 0);	// tägliches Signal in der Extremzone
+		
+		// Signale berechnen und ausgeben 
+		aktie.rechneSignale();
+		// Signal-Bewertung aggregieren und ausgeben 
+//		Zeitraum zeitraum1 = new Zeitraum(2015, 2015);
+		Zeitraum zeitraum2 = new Zeitraum(2016, 2016);
+		Zeitraum zeitraum3 = new Zeitraum(2017, 2017);
+//		aktie.bewerteSignale(zeitraum1, 10);
+		aktie.bewerteSignale(zeitraum2, 10);
+		aktie.bewerteSignale(zeitraum3, 10);
+		
+		List<SignalBewertung> sBs = sA.getBewertungen();
+		// die Bewertungen werden gespeichert
+		for (SignalBewertung sB : sBs) {
+			sV.save(sB);
+			
+		}
+		assertTrue(true);
+		
+		for (SignalBewertung sb : sBs) {
+			System.out.println("Sbs: " + sb);
+		}
+//		assertEquals(expected, actual);
+		
+//		aktie.writeFileKursIndikatorSignal();
+//		aktie.writeFileSignale();
+	}
+
+ 	@Ignore
 	@Test
 	public void test1SA1IA() {
-		Aktie aktie = AktieVerzeichnis.getInstance().getAktie("testaktie");
+		Aktie aktie = AktieVerzeichnis.getInstance().getAktieOhneKurse("testaktie");
 		assertNotNull(aktie);
 		assertTrue(aktie.getKursListe().size() > 1);
 		
@@ -87,10 +127,10 @@ import com.algotrading.util.Zeitraum;
 //		aktie.writeFileSignale();
 	}
 	
-	@Ignore
+//	@Ignore
 	@Test
 	public void test1SA2IA() {
-		Aktie aktie = AktieVerzeichnis.getInstance().getAktie("testaktie");
+		Aktie aktie = AktieVerzeichnis.getInstance().getAktieOhneKurse("testaktie");
 		assertNotNull(aktie);
 		assertTrue(aktie.getKursListe().size() > 1);
 		

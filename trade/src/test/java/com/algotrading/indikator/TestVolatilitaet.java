@@ -20,7 +20,7 @@ public class TestVolatilitaet extends TestCase {
 		// TODO Auto-generated method stub
 		super.setUp();
 		
-		aktie = AktieVerzeichnis.newInstance().getAktie("sardata5");
+		aktie = AktieVerzeichnis.newInstance().getAktieOhneKurse("sardata5");
 		
 		IndikatorAlgorithmus10 = aktie.addIndikatorAlgorithmus(new IndikatorVolatilitaet());
 		aktie.addIndikatorAlgorithmus(IndikatorAlgorithmus10);

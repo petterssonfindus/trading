@@ -18,7 +18,7 @@ public class TestMoneyFlowMultiplier extends TestCase {
 	protected void setUp() throws Exception {
 		super.setUp();
 		
-		aktie = AktieVerzeichnis.newInstance().getAktie("testaktie");
+		aktie = AktieVerzeichnis.newInstance().getAktieOhneKurse("testaktie");
 		iA = aktie.addIndikatorAlgorithmus(new IndikatorMFM());
 		aktie.addIndikatorAlgorithmus(iA);
 		iA.addParameter("dauer", 10);

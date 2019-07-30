@@ -34,6 +34,7 @@ public class TestSignalBewertungFIND extends TestCase {
 	@Autowired
 	SignalBewertungRepository sBR;
 	
+	
 	@Ignore
 	@Test 
 	public void testFindSignalBewertungByID() {
@@ -41,14 +42,14 @@ public class TestSignalBewertungFIND extends TestCase {
 		assertNotNull(test);
 	}
 	
-//	@Ignore
+	@Ignore
 	@Test
 	public void testFindByIndikatorName() {
 		// erst einen Indikator erzeugen 
-		List<SignalBewertung> test = sBR.findByAktieNameAndTage("testaktie", 30);
-		System.out.println("Anzahl Bewertungen: " + test.size());
+//		List<SignalBewertung> test = sBR.findByAktieNameAndTage("testaktie", 47);
+		SignalBewertung testSB = sBDAO.find(new Long(53));
 		// anhand des Gefundenen den selben suchen
-		List<SignalBewertung> sBs = sBDAO.findEquals(test.get(0));
+		List<SignalBewertung> sBs = sBDAO.findEquals(testSB);
 		
 		assertNotNull(sBs);
 	}
@@ -121,5 +122,7 @@ public class TestSignalBewertungFIND extends TestCase {
 		}
 		assertNotNull(test);
 	}
+	
+	
 	
 }

@@ -19,7 +19,7 @@ public class TestRSI extends TestCase {
 	IndikatorAlgorithmus rsi;
 	
 	public void setUp() {
-		rsiAktie = AktieVerzeichnis.newInstance().getAktie("sardata5");
+		rsiAktie = AktieVerzeichnis.newInstance().getAktieOhneKurse("sardata5");
 	}
 	
 	public void testRSI() {

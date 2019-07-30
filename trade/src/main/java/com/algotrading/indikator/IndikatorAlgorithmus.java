@@ -2,16 +2,16 @@ package com.algotrading.indikator;
 
 import java.util.Date;
 import java.util.List;
+import java.util.UUID;
 
 import javax.persistence.Column;
 import javax.persistence.DiscriminatorColumn;
 import javax.persistence.DiscriminatorType;
 import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
+import javax.persistence.PostLoad;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
@@ -34,8 +34,8 @@ import com.algotrading.util.Util;
  public abstract class IndikatorAlgorithmus extends Parameter {
 	
 	@Id
-	@GeneratedValue(strategy=GenerationType.AUTO)
-	private Long id;
+	@Column(columnDefinition = "VARCHAR(36)")
+	private String id;
 	
     @Column(name = "timestamp", columnDefinition = "TIMESTAMP DEFAULT CURRENT_TIMESTAMP", insertable = false, updatable = false, nullable = false)
     @Temporal(TemporalType.TIMESTAMP)
@@ -63,44 +63,82 @@ import com.algotrading.util.Util;
 	 */
 	public abstract void rechne (Aktie aktie);
 	
+	
 	public void synchronizeSAVE () {
-		this.id = null; // bei doppelter Verwendung muss die bestehende ID gelöscht werden. 
+		// bei jedem Speichern wird die ID generiert
+		this.id = UUID.randomUUID().toString();
 		this.name = this.getKurzname(); 
 		List<Para> paras = getParameterList();
 		switch (paras.size()) {
 			case 5: 
 				p5name = paras.get(4).getName();
-				p5wert = paras.get(4).getObject().toString();
+				p5wert = toStringParamObject(paras.get(4).getObject());
 			case 4: 
 				p4name = paras.get(3).getName();
-				p4wert = paras.get(3).getObject().toString();
+				p4wert = toStringParamObject(paras.get(3).getObject());
 			case 3: 
 				p3name = paras.get(2).getName();
-				p3wert = paras.get(2).getObject().toString();
+				p3wert = toStringParamObject(paras.get(2).getObject());
 			case 2: 
 				p2name = paras.get(1).getName();
-				p2wert = paras.get(1).getObject().toString();
+				p2wert = toStringParamObject(paras.get(1).getObject());
 			case 1: 
 				p1name = paras.get(0).getName();
-				p1wert = paras.get(0).getObject().toString();
+				p1wert = toStringParamObject(paras.get(0).getObject());
 		}
 	}
 	
+	/**
+	 * der Wert wird in einen String verwandelt um ihn generisch zu speichern
+	 */
+	private String toStringParamObject (Object o) {
+		String result = null; 
+		if (o instanceof IndikatorAlgorithmus) {
+			IndikatorAlgorithmus iA = (IndikatorAlgorithmus) o;
+			result = iA.getId().toString();
+		}
+		else {
+			result = o.toString();
+		}
+		return result; 
+	}
+	
+	/**
+	 * verwandelt den String aus der DB zurück in ein Object 
+	 */
+	private Object toObjectParamString (String s) {
+		// wenn es ein Integer ist 
+		try {
+			Integer integer = Integer.parseInt(s);
+			return integer; 
+		} catch (Exception e) {
+			
+		}
+		try {
+			Float floatO = Float.parseFloat(s);
+			return floatO; 
+		} catch (Exception e) {
+			
+		}
+		return s; 
+	}
+	
+	@PostLoad
 	public void synchronizeLOAD () {
 		if (p1name != null) {
-			addParameter(p1name, p1wert);
+			addParameter(p1name, toObjectParamString(p1wert));
 		}
 		if (p2name != null) {
-			addParameter(p2name, p2wert);
+			addParameter(p2name, toObjectParamString(p2wert));
 		}
 		if (p3name != null) {
-			addParameter(p3name, p3wert);
+			addParameter(p3name, toObjectParamString(p3wert));
 		}
 		if (p4name != null) {
-			addParameter(p4name, p4wert);
+			addParameter(p4name, toObjectParamString(p4wert));
 		}
 		if (p5name != null) {
-			addParameter(p5name, p5wert);
+			addParameter(p5name, toObjectParamString(p5wert));
 		}
 	}
 	
@@ -136,14 +174,14 @@ import com.algotrading.util.Util;
 		return null;
 	}
 
-	public Long getId() {
-		return id;
+	public boolean equals (IndikatorAlgorithmus iA) {
+		// der Name muss der selbe sein 
+		if (! this.getName().matches(iA.getName())) return false; 
+		// die Parameter müssen die selben sein 
+		if (! this.equalsParameter(iA.getParameterList())) return false; 
+		return true; 
 	}
-
-	public void setId(Long id) {
-		this.id = id;
-	}
-
+	
 	public Date getTimestamp() {
 		return timestamp;
 	}
@@ -233,7 +271,12 @@ import com.algotrading.util.Util;
 	}
 
 	public String getName() {
+		if (this.name == null) this.name = this.getKurzname();
 		return name;
+	}
+
+	public String getId() {
+		return this.id;
 	}
 
 }

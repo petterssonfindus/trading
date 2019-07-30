@@ -15,7 +15,7 @@ public class SignalsucheTest extends TestCase {
 	public void testSignalsuche () {
 		
 	// Kursreihe erzeugen appl, dax
-	Aktie aktie = AktieVerzeichnis.getInstance().getAktie("testaktie");
+	Aktie aktie = AktieVerzeichnis.getInstance().getAktieOhneKurse("testaktie");
 	assertNotNull(aktie);
 	assertTrue(aktie.getKursListe().size() > 1);
 	log.info("Kursreihe hat Kurse: " + aktie.getKursListe().size());

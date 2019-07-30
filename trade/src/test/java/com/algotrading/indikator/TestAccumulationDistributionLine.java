@@ -19,7 +19,7 @@ public class TestAccumulationDistributionLine extends TestCase {
 		// TODO Auto-generated method stub
 		super.setUp();
 		
-		aktie = AktieVerzeichnis.newInstance().getAktie("testaktie");
+		aktie = AktieVerzeichnis.newInstance().getAktieOhneKurse("testaktie");
 		iA = aktie.addIndikatorAlgorithmus(new IndikatorADL());
 		aktie.addIndikatorAlgorithmus(iA);
 		iA.addParameter("dauer", 10);

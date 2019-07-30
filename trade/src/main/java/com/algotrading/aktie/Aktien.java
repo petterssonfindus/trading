@@ -27,7 +27,7 @@ public class Aktien extends ArrayList<Aktie> {
 	}
 	
 	public Aktie addAktie (String name) {
-		Aktie aktie = AktieVerzeichnis.getInstance().getAktie(name);
+		Aktie aktie = AktieVerzeichnis.getInstance().getAktieOhneKurse(name);
 		this.add(aktie);
 		return aktie; 
 	}

@@ -81,7 +81,7 @@ public class ReadDataYahoo {
 	public static void YahooWSController (String name) {
 		
 		// die Aktie 
-		Aktie aktie = AktieVerzeichnis.getInstance().getAktie(name);
+		Aktie aktie = AktieVerzeichnis.getInstance().getAktieOhneKurse(name);
 
 		GregorianCalendar nextKurs = aktie.ermittleNextKurs();
 		// wenn es noch keine Kurse gibt, muss das Datum manuell bestimmt werden. 

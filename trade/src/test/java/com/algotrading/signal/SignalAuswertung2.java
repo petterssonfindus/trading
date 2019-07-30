@@ -14,7 +14,7 @@ import junit.framework.TestCase;
 public class SignalAuswertung2 extends TestCase {
 
 	public void testSignalauswertung() {
-		Aktie aktie = AktieVerzeichnis.getInstance().getAktie("^gdaxi");
+		Aktie aktie = AktieVerzeichnis.getInstance().getAktieOhneKurse("^gdaxi");
 		
 		// Indikator konfigurieren und an Aktie hängen
 		IndikatorAlgorithmus iB = aktie.addIndikatorAlgorithmus(new IndikatorMinMax());

@@ -89,7 +89,7 @@ public class SimulatorTest extends TestCase {
 		// Aktienliste bestimmen
 
 		Aktien aktien = Aktien.create();
-		aktien.add(AktieVerzeichnis.getInstance().getAktie("xxxdja"));
+		aktien.add(AktieVerzeichnis.getInstance().getAktieOhneKurse("xxxdja"));
 //		aktien.add(Aktien.getInstance().getAktie("aa"));
 
 //		ArrayList<Aktie> aktien = Aktien.getInstance().getAktien(zeitraum, false);

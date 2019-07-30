@@ -19,16 +19,22 @@ public interface SignalBewertungRepository extends CrudRepository<SignalBewertun
 	  List<SignalBewertung> findByAktieNameByQuery(String aktieName);
 	  
 	  @Query("select s from SignalBewertung s INNER JOIN s.signalAlgorithmus sa INNER JOIN s.indikatorAlgorithmen ia"
+			  + " WHERE sa.name =?1 AND sa.p1name=?2 AND sa.p1wert=?3")
+	  		List<SignalBewertung> findBySignal(String signalName, String sPName1, Object sPWert1);
+
+	  @Query("select s from SignalBewertung s INNER JOIN s.signalAlgorithmus sa INNER JOIN s.indikatorAlgorithmen ia"
 		  		+ " WHERE sa.name =?1 AND sa.p1name=?2 AND sa.p1wert=?3"
 		  		+ " AND ia.name =?4 AND ia.p1name=?5 AND ia.p1wert=?6")
 		  List<SignalBewertung> findBySignalAND1Indikator(String signalName, String sPName1, Object sPWert1, String indikatorName, String iPName1, Object iPWert2);
 
-/*	  @Query("select s from SignalBewertung s INNER JOIN s.signalAlgorithmus sa INNER JOIN s.indikatorAlgorithmen ia "
-	  		+ " WHERE sa.name =?1 AND sa.p1name=?2 AND sa.p1wert=?2"
-			+ " AND ia.name =?4 AND ia.p1name=?5 AND i.p1wert=?6")
-	  List<SignalBewertung> findBySignalAnd1Indikator(String signalName, String sPName1, String sPWert1, String indikatorName, 
-			String iPName1, String iPWert1);
-*/
+	  @Query("select s from SignalBewertung s INNER JOIN s.signalAlgorithmus sa INNER JOIN s.indikatorAlgorithmen ia INNER JOIN s.indikatorAlgorithmen ia2"
+		  		+ " WHERE sa.name =?1 AND sa.p1name=?2 AND sa.p1wert=?3"
+		  		+ " AND ia.name =?4 AND ia.p1name=?5 AND ia.p1wert=?6"
+	  			+ " AND ia2.name =?7 AND ia2.p1name=?8 AND ia2.p1wert=?9")
+		  List<SignalBewertung> findBySignalAND2Indikator(String signalName, String sPName1, Object sPWert1, 
+				String indikatorName1, String iPName1, Object iPWert1,
+	  			String indikatorName2, String iPName2, Object iPWert2);
+
 	  @Query("select s from SignalBewertung s INNER JOIN s.indikatorAlgorithmen i WHERE i.name =?1 "
 			  	+ "AND i.p1name=?2 AND i.p1wert=?3")
 	  List<SignalBewertung> findByIndikator(String indikatorName, 

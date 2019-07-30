@@ -225,8 +225,8 @@ public class DBManager {
 	 * @param name
 	 */
 	protected static void checkKursreiheTage (String name) {
-		Aktie aktie = AktieVerzeichnis.getInstance().getAktie(name);
-		Aktie dow = AktieVerzeichnis.getInstance().getAktie("xxxdja");
+		Aktie aktie = AktieVerzeichnis.getInstance().getAktieOhneKurse(name);
+		Aktie dow = AktieVerzeichnis.getInstance().getAktieOhneKurse("xxxdja");
 		ArrayList<Kurs> aktieKurse = aktie.getKursListe();
 		ArrayList<Kurs> dowKurse = dow.getKursListe();
 		// Kurs zum Beginn der Zeitreihe

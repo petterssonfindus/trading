@@ -12,7 +12,7 @@ public class TestMathUtil extends TestCase {
 	static Aktie aktie; 
 	
 	public void setUp() {
-		aktie = AktieVerzeichnis.newInstance().getAktie("testaktie");
+		aktie = AktieVerzeichnis.newInstance().getAktieOhneKurse("testaktie");
 	}
 	
 	public static void testRechneStandardabweichung() {
@@ -29,7 +29,7 @@ public class TestMathUtil extends TestCase {
 	}
 	
 	public static void testRechneAbweichung() {
-		Aktie aktie = AktieVerzeichnis.getInstance().getAktie("testaktie");
+		Aktie aktie = AktieVerzeichnis.getInstance().getAktieOhneKurse("testaktie");
 		IndikatorAlgorithmus iA = aktie.addIndikatorAlgorithmus(new IndikatorAbweichung());
 		iA.addParameter("typ", 1);
 		aktie.rechneIndikatoren();

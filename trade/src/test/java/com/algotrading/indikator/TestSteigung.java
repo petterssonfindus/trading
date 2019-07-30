@@ -8,7 +8,7 @@ import junit.framework.TestCase;
 public class TestSteigung extends TestCase {
 	
 	public void testPerformancePositiv() {
-		Aktie aktie = AktieVerzeichnis.getInstance().getAktie("testaktie");
+		Aktie aktie = AktieVerzeichnis.getInstance().getAktieOhneKurse("testaktie");
 		IndikatorAlgorithmus iB = aktie.addIndikatorAlgorithmus(new IndikatorSteigung());
 		float kurs = aktie.getKursListe().get(50).getKurs();
 		System.out.println("Performancekurs " + kurs);

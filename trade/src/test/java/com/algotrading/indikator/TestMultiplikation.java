@@ -12,7 +12,7 @@ public class TestMultiplikation extends TestCase {
 	
 	protected void setUp() throws Exception {
 		super.setUp();
-		aktie = AktieVerzeichnis.newInstance().getAktie("testaktie");
+		aktie = AktieVerzeichnis.newInstance().getAktieOhneKurse("testaktie");
 	}	
 	
 	/**

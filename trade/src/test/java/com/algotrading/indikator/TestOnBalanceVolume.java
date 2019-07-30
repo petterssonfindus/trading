@@ -16,7 +16,7 @@ public class TestOnBalanceVolume extends TestCase {
 	@Override
 	protected void setUp() throws Exception {
 		super.setUp();
-		aktie = AktieVerzeichnis.newInstance().getAktie("testaktie");
+		aktie = AktieVerzeichnis.newInstance().getAktieOhneKurse("testaktie");
 	}
 	
 /*

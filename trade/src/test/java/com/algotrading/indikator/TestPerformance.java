@@ -10,7 +10,7 @@ public class TestPerformance extends TestCase {
 
 
 	public void testPerformancePositiv() {
-		Aktie aktie = AktieVerzeichnis.getInstance().getAktie("testaktie");
+		Aktie aktie = AktieVerzeichnis.getInstance().getAktieOhneKurse("testaktie");
 		IndikatorAlgorithmus performance = aktie.addIndikatorAlgorithmus(new IndikatorPerformance());
 		float kurs = aktie.getKursListe().get(50).getKurs();
 		System.out.println("Performancekurs " + kurs);
@@ -27,7 +27,7 @@ public class TestPerformance extends TestCase {
 	}
 
 	public void testPerformanceNegativ() {
-		Aktie aktie = AktieVerzeichnis.getInstance().getAktie("testaktie");
+		Aktie aktie = AktieVerzeichnis.getInstance().getAktieOhneKurse("testaktie");
 		IndikatorAlgorithmus performance = aktie.addIndikatorAlgorithmus(new IndikatorPerformance());
 		float kurs = aktie.getKursListe().get(50).getKurs();
 		System.out.println("NPerformancekurs " + kurs);

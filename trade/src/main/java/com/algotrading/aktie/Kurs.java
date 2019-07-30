@@ -150,7 +150,7 @@ public class Kurs {
 	 * @return die Aktie, zu dem der Kurs gehört 
 	 */
 	 public Aktie getAktie() {
-		 return AktieVerzeichnis.getInstance().getAktie(this.wertpapier);
+		 return AktieVerzeichnis.getInstance().getAktieOhneKurse(this.wertpapier);
 	 }
 	
 	/**

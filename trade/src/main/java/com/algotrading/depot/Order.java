@@ -49,7 +49,7 @@ public class Order {
 		// Referenz auf das zugehärige Depot setzen
 		order.depot = depot; 
 		// zugehärige Kursreihe ermitteln 
-		Aktie kursreihe = AktieVerzeichnis.getInstance().getAktie(wertpapier);
+		Aktie kursreihe = AktieVerzeichnis.getInstance().getAktieOhneKurse(wertpapier);
 		// das Datum der Order stammt aus dem aktuellen Datum des Depot
 		order.datum = depot.heute;
 		order.datumString = DateUtil.formatDate(order.datum);
