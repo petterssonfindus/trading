@@ -1,14 +1,16 @@
 package com.algotrading.signal;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.algotrading.aktie.Aktie;
 import com.algotrading.indikator.IndikatorAlgorithmus;
 import com.algotrading.indikator.IndikatorAlgorithmusDAO;
-import com.algotrading.util.Parameter.Para;
+import com.algotrading.util.Zeitraum;
 
 @Service
 public class Signalverwaltung {
@@ -24,38 +26,47 @@ public class Signalverwaltung {
 		return signalBewertungDAO.save(sB);
 	}
 
+	/**
+	 * Führt signalbewertung druch für Liste Zeiträume und Liste Tage
+	 */
+	public List<SignalBewertung> bewerteSignalListeAndSave(Aktie aktie, List<Zeitraum> zeiten, List<Integer> tage) {
+		List<SignalBewertung> bewertungen = new ArrayList<SignalBewertung>();
+		// für jede Tage-Betrachtung
+		for (Integer tag : tage) {
+			bewertungen.addAll(bewerteSignaleAndSave(aktie, zeiten, tag));
+		}
+		return bewertungen;
+	}
+
+	/**
+	 * Führt die SignalBewertung für eine Liste von Zeiträumen durch Reihenfolge und
+	 * Dauer spielen keine Rolle
+	 */
+	public List<SignalBewertung> bewerteSignaleAndSave(Aktie aktie, List<Zeitraum> zeiten, int tage) {
+		List<SignalBewertung> bewertungen = new ArrayList<SignalBewertung>();
+		for (Zeitraum zeitraum : zeiten) {
+			bewertungen.addAll(aktie.bewerteSignale(zeitraum, tage));
+		}
+		// alle SignalBewertungen werden in die DB geschrieben
+		for (SignalBewertung sB : bewertungen) {
+			save(sB);
+		}
+		return bewertungen;
+	}
+
 	@Transactional
 	public SignalBewertung find(Long id) {
 		SignalBewertung result = null;
 		result = signalBewertungDAO.find(id);
-		// Nach-Laden der Lazy-Load Liste innerhalb einer Transaction
-		if (result != null)
-			result.getIndikatorAlgorithmen().size();
+		// Nach-Laden der Indikator-Algo-Parameter
+		if (result != null) {
+			List<IndikatorAlgorithmus> indiAlgos = result.getSignalAlgorithmus().getIndikatorAlgorithmen();
+			for (IndikatorAlgorithmus iA : indiAlgos) {
+				indiAlgos.size();
+			}
+		} else
+			return null;
 		return result;
-	}
-
-	@Transactional
-	public SignalBewertung findWithIA(Long id) {
-		// zuerst die SignalBewertung aus der DB lesen ohne IAs
-		SignalBewertung sB = find(id);
-		// dann die UUID der IndikatorAlgos lesen
-		return instanciateIA(sB);
-	}
-
-	/**
-	 * Durchsucht alle Parameter der SignalBewertung Und Lädt (instanziiert) die
-	 * anhängenden IndikatorAlgorithmen
-	 */
-	public SignalBewertung instanciateIA(SignalBewertung sB) {
-		// geht durch alle Parameter des SignalAlgorithmus
-		List<Para> paraList = sB.getSignalAlgorithmus().findIAParameter();
-		for (Para para : paraList) {
-			// aus der UUID einen IndikatorAlgorithmus machen.
-			IndikatorAlgorithmus iA = iADAO.findByUUID((String) para.getObject());
-			// den iA als Parameter-Objekt speichern
-			sB.getSignalAlgorithmus().replace(para.getName(), iA);
-		}
-		return sB;
 	}
 
 	@Transactional
@@ -64,6 +75,31 @@ public class Signalverwaltung {
 			return true;
 		else
 			return false;
+	}
+
+	/**
+	 * Prüft, ob es die identische SignalBewertung in der Datenbank gibt Alle
+	 * Gefundenen stimmen exakte mit der gesuchten überein.
+	 */
+	public List<SignalBewertung> existsExact(SignalBewertung sB) {
+		// eine Liste aller ähnlichen SB suchen
+		List<SignalBewertung> liste = existsInDB(sB);
+		// alle Treffer exakt überprüfen
+		// wenn nicht identisch, dann aus Liste entfernen
+		for (SignalBewertung sB1 : liste) {
+			if (!sB.equals(sB1))
+				liste.remove(sB1);
+		}
+		return liste;
+	}
+
+	/**
+	 * Prüft, ob es zu einer SignalBewertung eine inhaltlich identische in der
+	 * Datenbank gibt. Wenn ja, dann wird diese instantiiert und zurück gegeben.
+	 */
+	public List<SignalBewertung> existsInDB(SignalBewertung sB) {
+		// holt sich aus der DB alles was ähnlich aussieht.
+		return signalBewertungDAO.findByTypedQuery(sB);
 	}
 
 }

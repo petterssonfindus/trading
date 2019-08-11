@@ -1,39 +1,46 @@
 package com.algotrading.indikator;
 
+import javax.persistence.DiscriminatorValue;
+import javax.persistence.Entity;
+
 import org.apache.commons.math3.stat.descriptive.DescriptiveStatistics;
 
-import com.algotrading.aktie.*;
+import com.algotrading.aktie.Aktie;
 import com.algotrading.aktie.Kurs;
+
 /**
- * Volatilität 
- * Parameter: dauer in Tagen 
+ * Volatilität Parameter: dauer in Tagen
+ * 
  * @author oskar
  */
+@Entity(name = "Volatilitaet")
+@DiscriminatorValue("Volatilitaet")
 public class IndikatorVolatilitaet extends IndikatorAlgorithmus {
 
 	/**
 	 * Volatilität mit Hilfe der apache.math.statistic-Komponente
 	 */
 	@Override
-	public void rechne (Aktie aktie) {
+	public void rechne(Aktie aktie) {
 		int x = (Integer) getParameter("dauer");
-		// wenn weniger Kurse vorhanden sind, als die Zeitraum 
-		if (aktie.getKursListe().size() <= x) return;
-		
-		Kurs kurs; 
+		// wenn weniger Kurse vorhanden sind, als die Zeitraum
+		if (aktie.getKursListe().size() <= x)
+			return;
+
+		Kurs kurs;
 		DescriptiveStatistics stats = new DescriptiveStatistics();
 		// beim Einfügen weiterer Werte fliegt automatisch der erst raus
 		stats.setWindowSize(x);
 		// die Werte auffüllen ohne Berechnung
-		for (int i = 0 ; i < x ; i++) {
+		for (int i = 0; i < x; i++) {
 			stats.addValue(aktie.getKursListe().get(i).getKurs());
 		}
-		for (int i = x ; i < aktie.getKursListe().size() ; i++) {
+		for (int i = x; i < aktie.getKursListe().size(); i++) {
 			kurs = aktie.getKursListe().get(i);
 			stats.addValue(kurs.getKurs());
-			// Ermittlung der StandardAbweichung 
+			// Ermittlung der StandardAbweichung
 			double vola = stats.getStandardDeviation();
-			kurs.addIndikator(this, (float) vola); 
+			kurs.addIndikator(this, (float) vola);
 		}
 	}
 

@@ -10,8 +10,6 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.stereotype.Component;
 
-import com.algotrading.indikator.IndikatorAlgorithmus;
-
 /**
  * Verwaltet eine Liste von Parametern mit Namen und beliebigem Object. Es kann
  * sich um einen Zahlen-Wert handeln oder einen Zeitraum oder eine
@@ -79,9 +77,15 @@ public class Parameter {
 		this.parameter.put(name, zahl);
 	}
 
+	/**
+	 * Als Parameter kommen Objekt infrage, die mit toString() in Strings
+	 * umgewandelt werden können Integer, Float, String
+	 */
 	public void addParameter(String name, Object o) {
-
-		this.parameter.put(name, o);
+		if (o instanceof String || o instanceof Integer || o instanceof Float) {
+			this.parameter.put(name, o);
+		} else
+			log.error("Fehler beim Schreiben Parameter: " + name);
 	}
 
 	/**
@@ -130,13 +134,6 @@ public class Parameter {
 			// sein
 			else
 				return false;
-		}
-		// beide Parameter sind IndikatorAlgorithmus
-		// vor dem "Equals" muss das Nach-Laden statt gefunden haben.
-		if (object1 instanceof IndikatorAlgorithmus && object2 instanceof IndikatorAlgorithmus) {
-			IndikatorAlgorithmus iA1 = (IndikatorAlgorithmus) object1;
-			IndikatorAlgorithmus iA2 = (IndikatorAlgorithmus) object2;
-			return iA1.equals(iA2);
 		}
 
 		// vielleicht sind beide Integer

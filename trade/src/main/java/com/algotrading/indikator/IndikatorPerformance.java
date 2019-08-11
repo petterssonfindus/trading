@@ -1,5 +1,8 @@
 package com.algotrading.indikator;
 
+import javax.persistence.DiscriminatorValue;
+import javax.persistence.Entity;
+
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -7,12 +10,15 @@ import com.algotrading.aktie.Aktie;
 import com.algotrading.util.Util;
 
 /**
- * Die Performance wird als p.a.-Kapitalentwicklung berechnet 
- * eine positive Dauer geht rückwärts und berechnet die Performance in der abgelaufenen Zeit
- * eine negative Dauer geht vorwärts für die kommende Zeit 
+ * Die Performance wird als p.a.-Kapitalentwicklung berechnet eine positive
+ * Dauer geht rückwärts und berechnet die Performance in der abgelaufenen Zeit
+ * eine negative Dauer geht vorwärts für die kommende Zeit
+ * 
  * @author oskar
  *
  */
+@Entity(name = "Performance")
+@DiscriminatorValue("Performance")
 public class IndikatorPerformance extends IndikatorAlgorithmus {
 	private static final Logger log = LogManager.getLogger(IndikatorPerformance.class);
 
@@ -24,26 +30,30 @@ public class IndikatorPerformance extends IndikatorAlgorithmus {
 		// holt die gewünschte Dauer
 		int x = ((Integer) getParameter("dauer")).intValue();
 
-		if (kurse.length <= x) log.error(aktie.name + " zu wenig Kurse: " + kurse.length + " vorhanden: " + x + " benoetigt."); // wenn weniger Kurse vorhanden sind
-		
-		float kapitalBeginn = 0; 
-		float kapitalEnde = 0; 
-		float rendite; 
+		if (kurse.length <= x)
+			log.error(aktie.name + " zu wenig Kurse: " + kurse.length + " vorhanden: " + x + " benoetigt."); // wenn
+																												// weniger
+																												// Kurse
+																												// vorhanden
+																												// sind
+
+		float kapitalBeginn = 0;
+		float kapitalEnde = 0;
+		float rendite;
 		// zurück rechnen
 		if (x > 0) {
 			// ignoriert die ersten x Kurse, läuft bis zum Schluss
-			for (int i = x ; i < kurse.length; i++) {
+			for (int i = x; i < kurse.length; i++) {
 				// Beginn wird von heute (i) zurück gesetzt um x
 				kapitalBeginn = kurse[i - x];
 				// Ende ist i
 				kapitalEnde = kurse[i];
-				// Rendite wird berechnet und eingetragen 
+				// Rendite wird berechnet und eingetragen
 				rechneRendite(aktie, x, kapitalBeginn, kapitalEnde, i);
 			}
-		}
-		else {
+		} else {
 			x = Math.abs(x);
-			for (int i = 1 ; i < kurse.length - x; i++) {
+			for (int i = 1; i < kurse.length - x; i++) {
 				// Beginn ist heute
 				kapitalBeginn = kurse[i];
 				// Ende ist in Zukunft
@@ -51,20 +61,19 @@ public class IndikatorPerformance extends IndikatorAlgorithmus {
 				rechneRendite(aktie, x, kapitalBeginn, kapitalEnde, i);
 			}
 		}
-		
+
 	}
 
-	private void rechneRendite(Aktie aktie, int x, float kapitalBeginn,
-			float kapitalEnde, int i) {
+	private void rechneRendite(Aktie aktie, int x, float kapitalBeginn, float kapitalEnde, int i) {
 		float rendite;
 		rendite = Util.rechnePerformancePA(kapitalBeginn, kapitalEnde, x);
-		aktie.getKursListe().get(i).addIndikator(this, rendite); 
+		aktie.getKursListe().get(i).addIndikator(this, rendite);
 		log.trace("GD: " + x + " - " + rendite);
 	}
 
 	@Override
 	public String getKurzname() {
-		return "Performance"; 
+		return "Performance";
 	}
 
 }

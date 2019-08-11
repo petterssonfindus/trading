@@ -2,7 +2,6 @@ package com.algotrading.signal;
 
 import java.util.Date;
 import java.util.GregorianCalendar;
-import java.util.List;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -11,7 +10,6 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
-import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.PrePersist;
 import javax.persistence.Table;
@@ -21,202 +19,202 @@ import javax.persistence.Transient;
 
 import org.springframework.data.annotation.CreatedDate;
 
-import com.algotrading.indikator.IndikatorAlgorithmus;
 import com.algotrading.util.Util;
 import com.algotrading.util.Zeitraum;
 
 /**
- * Speichert das Ergebnis der Bewertung, wie gut ein Signal einen Kurs prognostizieren kann 
- * Die Berechnung findet an der Aktie statt. 
- * Wird über JPA persistiert
+ * Speichert das Ergebnis der Bewertung, wie gut ein Signal einen Kurs
+ * prognostizieren kann Die Berechnung findet an der Aktie statt. Wird über JPA
+ * persistiert
+ * 
  * @author oskar
  *
  */
 
 @Entity
-@Table( name = "SIGNALBEWERTUNGEN" )
+@Table(name = "SIGNALBEWERTUNGEN")
 public class SignalBewertung {
-	
+
 	// der Zeithorizont in Tagen
 	@Column(name = "tage")
 	private int tage;
 
-	private String aktieName; 
-	
+	private String aktieName;
+
 	private String ISIN;
-	
+
 	@Column(name = "SAName")
 	private String SAName;
-	
-	@OneToMany(cascade = CascadeType.ALL)  
-	@JoinColumn(name="bewertungID")  
-	private List<IndikatorAlgorithmus> indikatorAlgorithmen;
-	
-	@JoinColumn(name="signalAlgoID")
-	@OneToOne(cascade={CascadeType.MERGE, CascadeType.PERSIST})
-	private SignalAlgorithmus signalAlgorithmus; 
-	
+
+	@JoinColumn(name = "signalAlgoID")
+	@OneToOne(cascade = { CascadeType.MERGE, CascadeType.PERSIST })
+	private SignalAlgorithmus signalAlgorithmus;
+
 	@Transient
-	private Zeitraum zeitraum; 
-	private GregorianCalendar zeitraumBeginn; 
-	private GregorianCalendar zeitraumEnde; 
-	
+	private Zeitraum zeitraum;
+	private GregorianCalendar zeitraumBeginn;
+	private GregorianCalendar zeitraumEnde;
+
 	@Id
-	@GeneratedValue(strategy=GenerationType.AUTO)  
+	@GeneratedValue(strategy = GenerationType.AUTO)
 	private Long id;
-	
-    @Column(name = "timestamp", columnDefinition = "TIMESTAMP DEFAULT CURRENT_TIMESTAMP", insertable = false, updatable = false, nullable = false)
-    @Temporal(TemporalType.TIMESTAMP)
-    private Date timestamp;
-    
-    @CreatedDate
-    private Date createdDate;
+
+	@Column(name = "timestamp", columnDefinition = "TIMESTAMP DEFAULT CURRENT_TIMESTAMP", insertable = false, updatable = false, nullable = false)
+	@Temporal(TemporalType.TIMESTAMP)
+	private Date timestamp;
+
+	@CreatedDate
+	private Date createdDate;
 
 	public int kauf; // Anzahl Kauf-Signale
-	public float kaufKorrekt; // Anzahl korrekter Kauf-Signale im Verhältnis zu Käufen 
+	public float kaufKorrekt; // Anzahl korrekter Kauf-Signale im Verhältnis zu Käufen
 	public float summeBKauf; // Bewertungs-Summe als Saldo aller Kauf-Empfehlungen
 	public float summeSKauf; // die Summe aller Kauf-Prognosen
-	
+
 	public int verkauf; // Anzahl Verkauf-Signale
-	public float verkaufKorrekt; // Anzahl korrekter Verkauf-Signale im Verhältnis zu Verkäufen 
+	public float verkaufKorrekt; // Anzahl korrekter Verkauf-Signale im Verhältnis zu Verkäufen
 	public float summeBVerkauf; // Bewertungs-Summe als Saldo aller Verkauf-Empfehlungen
 	public float summeSVerkauf;// die Summe aller Verkauf-Empfehlungen
-	
-	public float summeBewertungen; // Bewertungs-Summe als Saldo positiver und negativer Prognosequalität. 
-	
-	public float performance; // die Performance des Kurses im betrachteten Zeitraum 
-	
-	protected SignalBewertung() {}  // für JPA
-	
+
+	public float summeBewertungen; // Bewertungs-Summe als Saldo positiver und negativer Prognosequalität.
+
+	public float performance; // die Performance des Kurses im betrachteten Zeitraum
+
+	protected SignalBewertung() {
+	} // für JPA
+
 	/**
-	 * Bei der Erzeugung wird der zugehörige SignalAlgorithmus gesetzt
-	 * Damit können Informationen aus der Aktie geholt werden 
-	 * Die Indikator-Algorithmen werden aus der Aktie geholt
+	 * Bei der Erzeugung wird der zugehörige SignalAlgorithmus gesetzt Damit können
+	 * Informationen aus der Aktie geholt werden Die Indikator-Algorithmen werden
+	 * aus der Aktie geholt
 	 */
 	SignalBewertung(SignalAlgorithmus sA) {
 		this.signalAlgorithmus = sA;
 		this.aktieName = sA.getAktie().getName();
 		this.ISIN = sA.getAktie().getISIN();
-		if (sA.getAktie().getIndikatorAlgorithmen() == null)
-			// IndikatorAQlgorithmen sind an der aktie nie null 
-		this.indikatorAlgorithmen = sA.getAktie().getIndikatorAlgorithmen();
 	}
-	
+
 	@PrePersist
-	public void generateID () {
-		
+	public void generateID() {
+
 	}
-	
+
 	/**
-	 * erzeugt aus den Parametern mit UUID-Referenz echte Objekte durch Nach-Lesen 
+	 * erzeugt aus den Parametern mit UUID-Referenz echte Objekte durch Nach-Lesen
 	 */
-	public void instanziiereParameter () {
+	public void instanziiereParameter() {
 		SignalAlgorithmus sA = this.getSignalAlgorithmus();
 	}
-	
-	
+
 	/**
-	 * alle Parameter müssen gleich sein 
-	 * und die IndikatorParameter
+	 * alle Parameter müssen gleich sein und die SignalAlgorithmusParameter
 	 */
-	public boolean equals (SignalBewertung sB) {
-		// erst die eigenen Parameter vergleichen 
-		if (! this.aktieName.matches(sB.aktieName)) return false;
-		if (this.kauf != sB.kauf) return false;
-		if (this.verkauf != sB.verkauf) return false;
-		if (! floatEquals(this.kaufKorrekt, sB.kaufKorrekt)) return false;
-		if (! floatEquals(this.verkaufKorrekt, sB.verkaufKorrekt)) return false;
-		if (! floatEquals(this.performance, sB.performance)) return false;
-		if (! floatEquals(this.summeBewertungen, sB.summeBewertungen)) return false;
-		if (! floatEquals(this.summeBKauf, sB.summeBKauf)) return false;
-		if (! floatEquals(this.summeBVerkauf, sB.summeBVerkauf)) return false;
-		if (! floatEquals(this.summeSKauf, sB.summeSKauf)) return false;
-		if (! floatEquals(this.summeSVerkauf, sB.summeSVerkauf)) return false;
-		if (tage != sB.tage) return false; 
-		if (! this.getZeitraum().equals(sB.getZeitraum())) return false;
-		// SignalAlgorithmus muss gleich sein 
-		if (! this.signalAlgorithmus.equals(sB.getSignalAlgorithmus())) return false;
-		// IndikatorAlgorithmen werden nicht verglichen 
+	public boolean equals(SignalBewertung sB) {
+		// erst die eigenen Parameter vergleichen
+		if (!this.aktieName.matches(sB.aktieName))
+			return false;
+		if (this.kauf != sB.kauf)
+			return false;
+		if (this.verkauf != sB.verkauf)
+			return false;
+		if (!floatEquals(this.kaufKorrekt, sB.kaufKorrekt))
+			return false;
+		if (!floatEquals(this.verkaufKorrekt, sB.verkaufKorrekt))
+			return false;
+		if (!floatEquals(this.performance, sB.performance))
+			return false;
+		if (!floatEquals(this.summeBewertungen, sB.summeBewertungen))
+			return false;
+		if (!floatEquals(this.summeBKauf, sB.summeBKauf))
+			return false;
+		if (!floatEquals(this.summeBVerkauf, sB.summeBVerkauf))
+			return false;
+		if (!floatEquals(this.summeSKauf, sB.summeSKauf))
+			return false;
+		if (!floatEquals(this.summeSVerkauf, sB.summeSVerkauf))
+			return false;
+		if (tage != sB.tage)
+			return false;
+		if (!this.getZeitraum().equals(sB.getZeitraum()))
+			return false;
+		// SignalAlgorithmus muss gleich sein
+		if (!this.signalAlgorithmus.equals(sB.getSignalAlgorithmus()))
+			return false;
+		// IndikatorAlgorithmen werden nicht verglichen
 		// über die Parameter der SignalAlgorithmen werden die IAs implizit verglichen
 // 		if (! this.equalsIndikatoren(sB.indikatorAlgorithmen)) return false; 
-		return true; 
-	}
-	
-	/**
-	 * Indikatoren müssen identisch sein, Reihenfolge spielt keine Rolle  
-	 */
-	public boolean equalsIndikatoren (List<IndikatorAlgorithmus> indikatoren) {
-		if (this.indikatorAlgorithmen == null && indikatoren == null) return true; 
-		if (this.indikatorAlgorithmen == null && indikatoren != null) return false;
-		if (this.indikatorAlgorithmen != null && indikatoren == null) return false;
-		// die Anzahl muss identisch sein 
-		if (this.indikatorAlgorithmen.size() != indikatoren.size()) return false; 
-		for (IndikatorAlgorithmus iA : this.indikatorAlgorithmen) {
-			boolean gefunden = false; 
-			for (IndikatorAlgorithmus iAVergleich : indikatoren) {
-				if (iA.equals(iAVergleich)) {
-					gefunden = true; 
-					break; 
-				}
-			}
-			// ein Indikator konnte nicht gefunden werden 
-			if (gefunden == false) {
-				return false; 
-			}
-		}
-		// wenn Ausführung bis hier her kommt, sind alle Indikatoren gefunden worden. 
 		return true;
 	}
 
 	/**
-	 * die beiden float-Werte sind gleich, wenn sie innerhalb einer Bandbreite von X % sind
+	 * die beiden float-Werte sind gleich, wenn sie innerhalb einer Bandbreite von X
+	 * % sind
+	 * 
 	 * @param para1
 	 * @param para2
 	 * @return
 	 */
-	private boolean floatEquals (float para1, float para2) {
-		if (para1 == para2) return true; 
-		boolean result = false; 
-		float test1; 
+	private boolean floatEquals(float para1, float para2) {
+		if (para1 == para2)
+			return true;
+		boolean result = false;
+		float test1;
 		float test2;
 		float testAbs = 0.05f * Math.abs(para1);
 		float bandbreite = 0.05f * testAbs;
-		if (para1 > para2) {  // para1 ist > als para2
-			test1 = para1 - bandbreite;  // para1 reduzieren um bandbreite
-			if (test1 < para2) result = true; // ist para1 jetzt kleiner ? 
-		}
-		else {
+		if (para1 > para2) { // para1 ist > als para2
+			test1 = para1 - bandbreite; // para1 reduzieren um bandbreite
+			if (test1 < para2)
+				result = true; // ist para1 jetzt kleiner ?
+		} else {
 			test1 = para1 + bandbreite;
-			if (test1 > para2) result = true;
+			if (test1 > para2)
+				result = true;
 		}
-		return result; 
+		return result;
 	}
-	
-	public String toString () {
-		return this.signalAlgorithmus + " Kauf:" + kauf + 
-				" korrekt:" + Util.rundeBetrag(kaufKorrekt, 3) + 
-				" Signal:" + Util.rundeBetrag(summeSKauf,3) + 
-				" Bewertung:" + Util.rundeBetrag(summeBKauf,3) + 
-				" Verkauf:" + verkauf + 
-				" korrekt:" + Util.rundeBetrag(verkaufKorrekt, 3) + 
-				" Signal:" + Util.rundeBetrag(summeSVerkauf,3) +
-				" Bewertung:" + Util.rundeBetrag(summeBVerkauf,3) +
-				" BewSumme:" + Util.rundeBetrag(summeBewertungen,3) + 
-				" Performance:" + Util.rundeBetrag(performance,3);
+
+	public String toString() {
+		return this.signalAlgorithmus
+				+ " Kauf:"
+				+ kauf
+				+ " korrekt:"
+				+ Util.rundeBetrag(kaufKorrekt, 3)
+				+ " Signal:"
+				+ Util.rundeBetrag(summeSKauf, 3)
+				+ " Bewertung:"
+				+ Util.rundeBetrag(summeBKauf, 3)
+				+ " Verkauf:"
+				+ verkauf
+				+ " korrekt:"
+				+ Util.rundeBetrag(verkaufKorrekt, 3)
+				+ " Signal:"
+				+ Util.rundeBetrag(summeSVerkauf, 3)
+				+ " Bewertung:"
+				+ Util.rundeBetrag(summeBVerkauf, 3)
+				+ " BewSumme:"
+				+ Util.rundeBetrag(summeBewertungen, 3)
+				+ " Performance:"
+				+ Util.rundeBetrag(performance, 3);
 	}
+
 	public Long getId() {
 		return id;
 	}
+
 	public void setTage(int tage) {
 		this.tage = tage;
 	}
+
 	public int getTage() {
 		return tage;
 	}
-	private void setZeitraumBeginn () {
+
+	private void setZeitraumBeginn() {
 		this.zeitraumBeginn = this.zeitraum.beginn;
 	}
-	private void setZeitraumEnde () {
+
+	private void setZeitraumEnde() {
 		this.zeitraumEnde = this.zeitraum.ende;
 	}
 
@@ -323,20 +321,21 @@ public class SignalBewertung {
 	public String getAktieName() {
 		return aktieName;
 	}
+
 	/*
-	 * der Aktienname wird anhand der Referenz zum SignalAlgo und zur Aktie gesetzt 
-	 * Verwendung während der Simulation 
+	 * der Aktienname wird anhand der Referenz zum SignalAlgo und zur Aktie gesetzt
+	 * Verwendung während der Simulation
 	 */
 	private void setAktieName() {
 		this.aktieName = this.signalAlgorithmus.getAktie().getName();
 	}
+
 	/*
 	 * Verwendung zur Reproduktion der Bewertung aus der DB
 	 */
 	public void setAktieName(String aktieName) {
 		this.aktieName = aktieName;
 	}
-	
 
 	public Zeitraum getZeitraum() {
 		if (this.zeitraum == null) {
@@ -358,10 +357,11 @@ public class SignalBewertung {
 	public void setISIN(String iSIN) {
 		ISIN = iSIN;
 	}
+
 	/*
-	 * die ISIN wird anhand der Referenz zur SignalAlgo und zur Aktie gesetzt 
+	 * die ISIN wird anhand der Referenz zur SignalAlgo und zur Aktie gesetzt
 	 */
-	private void setISIN () {
+	private void setISIN() {
 		ISIN = this.signalAlgorithmus.getAktie().getISIN();
 	}
 
@@ -372,25 +372,12 @@ public class SignalBewertung {
 	public void setSAName(String sAName) {
 		SAName = sAName;
 	}
+
 	/*
-	 * der SA-Name wird anhand der Referenz zum SA gesetzt. 
+	 * der SA-Name wird anhand der Referenz zum SA gesetzt.
 	 */
 	private void setSAName() {
 		SAName = this.signalAlgorithmus.getKurzname();
-	}
-
-	public List<IndikatorAlgorithmus> getIndikatorAlgorithmen() {
-		return this.indikatorAlgorithmen;
-	}
-
-	public void setIndikatorAlgorithmen(List<IndikatorAlgorithmus> indikatorAlgorithmen) {
-		this.indikatorAlgorithmen = indikatorAlgorithmen;
-	}
-	/*
-	 * die Liste der verwendeten IndikatorAlgos werden über die Referenz zur Aktie gesetzt 
-	 */
-	public void setIndikatorAlgorithmen() {
-		this.indikatorAlgorithmen = this.signalAlgorithmus.getAktie().getIndikatorAlgorithmen();
 	}
 
 	public Date getCreatedDate() {

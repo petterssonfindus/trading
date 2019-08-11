@@ -5,6 +5,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.UUID;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.DiscriminatorColumn;
 import javax.persistence.DiscriminatorType;
@@ -12,6 +13,8 @@ import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
+import javax.persistence.JoinColumn;
+import javax.persistence.OneToMany;
 import javax.persistence.PostLoad;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
@@ -51,6 +54,11 @@ public abstract class SignalAlgorithmus extends Parameter {
 	@Transient
 	private Aktie aktie;
 
+	// eine Liste an Indiktoren, die der SignalAlgorithmus benötigt
+	@OneToMany(cascade = CascadeType.ALL)
+	@JoinColumn(name = "SAID")
+	private List<IndikatorAlgorithmus> indikatorAlgorithmen = new ArrayList<IndikatorAlgorithmus>();
+
 	// eine Liste aller Signale, die von diesem Algorithmus erzeugt wurden
 	@Transient
 	private List<Signal> signale = new ArrayList<Signal>();
@@ -73,8 +81,10 @@ public abstract class SignalAlgorithmus extends Parameter {
 	@Transient
 	private boolean istBerechnet = false;
 
+	/**
+	 * vor dem Speichern werden alle Werte für die Datenbank vorbereitet
+	 */
 	public String synchronizeSAVE() {
-
 		this.id = UUID.randomUUID().toString(); // sicherheitshalber die ID erzeugen
 		this.name = this.getKurzname();
 		this.aktieName = this.getAktie().getName();
@@ -95,6 +105,10 @@ public abstract class SignalAlgorithmus extends Parameter {
 		case 1:
 			p1name = paras.get(0).getName();
 			p1wert = toStringParamObject(paras.get(0).getObject());
+		}
+		// alle benötigten IndikatorAlgorithmen werden vorbereitet
+		for (IndikatorAlgorithmus iA : this.indikatorAlgorithmen) {
+			iA.synchronizeSAVE();
 		}
 		return this.id;
 	}
@@ -138,7 +152,9 @@ public abstract class SignalAlgorithmus extends Parameter {
 	 */
 	public Zeitraum getZeitraumSignale() {
 		Signal signal1 = this.signale.get(0);
-		Signal signaln = this.signale.get(this.signale.size() - 1);
+		Signal signaln = this.signale.get(
+				this.signale.size()
+						- 1);
 		return new Zeitraum(signal1.getKurs().getDatum(), signaln.getKurs().getDatum());
 	}
 
@@ -158,19 +174,60 @@ public abstract class SignalAlgorithmus extends Parameter {
 			return true;
 		// die Aktie muss die selbe sein
 		// entweder über die Aktie-Referenz - oder über den Aktie-Name
-		if (this.getAktie() != null && sA.getAktie() != null) {
+		if (this.getAktie() != null
+				&& sA.getAktie() != null) {
 			if (!this.getAktie().getName().matches(sA.getAktie().getName()))
 				return false;
-		}
-
-		else {
+		} else {
 			if (!this.getAktieName().matches(sA.getAktieName()))
 				return false;
 		}
 		// die Parameter des SignalAlgorithmus müssen die selben sein
 		if (!this.equalsParameter(sA.getParameterList()))
 			return false;
+		// die Indikatoren müssen die selben sein
+		if (!this.equalsIndikatoren(sA.indikatorAlgorithmen)) {
+			return false;
+		}
 		return true;
+	}
+
+	/**
+	 * Indikatoren müssen identisch sein, Reihenfolge spielt keine Rolle
+	 */
+	private boolean equalsIndikatoren(List<IndikatorAlgorithmus> indikatoren) {
+		if (this.indikatorAlgorithmen == null
+				&& indikatoren == null)
+			return true;
+		if (this.indikatorAlgorithmen == null
+				&& indikatoren != null)
+			return false;
+		if (this.indikatorAlgorithmen != null
+				&& indikatoren == null)
+			return false;
+		// die Anzahl muss identisch sein
+		if (this.indikatorAlgorithmen.size() != indikatoren.size())
+			return false;
+		for (IndikatorAlgorithmus iA : this.indikatorAlgorithmen) {
+			boolean gefunden = false;
+			for (IndikatorAlgorithmus iAVergleich : indikatoren) {
+				if (iA.equals(iAVergleich)) {
+					gefunden = true;
+					break;
+				}
+			}
+			// ein Indikator konnte nicht gefunden werden
+			if (gefunden == false) {
+				return false;
+			}
+		}
+		// wenn Ausführung bis hier her kommt, sind alle Indikatoren gefunden worden.
+		return true;
+	}
+
+	public IndikatorAlgorithmus addIndikatorAlgorithmus(IndikatorAlgorithmus iA) {
+		this.indikatorAlgorithmen.add(iA);
+		return iA;
 	}
 
 	/**
@@ -198,9 +255,14 @@ public abstract class SignalAlgorithmus extends Parameter {
 	 * enthält den Kurznamen und eine Liste der vorhandenen Parameter
 	 */
 	public String toString() {
-		String result = ";I:" + getKurzname();
+		String result = ";I:"
+				+ getKurzname();
 		for (String name : this.getAllParameter().keySet()) {
-			result = result + (Util.separatorCSV + name + ":" + this.getParameter(name));
+			result = result
+					+ (Util.separatorCSV
+							+ name
+							+ ":"
+							+ this.getParameter(name));
 		}
 		return result;
 	}
@@ -211,6 +273,7 @@ public abstract class SignalAlgorithmus extends Parameter {
 
 	public void setAktie(Aktie aktie) {
 		this.aktie = aktie;
+		this.aktieName = aktie.getName();
 	}
 
 	public String getAktieName() {
@@ -219,6 +282,54 @@ public abstract class SignalAlgorithmus extends Parameter {
 
 	public String getId() {
 		return this.id;
+	}
+
+	public List<IndikatorAlgorithmus> getIndikatorAlgorithmen() {
+		return indikatorAlgorithmen;
+	}
+
+	public String getName() {
+		return name;
+	}
+
+	public String getP1name() {
+		return p1name;
+	}
+
+	public String getP1wert() {
+		return p1wert;
+	}
+
+	public String getP2name() {
+		return p2name;
+	}
+
+	public String getP2wert() {
+		return p2wert;
+	}
+
+	public String getP3name() {
+		return p3name;
+	}
+
+	public String getP3wert() {
+		return p3wert;
+	}
+
+	public String getP4name() {
+		return p4name;
+	}
+
+	public String getP4wert() {
+		return p4wert;
+	}
+
+	public String getP5name() {
+		return p5name;
+	}
+
+	public String getP5wert() {
+		return p5wert;
 	}
 
 }
