@@ -77,9 +77,8 @@ public class SignalBewertungDAO {
 	 * Eine Liste geladener SignalBewertungen wird Nach-Geladen
 	 */
 	@Transactional
-	private boolean loadLazyLoaded(List<SignalBewertung> sBs) {
-		if (sBs == null
-				|| sBs.size() == 0)
+	boolean loadLazyLoaded(List<SignalBewertung> sBs) {
+		if (sBs == null || sBs.size() == 0)
 			return false;
 		for (SignalBewertung sB : sBs) {
 			sB.getSignalAlgorithmus().getIndikatorAlgorithmen().size();
@@ -103,17 +102,15 @@ public class SignalBewertungDAO {
 	public List<SignalBewertung> findByTypedQuery(SignalBewertung sB) {
 		List<SignalBewertung> result = null;
 
-		String queryStr = "SELECT DISTINCT sb FROM SignalBewertung sb, SignalAlgorithmus sa JOIN sa.indikatorAlgorithmen ia "
-				+ "WHERE sb.signalAlgorithmus = sa "
-				+ makeQueryStringForSB(sB)
-				+ makeQueryStringForSA(sB.getSignalAlgorithmus())
-				+ makeQueryStringForIA("", sB.getSignalAlgorithmus().getIndikatorAlgorithmen().get(0));
+		String queryStr = "SELECT DISTINCT sb FROM SignalBewertung sb, SignalAlgorithmus sa JOIN sa.indikatorAlgorithmen ia " + "WHERE sb.signalAlgorithmus = sa " + makeQueryStringForSB(
+				sB) + makeQueryStringForSA(sB.getSignalAlgorithmus()) + makeQueryStringForIA(
+						"",
+						sB.getSignalAlgorithmus().getIndikatorAlgorithmen().get(0));
 
 		TypedQuery<SignalBewertung> query = em.createQuery(queryStr, SignalBewertung.class)
 				.setParameter("beginn", new Date(), TemporalType.DATE);
 		result = query.getResultList();
-		if (result == null
-				|| result.size() == 0)
+		if (result == null || result.size() == 0)
 			return result;
 		// Nach-Laden mit ID
 		loadLazyLoaded(result);
@@ -121,35 +118,34 @@ public class SignalBewertungDAO {
 	}
 
 	private static String makeQueryStringForSB(SignalBewertung sB) {
-		String result = "AND sb.aktieName=".concat(surroundHochkomma(sB.getAktieName()))
-				+ "AND sb.tage = 10 "
-				+ "AND sb.zeitraumBeginn <= :beginn ";
+		String result = "AND sb.aktieName=".concat(
+				surroundHochkomma(sB.getAktieName())) + "AND sb.tage = 10 " + "AND sb.zeitraumBeginn <= :beginn ";
 		return result;
 	}
 
 	private static String makeQueryStringForSA(SignalAlgorithmus sA) {
-		String result = "AND sa.name = ".concat(surroundHochkomma(sA.getKurzname()))
-				+ " AND sa.aktieName=".concat(surroundHochkomma(sA.getAktieName()));
+		String result = "AND sa.name = ".concat(surroundHochkomma(sA.getKurzname())) + " AND sa.aktieName="
+				.concat(surroundHochkomma(sA.getAktieName()));
 		if (sA.getP1name() != null)
 			result = result.concat(
-					" AND sa.p1name=".concat(surroundHochkomma(sA.getP1name()))
-							+ " AND sa.p1wert=".concat(surroundHochkomma(sA.getP1wert())));
+					" AND sa.p1name=".concat(surroundHochkomma(sA.getP1name())) + " AND sa.p1wert="
+							.concat(surroundHochkomma(sA.getP1wert())));
 		if (sA.getP2name() != null)
 			result = result.concat(
-					" AND sa.p2name=".concat(surroundHochkomma(sA.getP2name()))
-							+ " AND sa.p2wert=".concat(surroundHochkomma(sA.getP2wert())));
+					" AND sa.p2name=".concat(surroundHochkomma(sA.getP2name())) + " AND sa.p2wert="
+							.concat(surroundHochkomma(sA.getP2wert())));
 		if (sA.getP3name() != null)
 			result = result.concat(
-					" AND sa.p3name=".concat(surroundHochkomma(sA.getP3name()))
-							+ " AND sa.p3wert=".concat(surroundHochkomma(sA.getP3wert())));
+					" AND sa.p3name=".concat(surroundHochkomma(sA.getP3name())) + " AND sa.p3wert="
+							.concat(surroundHochkomma(sA.getP3wert())));
 		if (sA.getP4name() != null)
 			result = result.concat(
-					" AND sa.p4name=".concat(surroundHochkomma(sA.getP4name()))
-							+ " AND sa.p4wert=".concat(surroundHochkomma(sA.getP4wert())));
+					" AND sa.p4name=".concat(surroundHochkomma(sA.getP4name())) + " AND sa.p4wert="
+							.concat(surroundHochkomma(sA.getP4wert())));
 		if (sA.getP5name() != null)
 			result = result.concat(
-					" AND sa.p5name=".concat(surroundHochkomma(sA.getP5name()))
-							+ " AND sa.p5wert=".concat(surroundHochkomma(sA.getP5wert())));
+					" AND sa.p5name=".concat(surroundHochkomma(sA.getP5name())) + " AND sa.p5wert="
+							.concat(surroundHochkomma(sA.getP5wert())));
 
 		return result;
 	}
@@ -158,24 +154,24 @@ public class SignalBewertungDAO {
 		String result = "AND ia.name = ".concat(surroundHochkomma(iA.getName()));
 		if (iA.getP1name() != null)
 			result = result.concat(
-					" AND ia.p1name=".concat(surroundHochkomma(iA.getP1name()))
-							+ " AND ia.p1wert=".concat(surroundHochkomma(iA.getP1wert())));
+					" AND ia.p1name=".concat(surroundHochkomma(iA.getP1name())) + " AND ia.p1wert="
+							.concat(surroundHochkomma(iA.getP1wert())));
 		if (iA.getP2name() != null)
 			result = result.concat(
-					" AND ia.p2name=".concat(surroundHochkomma(iA.getP2name()))
-							+ " AND ia.p2wert=".concat(surroundHochkomma(iA.getP2wert())));
+					" AND ia.p2name=".concat(surroundHochkomma(iA.getP2name())) + " AND ia.p2wert="
+							.concat(surroundHochkomma(iA.getP2wert())));
 		if (iA.getP3name() != null)
 			result = result.concat(
-					" AND ia.p3name=".concat(surroundHochkomma(iA.getP3name()))
-							+ " AND ia.p3wert=".concat(surroundHochkomma(iA.getP3wert())));
+					" AND ia.p3name=".concat(surroundHochkomma(iA.getP3name())) + " AND ia.p3wert="
+							.concat(surroundHochkomma(iA.getP3wert())));
 		if (iA.getP4name() != null)
 			result = result.concat(
-					" AND ia.p4name=".concat(surroundHochkomma(iA.getP4name()))
-							+ " AND ia.p4wert=".concat(surroundHochkomma(iA.getP4wert())));
+					" AND ia.p4name=".concat(surroundHochkomma(iA.getP4name())) + " AND ia.p4wert="
+							.concat(surroundHochkomma(iA.getP4wert())));
 		if (iA.getP5name() != null)
 			result = result.concat(
-					" AND ia.p5name=".concat(surroundHochkomma(iA.getP5name()))
-							+ " AND ia.p5wert=".concat(surroundHochkomma(iA.getP5wert())));
+					" AND ia.p5name=".concat(surroundHochkomma(iA.getP5name())) + " AND ia.p5wert="
+							.concat(surroundHochkomma(iA.getP5wert())));
 
 		return result;
 	}

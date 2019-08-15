@@ -17,8 +17,6 @@ import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.persistence.Transient;
 
-import org.springframework.data.annotation.CreatedDate;
-
 import com.algotrading.util.Util;
 import com.algotrading.util.Zeitraum;
 
@@ -32,7 +30,7 @@ import com.algotrading.util.Zeitraum;
  */
 
 @Entity
-@Table(name = "SIGNALBEWERTUNGEN")
+@Table(name = "SIGNALBEWERTUNG")
 public class SignalBewertung {
 
 	// der Zeithorizont in Tagen
@@ -46,7 +44,7 @@ public class SignalBewertung {
 	@Column(name = "SAName")
 	private String SAName;
 
-	@JoinColumn(name = "signalAlgoID")
+	@JoinColumn(name = "signalAlgorithmus_ID")
 	@OneToOne(cascade = { CascadeType.MERGE, CascadeType.PERSIST })
 	private SignalAlgorithmus signalAlgorithmus;
 
@@ -62,9 +60,6 @@ public class SignalBewertung {
 	@Column(name = "timestamp", columnDefinition = "TIMESTAMP DEFAULT CURRENT_TIMESTAMP", insertable = false, updatable = false, nullable = false)
 	@Temporal(TemporalType.TIMESTAMP)
 	private Date timestamp;
-
-	@CreatedDate
-	private Date createdDate;
 
 	public int kauf; // Anzahl Kauf-Signale
 	public float kaufKorrekt; // Anzahl korrekter Kauf-Signale im Verhältnis zu Käufen
@@ -175,27 +170,14 @@ public class SignalBewertung {
 	}
 
 	public String toString() {
-		return this.signalAlgorithmus
-				+ " Kauf:"
-				+ kauf
-				+ " korrekt:"
-				+ Util.rundeBetrag(kaufKorrekt, 3)
-				+ " Signal:"
-				+ Util.rundeBetrag(summeSKauf, 3)
-				+ " Bewertung:"
-				+ Util.rundeBetrag(summeBKauf, 3)
-				+ " Verkauf:"
-				+ verkauf
-				+ " korrekt:"
-				+ Util.rundeBetrag(verkaufKorrekt, 3)
-				+ " Signal:"
-				+ Util.rundeBetrag(summeSVerkauf, 3)
-				+ " Bewertung:"
-				+ Util.rundeBetrag(summeBVerkauf, 3)
-				+ " BewSumme:"
-				+ Util.rundeBetrag(summeBewertungen, 3)
-				+ " Performance:"
-				+ Util.rundeBetrag(performance, 3);
+		return this.signalAlgorithmus + " Kauf:" + kauf + " korrekt:" + Util
+				.rundeBetrag(kaufKorrekt, 3) + " Signal:" + Util.rundeBetrag(summeSKauf, 3) + " Bewertung:" + Util
+						.rundeBetrag(summeBKauf, 3) + " Verkauf:" + verkauf + " korrekt:" + Util.rundeBetrag(
+								verkaufKorrekt,
+								3) + " Signal:" + Util.rundeBetrag(summeSVerkauf, 3) + " Bewertung:" + Util
+										.rundeBetrag(summeBVerkauf, 3) + " BewSumme:" + Util.rundeBetrag(
+												summeBewertungen,
+												3) + " Performance:" + Util.rundeBetrag(performance, 3);
 	}
 
 	public Long getId() {
@@ -378,14 +360,6 @@ public class SignalBewertung {
 	 */
 	private void setSAName() {
 		SAName = this.signalAlgorithmus.getKurzname();
-	}
-
-	public Date getCreatedDate() {
-		return createdDate;
-	}
-
-	public void setCreatedDate(Date createdDate) {
-		this.createdDate = createdDate;
 	}
 
 	public SignalAlgorithmus getSignalAlgorithmus() {
