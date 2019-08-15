@@ -17,6 +17,7 @@ import com.algotrading.component.Signalverwaltung;
 import com.algotrading.indikator.IndikatorAlgorithmus;
 import com.algotrading.jpa.SignalBewertungDAO;
 import com.algotrading.jpa.SignalBewertungRepository;
+import com.algotrading.signalbewertung.SignalBewertung;
 import com.algotrading.util.Zeitraum;
 
 import junit.framework.TestCase;

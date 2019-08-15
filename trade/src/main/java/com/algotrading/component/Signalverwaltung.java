@@ -12,7 +12,8 @@ import com.algotrading.indikator.IndikatorAlgorithmus;
 import com.algotrading.jpa.IndikatorAlgorithmusDAO;
 import com.algotrading.jpa.SignalBewertungDAO;
 import com.algotrading.jpa.SignalBewertungenDAO;
-import com.algotrading.signal.SignalBewertung;
+import com.algotrading.signalbewertung.SignalBewertung;
+import com.algotrading.signalbewertung.SignalBewertungen;
 import com.algotrading.util.Zeitraum;
 
 @Service
@@ -22,10 +23,10 @@ public class Signalverwaltung {
 	private SignalBewertungDAO signalBewertungDAO;
 
 	@Autowired
-	private IndikatorAlgorithmusDAO iADAO;
+	private SignalBewertungenDAO sBsDAO;
 
 	@Autowired
-	private SignalBewertungenDAO sBsDAO;
+	private IndikatorAlgorithmusDAO iADAO;
 
 	/**
 	 * Bewertet alle Signale, die an der Aktie hängen
@@ -40,18 +41,41 @@ public class Signalverwaltung {
 	}
 
 	@Transactional
-	public SignalBewertung save(SignalBewertung sB) {
+	public SignalBewertung saveSignalBewertung(SignalBewertung sB) {
 		return signalBewertungDAO.save(sB);
 	}
 
+	@Transactional
+	public List<SignalBewertung> saveSignalBewertungListe(List<SignalBewertung> liste) {
+		for (SignalBewertung sB : liste) {
+			saveSignalBewertung(sB);
+		}
+		return liste;
+	}
+
 	/**
-	 * Führt signalbewertung druch für Liste Zeiträume und Liste Tage
+	 * Speichert die ganze Hierarchie: SignalBewertungen - SignalBewertung -
+	 * SignalAlgorithmus - IndikatorAlgorithmus
 	 */
-	public List<SignalBewertung> bewerteSignalListeAndSave(Aktie aktie, List<Zeitraum> zeiten, List<Integer> tage) {
+	@Transactional
+	public SignalBewertungen saveSignalBewertungen(SignalBewertungen sBs) {
+		sBsDAO.save(sBs);
+		return sBs;
+	}
+
+	@Transactional
+	public void deleteSignalBewertungen(Long id) {
+		sBsDAO.deleteByID(id);
+	}
+
+	/**
+	 * Führt signalbewertung durch für Liste Zeiträume und Liste Tage
+	 */
+	public List<SignalBewertung> bewerteSignalListe(Aktie aktie, List<Zeitraum> zeiten, List<Integer> tage) {
 		List<SignalBewertung> bewertungen = new ArrayList<SignalBewertung>();
 		// für jede Tage-Betrachtung
 		for (Integer tag : tage) {
-			bewertungen.addAll(bewerteSignaleAndSave(aktie, zeiten, tag));
+			bewertungen.addAll(bewerteSignale(aktie, zeiten, tag));
 		}
 		return bewertungen;
 	}
@@ -60,14 +84,10 @@ public class Signalverwaltung {
 	 * Führt die SignalBewertung für eine Liste von Zeiträumen durch Reihenfolge und
 	 * Dauer spielen keine Rolle
 	 */
-	public List<SignalBewertung> bewerteSignaleAndSave(Aktie aktie, List<Zeitraum> zeiten, int tage) {
+	public List<SignalBewertung> bewerteSignale(Aktie aktie, List<Zeitraum> zeiten, int tage) {
 		List<SignalBewertung> bewertungen = new ArrayList<SignalBewertung>();
 		for (Zeitraum zeitraum : zeiten) {
 			bewertungen.addAll(aktie.bewerteSignale(zeitraum, tage));
-		}
-		// alle SignalBewertungen werden in die DB geschrieben
-		for (SignalBewertung sB : bewertungen) {
-			save(sB);
 		}
 		return bewertungen;
 	}
@@ -118,6 +138,24 @@ public class Signalverwaltung {
 	public List<SignalBewertung> existsInDB(SignalBewertung sB) {
 		// holt sich aus der DB alles was ähnlich aussieht.
 		return signalBewertungDAO.findByTypedQuery(sB);
+	}
+
+	public long countSignalBewertungen() {
+		return sBsDAO.count();
+	}
+
+	public long countSignalBewertung() {
+		return signalBewertungDAO.count();
+	}
+
+	public long countIndikatorAlgorithmus() {
+		return iADAO.count();
+	}
+
+	public void printCount() {
+		System.out.println("SignalBewertungen: " + countSignalBewertungen());
+		System.out.println("SignalBewertung: " + countSignalBewertung());
+		System.out.println("IndikatorAlgorithmus: " + countIndikatorAlgorithmus());
 	}
 
 }

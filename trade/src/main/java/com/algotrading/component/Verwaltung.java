@@ -1,4 +1,4 @@
-package com.algotrading.util;
+package com.algotrading.component;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -7,6 +7,7 @@ import org.springframework.stereotype.Service;
 
 import com.algotrading.indikator.IndikatorAlgorithmus;
 import com.algotrading.jpa.IndikatorAlgorithmusDAO;
+import com.algotrading.util.Parameter;
 
 @Service
 public class Verwaltung {

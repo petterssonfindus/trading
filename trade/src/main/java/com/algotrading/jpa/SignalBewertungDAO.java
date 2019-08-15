@@ -16,7 +16,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.algotrading.indikator.IndikatorAlgorithmus;
 import com.algotrading.signal.SignalAlgorithmus;
-import com.algotrading.signal.SignalBewertung;
+import com.algotrading.signalbewertung.SignalBewertung;
 
 /**
  * Zugriff auf Repository
@@ -35,6 +35,11 @@ public class SignalBewertungDAO {
 	public SignalBewertung save(SignalBewertung signalBewertung) {
 		signalBewertung.getSignalAlgorithmus().synchronizeSAVE();
 		return sBR.save(signalBewertung);
+	}
+
+	@Transactional
+	public long count() {
+		return sBR.count();
 	}
 
 	@Transactional

@@ -1,4 +1,4 @@
-package com.algotrading.signal;
+package com.algotrading.signalbewertung;
 
 import java.util.Date;
 import java.util.GregorianCalendar;
@@ -17,6 +17,7 @@ import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.persistence.Transient;
 
+import com.algotrading.signal.SignalAlgorithmus;
 import com.algotrading.util.Util;
 import com.algotrading.util.Zeitraum;
 
@@ -83,7 +84,7 @@ public class SignalBewertung {
 	 * Informationen aus der Aktie geholt werden Die Indikator-Algorithmen werden
 	 * aus der Aktie geholt
 	 */
-	SignalBewertung(SignalAlgorithmus sA) {
+	public SignalBewertung(SignalAlgorithmus sA) {
 		this.signalAlgorithmus = sA;
 		this.aktieName = sA.getAktie().getName();
 		this.ISIN = sA.getAktie().getISIN();

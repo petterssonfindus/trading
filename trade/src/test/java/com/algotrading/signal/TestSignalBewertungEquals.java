@@ -10,6 +10,7 @@ import com.algotrading.indikator.IndikatorAbweichung;
 import com.algotrading.indikator.IndikatorAlgorithmus;
 import com.algotrading.indikator.IndikatorGD;
 import com.algotrading.jpa.SignalBewertungDAO;
+import com.algotrading.signalbewertung.SignalBewertung;
 import com.algotrading.util.AbstractTest;
 import com.algotrading.util.Zeitraum;
 
@@ -61,7 +62,7 @@ public class TestSignalBewertungEquals extends AbstractTest {
 	@Test
 	public void testSignalBewertungCreate() {
 		SignalBewertung sB = createSignalBewertungDurchBerechnung();
-		sV.save(sB);
+		sV.saveSignalBewertung(sB);
 	}
 
 	/**

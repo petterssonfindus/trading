@@ -12,7 +12,7 @@ import com.algotrading.depot.Order;
 import com.algotrading.indikator.IndikatorAlgorithmus;
 import com.algotrading.signal.Signal;
 import com.algotrading.signal.SignalAlgorithmus;
-import com.algotrading.signal.SignalBewertung;
+import com.algotrading.signalbewertung.SignalBewertung;
 import com.algotrading.util.DateUtil;
 import com.algotrading.util.FileUtil;
 import com.algotrading.util.Parameter;

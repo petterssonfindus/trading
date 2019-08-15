@@ -10,8 +10,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.algotrading.signal.SignalBewertung;
-import com.algotrading.signal.SignalBewertungen;
+import com.algotrading.signalbewertung.SignalBewertung;
+import com.algotrading.signalbewertung.SignalBewertungen;
 
 @Component
 public class SignalBewertungenDAO {
@@ -25,7 +25,7 @@ public class SignalBewertungenDAO {
 	@PersistenceContext
 	EntityManager em;
 
-// 	@Transactional
+	@Transactional
 	public SignalBewertungen save(SignalBewertungen signalBewertungen) {
 		List<SignalBewertung> liste = signalBewertungen.getSignalBewertungen();
 		// der SignalAlgorithmus muss vor dem Speichern synchronisiert werden.
@@ -33,6 +33,16 @@ public class SignalBewertungenDAO {
 			sB.getSignalAlgorithmus().synchronizeSAVE();
 		}
 		return sBenR.save(signalBewertungen);
+	}
+
+	@Transactional
+	public void deleteByID(Long id) {
+		sBenR.deleteById(id);
+	}
+
+	@Transactional
+	public long count() {
+		return sBenR.count();
 	}
 
 	@Transactional

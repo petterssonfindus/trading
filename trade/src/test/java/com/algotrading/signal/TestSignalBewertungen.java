@@ -18,6 +18,8 @@ import com.algotrading.component.Signalverwaltung;
 import com.algotrading.indikator.IndikatorAlgorithmus;
 import com.algotrading.indikator.IndikatorGDalt;
 import com.algotrading.indikator.IndikatorOBV;
+import com.algotrading.signalbewertung.SignalBewertung;
+import com.algotrading.signalbewertung.SignalBewertungen;
 import com.algotrading.util.DateUtil;
 import com.algotrading.util.Zeitraum;
 
@@ -30,6 +32,13 @@ public class TestSignalBewertungen {
 
 	@Autowired
 	Signalverwaltung sV;
+
+	@Test
+	public void testDeletesignalBewertungen() {
+		sV.printCount();
+		sV.deleteSignalBewertungen(new Long(986));
+		sV.printCount();
+	}
 
 	@Test
 	public void testCreateSignalBewertungen() {
@@ -65,8 +74,13 @@ public class TestSignalBewertungen {
 		}
 		List<Integer> tage = DateUtil.getBewertungTage(1);
 		// Bewertung wird durchgeführt mit den vorbereiteten Zeiträumen
-		@SuppressWarnings("unused")
-		List<SignalBewertung> bewertungen = sV.bewerteSignalListeAndSave(aktie, liste, tage);
+		List<SignalBewertung> bewertungen = sV.bewerteSignalListe(aktie, liste, tage);
+
+		SignalBewertungen sBs = new SignalBewertungen();
+		sBs.addSignalBewertungen(bewertungen);
+		sV.saveSignalBewertungen(sBs);
+		// Liste der Bewertungen wird gespeichert
+		// sV.saveSignalBewertungListe(bewertungen);
 
 	}
 

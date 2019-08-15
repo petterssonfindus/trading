@@ -22,109 +22,108 @@ import com.algotrading.util.Parameter;
 import com.algotrading.util.Util;
 
 /**
- * Alle Indikatoren müssen rechnen können 
+ * Alle Indikatoren müssen rechnen können
+ * 
  * @author oskar
  *
  */
 @Entity
-@Table( name = "INDIKATORALGO" )
+@Table(name = "INDIKATORALGO")
 @Inheritance(strategy = InheritanceType.SINGLE_TABLE)
 @DiscriminatorColumn(name = "typ", discriminatorType = DiscriminatorType.STRING)
 
- public abstract class IndikatorAlgorithmus extends Parameter {
-	
+public abstract class IndikatorAlgorithmus extends Parameter {
+
 	@Id
 	@Column(columnDefinition = "VARCHAR(36)")
 	private String id;
-	
-    @Column(name = "timestamp", columnDefinition = "TIMESTAMP DEFAULT CURRENT_TIMESTAMP", insertable = false, updatable = false, nullable = false)
-    @Temporal(TemporalType.TIMESTAMP)
-    private Date timestamp;
-    
-    private String name;  // der Name des IndikatorAlgorithmus
 
-	private String p1name; 
-	private String p1wert; 
-	private String p2name; 
-	private String p2wert; 
-	private String p3name; 
-	private String p3wert; 
-	private String p4name; 
-	private String p4wert; 
-	private String p5name; 
+	@Column(name = "timestamp", columnDefinition = "TIMESTAMP DEFAULT CURRENT_TIMESTAMP", insertable = false, updatable = false, nullable = false)
+	@Temporal(TemporalType.TIMESTAMP)
+	private Date timestamp;
+
+	private String name;  // der Name des IndikatorAlgorithmus
+
+	private String p1name;
+	private String p1wert;
+	private String p2name;
+	private String p2wert;
+	private String p3name;
+	private String p3wert;
+	private String p4name;
+	private String p4wert;
+	private String p5name;
 	private String p5wert;
-    
-    @Transient
-	private boolean istBerechnet = false; 
-	
+
+	@Transient
+	private boolean istBerechnet = false;
+
 	/**
-	 * iteriert über alle Kurse dieser Aktie und berechnet die Indikatorenwerte, die dann am Kurs hängen
-	 * Die Parameter hängen am Indikator-Algorithmus
+	 * iteriert über alle Kurse dieser Aktie und berechnet die Indikatorenwerte, die
+	 * dann am Kurs hängen Die Parameter hängen am Indikator-Algorithmus
 	 */
-	public abstract void rechne (Aktie aktie);
-	
-	
-	public void synchronizeSAVE () {
-		// bei jedem Speichern wird die ID generiert
-		this.id = UUID.randomUUID().toString();
-		this.name = this.getKurzname(); 
+	public abstract void rechne(Aktie aktie);
+
+	public void synchronizeSAVE() {
+		if (this.id == null)
+			this.id = UUID.randomUUID().toString();
+		this.name = this.getKurzname();
 		List<Para> paras = getParameterList();
 		switch (paras.size()) {
-			case 5: 
-				p5name = paras.get(4).getName();
-				p5wert = toStringParamObject(paras.get(4).getObject());
-			case 4: 
-				p4name = paras.get(3).getName();
-				p4wert = toStringParamObject(paras.get(3).getObject());
-			case 3: 
-				p3name = paras.get(2).getName();
-				p3wert = toStringParamObject(paras.get(2).getObject());
-			case 2: 
-				p2name = paras.get(1).getName();
-				p2wert = toStringParamObject(paras.get(1).getObject());
-			case 1: 
-				p1name = paras.get(0).getName();
-				p1wert = toStringParamObject(paras.get(0).getObject());
+		case 5:
+			p5name = paras.get(4).getName();
+			p5wert = toStringParamObject(paras.get(4).getObject());
+		case 4:
+			p4name = paras.get(3).getName();
+			p4wert = toStringParamObject(paras.get(3).getObject());
+		case 3:
+			p3name = paras.get(2).getName();
+			p3wert = toStringParamObject(paras.get(2).getObject());
+		case 2:
+			p2name = paras.get(1).getName();
+			p2wert = toStringParamObject(paras.get(1).getObject());
+		case 1:
+			p1name = paras.get(0).getName();
+			p1wert = toStringParamObject(paras.get(0).getObject());
 		}
 	}
-	
+
 	/**
 	 * der Wert wird in einen String verwandelt um ihn generisch zu speichern
 	 */
-	private String toStringParamObject (Object o) {
-		String result = null; 
+	private String toStringParamObject(Object o) {
+		String result = null;
 		if (o instanceof IndikatorAlgorithmus) {
 			IndikatorAlgorithmus iA = (IndikatorAlgorithmus) o;
 			result = iA.getId().toString();
-		}
-		else {
+		} else {
 			result = o.toString();
 		}
-		return result; 
+		return result;
 	}
-	
+
 	/**
-	 * verwandelt den String aus der DB zurück in ein Object 
+	 * verwandelt den String aus der DB zurück in ein Object
 	 */
-	private Object toObjectParamString (String s) {
-		// wenn es ein Integer ist 
+	private Object toObjectParamString(String s) {
+		// wenn es ein Integer ist
 		try {
 			Integer integer = Integer.parseInt(s);
-			return integer; 
+			return integer;
 		} catch (Exception e) {
-			
+
 		}
 		try {
 			Float floatO = Float.parseFloat(s);
-			return floatO; 
+			return floatO;
 		} catch (Exception e) {
-			
+
 		}
-		return s; 
+		return s;
 	}
-	
+
 	@PostLoad
-	public void synchronizeLOAD () {
+	public void synchronizeLOAD() {
 		if (p1name != null) {
 			addParameter(p1name, toObjectParamString(p1wert));
 		}
@@ -141,47 +140,50 @@ import com.algotrading.util.Util;
 			addParameter(p5name, toObjectParamString(p5wert));
 		}
 	}
-	
-	public abstract String getKurzname () ;
-	
+
+	public abstract String getKurzname();
+
 	/**
 	 * Wird von der Aktie aufgerufen, wenn die Berechnung erfolgt ist
 	 */
-	public void berechnet () {
-		istBerechnet = true; 
+	public void berechnet() {
+		istBerechnet = true;
 	}
-	
+
 	/**
 	 * Gibt Auskunft, ob bereits berechnet wurde
 	 */
 	public boolean istBerechnet() {
 		return istBerechnet;
 	}
-	
+
 	/**
 	 * enthält den Kurznamen und eine Liste der vorhandenen Parameter
 	 */
 	public String toString() {
-		String result = ";I:" + getKurzname(); 
+		String result = ";I:" + getKurzname();
 		for (String name : this.getAllParameter().keySet()) {
 			result = result + (Util.separatorCSV + name + ":" + this.getParameter(name));
 		}
-		return result; 
+		return result;
 	}
 
-	public IndikatorAlgorithmus createConcreteObject (String name) {
-		if (name.compareTo("") == 1) return new IndikatorGD();
+	public IndikatorAlgorithmus createConcreteObject(String name) {
+		if (name.compareTo("") == 1)
+			return new IndikatorGD();
 		return null;
 	}
 
-	public boolean equals (IndikatorAlgorithmus iA) {
-		// der Name muss der selbe sein 
-		if (! this.getName().matches(iA.getName())) return false; 
-		// die Parameter müssen die selben sein 
-		if (! this.equalsParameter(iA.getParameterList())) return false; 
-		return true; 
+	public boolean equals(IndikatorAlgorithmus iA) {
+		// der Name muss der selbe sein
+		if (!this.getName().matches(iA.getName()))
+			return false;
+		// die Parameter müssen die selben sein
+		if (!this.equalsParameter(iA.getParameterList()))
+			return false;
+		return true;
 	}
-	
+
 	public Date getTimestamp() {
 		return timestamp;
 	}
@@ -271,7 +273,8 @@ import com.algotrading.util.Util;
 	}
 
 	public String getName() {
-		if (this.name == null) this.name = this.getKurzname();
+		if (this.name == null)
+			this.name = this.getKurzname();
 		return name;
 	}
 

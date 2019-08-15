@@ -23,6 +23,7 @@ import com.algotrading.indikator.IndikatorAbweichung;
 import com.algotrading.indikator.IndikatorAlgorithmus;
 import com.algotrading.indikator.IndikatorGD;
 import com.algotrading.jpa.SignalBewertungDAO;
+import com.algotrading.signalbewertung.SignalBewertung;
 import com.algotrading.util.Zeitraum;
 
 @ActiveProfiles("test")
@@ -66,7 +67,7 @@ public class TestSignalBewertungCreate {
 		List<SignalBewertung> sBs = sA.getBewertungen();
 		// die Bewertungen werden gespeichert
 		for (SignalBewertung sB : sBs) {
-			sV.save(sB);
+			sV.saveSignalBewertung(sB);
 
 		}
 		assertTrue(true);
@@ -87,7 +88,7 @@ public class TestSignalBewertungCreate {
 	@Test
 	public void test1SA1IA() {
 		SignalBewertung sB = createSignalBewertung();
-		sV.save(sB);
+		sV.saveSignalBewertung(sB);
 
 	}
 
@@ -160,7 +161,7 @@ public class TestSignalBewertungCreate {
 		List<SignalBewertung> sBs = sA.getBewertungen();
 		// die Bewertungen werden gespeichert
 		for (SignalBewertung sB : sBs) {
-			sV.save(sB);
+			sV.saveSignalBewertung(sB);
 
 		}
 		assertTrue(true);

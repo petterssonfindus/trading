@@ -1,4 +1,4 @@
-package com.algotrading.signal;
+package com.algotrading.signalbewertung;
 
 import java.util.ArrayList;
 import java.util.Date;

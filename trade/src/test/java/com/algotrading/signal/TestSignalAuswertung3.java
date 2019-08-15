@@ -18,6 +18,7 @@ import com.algotrading.component.Signalverwaltung;
 import com.algotrading.indikator.IndikatorAlgorithmus;
 import com.algotrading.indikator.IndikatorGDalt;
 import com.algotrading.indikator.IndikatorOBV;
+import com.algotrading.signalbewertung.SignalBewertung;
 import com.algotrading.util.DateUtil;
 import com.algotrading.util.Zeitraum;
 
@@ -67,7 +68,7 @@ public class TestSignalAuswertung3 extends TestCase {
 		List<Integer> tage = DateUtil.getBewertungTage(1);
 		// Bewertung wird durchgeführt mit den vorbereiteten Zeiträumen
 		@SuppressWarnings("unused")
-		List<SignalBewertung> bewertungen = sV.bewerteSignalListeAndSave(aktie, liste, tage);
+		List<SignalBewertung> bewertungen = sV.bewerteSignalListe(aktie, liste, tage);
 
 //		aktie.writeFileKursIndikatorSignal();
 	}

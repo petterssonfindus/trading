@@ -4,6 +4,7 @@ import java.util.List;
 
 import com.algotrading.indikator.IndikatorAbweichung;
 import com.algotrading.indikator.IndikatorAlgorithmus;
+import com.algotrading.signalbewertung.SignalBewertung;
 import com.algotrading.util.AbstractTest;
 import com.algotrading.util.Zeitraum;
 

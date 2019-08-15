@@ -6,7 +6,7 @@ import java.util.List;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
 
-import com.algotrading.signal.SignalBewertung;
+import com.algotrading.signalbewertung.SignalBewertung;
 
 public interface SignalBewertungRepository extends CrudRepository<SignalBewertung, Long> {
 	List<SignalBewertung> findByAktieName(String aktieName);

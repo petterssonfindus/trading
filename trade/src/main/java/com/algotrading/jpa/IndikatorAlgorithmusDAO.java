@@ -6,6 +6,7 @@ import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.algotrading.indikator.IndikatorAlgorithmus;
 
@@ -14,20 +15,29 @@ public class IndikatorAlgorithmusDAO {
 
 	@Autowired
 	IndikatorAlgorithmusRepository iAR;
-	
-	public IndikatorAlgorithmus findByUUID ( String uuid) {
+
+	@Transactional
+	public IndikatorAlgorithmus findByUUID(String uuid) {
 		Optional<IndikatorAlgorithmus> o = iAR.findById(uuid);
-		if (o.isPresent()) return o.get();
-		else return null;
+		if (o.isPresent())
+			return o.get();
+		else
+			return null;
 	}
-	
-	public List<IndikatorAlgorithmus> findAll () {
+
+	@Transactional
+	public List<IndikatorAlgorithmus> findAll() {
 		Iterable<IndikatorAlgorithmus> all = iAR.findAll();
 		List<IndikatorAlgorithmus> liste = new ArrayList<IndikatorAlgorithmus>();
-			for (IndikatorAlgorithmus iA : all) {
-				liste.add(iA);
-			}
+		for (IndikatorAlgorithmus iA : all) {
+			liste.add(iA);
+		}
 		return liste;
 	}
-	
+
+	@Transactional
+	public long count() {
+		return iAR.count();
+	}
+
 }

@@ -23,6 +23,7 @@ import javax.persistence.Transient;
 
 import com.algotrading.aktie.Aktie;
 import com.algotrading.indikator.IndikatorAlgorithmus;
+import com.algotrading.signalbewertung.SignalBewertung;
 import com.algotrading.util.Parameter;
 import com.algotrading.util.Util;
 import com.algotrading.util.Zeitraum;
@@ -85,7 +86,9 @@ public abstract class SignalAlgorithmus extends Parameter {
 	 * vor dem Speichern werden alle Werte für die Datenbank vorbereitet
 	 */
 	public String synchronizeSAVE() {
-		this.id = UUID.randomUUID().toString(); // sicherheitshalber die ID erzeugen
+		if (this.id == null) {
+			this.id = UUID.randomUUID().toString(); // sicherheitshalber die ID erzeugen
+		}
 		this.name = this.getKurzname();
 		this.aktieName = this.getAktie().getName();
 		List<Para> paras = getParameterList();
@@ -152,9 +155,7 @@ public abstract class SignalAlgorithmus extends Parameter {
 	 */
 	public Zeitraum getZeitraumSignale() {
 		Signal signal1 = this.signale.get(0);
-		Signal signaln = this.signale.get(
-				this.signale.size()
-						- 1);
+		Signal signaln = this.signale.get(this.signale.size() - 1);
 		return new Zeitraum(signal1.getKurs().getDatum(), signaln.getKurs().getDatum());
 	}
 
@@ -174,8 +175,7 @@ public abstract class SignalAlgorithmus extends Parameter {
 			return true;
 		// die Aktie muss die selbe sein
 		// entweder über die Aktie-Referenz - oder über den Aktie-Name
-		if (this.getAktie() != null
-				&& sA.getAktie() != null) {
+		if (this.getAktie() != null && sA.getAktie() != null) {
 			if (!this.getAktie().getName().matches(sA.getAktie().getName()))
 				return false;
 		} else {
@@ -196,14 +196,11 @@ public abstract class SignalAlgorithmus extends Parameter {
 	 * Indikatoren müssen identisch sein, Reihenfolge spielt keine Rolle
 	 */
 	private boolean equalsIndikatoren(List<IndikatorAlgorithmus> indikatoren) {
-		if (this.indikatorAlgorithmen == null
-				&& indikatoren == null)
+		if (this.indikatorAlgorithmen == null && indikatoren == null)
 			return true;
-		if (this.indikatorAlgorithmen == null
-				&& indikatoren != null)
+		if (this.indikatorAlgorithmen == null && indikatoren != null)
 			return false;
-		if (this.indikatorAlgorithmen != null
-				&& indikatoren == null)
+		if (this.indikatorAlgorithmen != null && indikatoren == null)
 			return false;
 		// die Anzahl muss identisch sein
 		if (this.indikatorAlgorithmen.size() != indikatoren.size())
@@ -255,14 +252,9 @@ public abstract class SignalAlgorithmus extends Parameter {
 	 * enthält den Kurznamen und eine Liste der vorhandenen Parameter
 	 */
 	public String toString() {
-		String result = ";I:"
-				+ getKurzname();
+		String result = ";I:" + getKurzname();
 		for (String name : this.getAllParameter().keySet()) {
-			result = result
-					+ (Util.separatorCSV
-							+ name
-							+ ":"
-							+ this.getParameter(name));
+			result = result + (Util.separatorCSV + name + ":" + this.getParameter(name));
 		}
 		return result;
 	}
