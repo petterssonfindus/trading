@@ -1,4 +1,4 @@
-package com.algotrading.signal;
+package com.algotrading.jpa;
 
 import java.util.List;
 import java.util.Optional;
@@ -9,6 +9,9 @@ import javax.persistence.PersistenceContext;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
+
+import com.algotrading.signal.SignalBewertung;
+import com.algotrading.signal.SignalBewertungen;
 
 @Component
 public class SignalBewertungenDAO {

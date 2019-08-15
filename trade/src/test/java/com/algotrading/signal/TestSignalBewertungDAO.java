@@ -12,6 +12,8 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import com.algotrading.Application;
+import com.algotrading.jpa.SignalBewertungDAO;
+import com.algotrading.jpa.SignalBewertungRepository;
 
 @ActiveProfiles("test")
 @RunWith(SpringJUnit4ClassRunner.class)

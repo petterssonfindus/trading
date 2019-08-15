@@ -6,7 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.algotrading.indikator.IndikatorAlgorithmus;
-import com.algotrading.indikator.IndikatorAlgorithmusDAO;
+import com.algotrading.jpa.IndikatorAlgorithmusDAO;
 
 @Service
 public class Verwaltung {

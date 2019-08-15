@@ -22,6 +22,7 @@ import com.algotrading.component.Signalverwaltung;
 import com.algotrading.indikator.IndikatorAbweichung;
 import com.algotrading.indikator.IndikatorAlgorithmus;
 import com.algotrading.indikator.IndikatorGD;
+import com.algotrading.jpa.SignalBewertungDAO;
 import com.algotrading.util.Zeitraum;
 
 @ActiveProfiles("test")

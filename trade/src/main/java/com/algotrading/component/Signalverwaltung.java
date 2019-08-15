@@ -9,10 +9,10 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.algotrading.aktie.Aktie;
 import com.algotrading.indikator.IndikatorAlgorithmus;
-import com.algotrading.indikator.IndikatorAlgorithmusDAO;
+import com.algotrading.jpa.IndikatorAlgorithmusDAO;
+import com.algotrading.jpa.SignalBewertungDAO;
+import com.algotrading.jpa.SignalBewertungenDAO;
 import com.algotrading.signal.SignalBewertung;
-import com.algotrading.signal.SignalBewertungDAO;
-import com.algotrading.signal.SignalBewertungenDAO;
 import com.algotrading.util.Zeitraum;
 
 @Service

@@ -1,4 +1,4 @@
-package com.algotrading.signal;
+package com.algotrading.jpa;
 
 import java.util.Date;
 import java.util.GregorianCalendar;
@@ -15,6 +15,8 @@ import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.algotrading.indikator.IndikatorAlgorithmus;
+import com.algotrading.signal.SignalAlgorithmus;
+import com.algotrading.signal.SignalBewertung;
 
 /**
  * Zugriff auf Repository

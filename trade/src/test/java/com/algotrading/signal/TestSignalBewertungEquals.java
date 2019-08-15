@@ -9,6 +9,7 @@ import com.algotrading.aktie.AktieVerzeichnis;
 import com.algotrading.indikator.IndikatorAbweichung;
 import com.algotrading.indikator.IndikatorAlgorithmus;
 import com.algotrading.indikator.IndikatorGD;
+import com.algotrading.jpa.SignalBewertungDAO;
 import com.algotrading.util.AbstractTest;
 import com.algotrading.util.Zeitraum;
 

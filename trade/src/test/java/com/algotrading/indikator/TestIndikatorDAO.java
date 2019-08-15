@@ -17,6 +17,7 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import com.algotrading.Application;
 import com.algotrading.aktie.Aktie;
 import com.algotrading.aktie.AktieVerzeichnis;
+import com.algotrading.jpa.IndikatorAlgorithmusDAO;
 
 @ActiveProfiles("test")
 @RunWith(SpringJUnit4ClassRunner.class)

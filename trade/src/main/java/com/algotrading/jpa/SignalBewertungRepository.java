@@ -1,10 +1,12 @@
-package com.algotrading.signal;
+package com.algotrading.jpa;
 
 import java.util.GregorianCalendar;
 import java.util.List;
 
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
+
+import com.algotrading.signal.SignalBewertung;
 
 public interface SignalBewertungRepository extends CrudRepository<SignalBewertung, Long> {
 	List<SignalBewertung> findByAktieName(String aktieName);
