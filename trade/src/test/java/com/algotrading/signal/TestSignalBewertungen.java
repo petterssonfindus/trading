@@ -21,19 +21,18 @@ import com.algotrading.indikator.IndikatorOBV;
 import com.algotrading.util.DateUtil;
 import com.algotrading.util.Zeitraum;
 
-import junit.framework.TestCase;
-
 @ActiveProfiles("test")
 @RunWith(SpringJUnit4ClassRunner.class)
 @SpringBootTest(classes = Application.class, webEnvironment = WebEnvironment.RANDOM_PORT)
 @DirtiesContext
-public class TestSignalAuswertung3 extends TestCase {
+
+public class TestSignalBewertungen {
 
 	@Autowired
 	Signalverwaltung sV;
 
 	@Test
-	public void testSignalAuswertung() {
+	public void testCreateSignalBewertungen() {
 		Aktie aktie = AktieVerzeichnis.getInstance().getAktieOhneKurse("^gdaxi");
 //		List<Aktie> aktien = AktieVerzeichnis.getInstance().getAktien(DateUtil.createGregorianCalendar(1, 1, 2000));
 		IndikatorAlgorithmus iA = new IndikatorGDalt();
@@ -69,7 +68,6 @@ public class TestSignalAuswertung3 extends TestCase {
 		@SuppressWarnings("unused")
 		List<SignalBewertung> bewertungen = sV.bewerteSignalListeAndSave(aktie, liste, tage);
 
-//		aktie.writeFileKursIndikatorSignal();
 	}
 
 }

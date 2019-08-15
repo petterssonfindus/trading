@@ -17,8 +17,8 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import com.algotrading.Application;
 import com.algotrading.aktie.Aktie;
-import com.algotrading.aktie.AktieVerwaltung;
 import com.algotrading.aktie.AktieVerzeichnis;
+import com.algotrading.component.Signalverwaltung;
 import com.algotrading.indikator.IndikatorAbweichung;
 import com.algotrading.indikator.IndikatorAlgorithmus;
 import com.algotrading.indikator.IndikatorGD;
@@ -29,9 +29,6 @@ import com.algotrading.util.Zeitraum;
 @SpringBootTest(classes = Application.class, webEnvironment = WebEnvironment.RANDOM_PORT)
 @DirtiesContext
 public class TestSignalBewertungCreate {
-
-	@Autowired
-	AktieVerwaltung aV;
 
 	@Autowired
 	Signalverwaltung sV;
@@ -62,8 +59,8 @@ public class TestSignalBewertungCreate {
 		Zeitraum zeitraum2 = new Zeitraum(2016, 2016);
 		Zeitraum zeitraum3 = new Zeitraum(2017, 2017);
 //		aktie.bewerteSignale(zeitraum1, 10);
-		aV.bewerteSignale(aktie, zeitraum2, 10);
-		aV.bewerteSignale(aktie, zeitraum3, 10);
+		sV.bewerteSignale(aktie, zeitraum2, 10);
+		sV.bewerteSignale(aktie, zeitraum3, 10);
 
 		List<SignalBewertung> sBs = sA.getBewertungen();
 		// die Bewertungen werden gespeichert
@@ -117,7 +114,7 @@ public class TestSignalBewertungCreate {
 		aktie.rechneSignale();
 		// Signal-Bewertung aggregieren und ausgeben
 		Zeitraum zeitraum3 = new Zeitraum(2017, 2017);
-		aV.bewerteSignale(aktie, zeitraum3, 10);
+		sV.bewerteSignale(aktie, zeitraum3, 10);
 
 		List<SignalBewertung> sBs = sA.getBewertungen();
 		return sBs.get(0);
@@ -144,7 +141,7 @@ public class TestSignalBewertungCreate {
 
 		// Signal konfigurieren und an Aktie hängen
 		SignalAlgorithmus sA = aktie.addSignalAlgorithmus(new SignalMinMax());
-		sA.addParameter("indikator", iA);
+		sA.addIndikatorAlgorithmus(iA);
 		sA.addParameter("dauer", 15); // Min-Max-Berechnung 15 Tage zurück
 		sA.addParameter("schwelle", 1f); // 1-fache Standardabweichung
 		sA.addParameter("durchbruch", 0); // tägliches Signal in der Extremzone
@@ -156,8 +153,8 @@ public class TestSignalBewertungCreate {
 		Zeitraum zeitraum2 = new Zeitraum(2016, 2016);
 		Zeitraum zeitraum3 = new Zeitraum(2017, 2017);
 //		aktie.bewerteSignale(zeitraum1, 10);
-		aV.bewerteSignale(aktie, zeitraum2, 10);
-		aV.bewerteSignale(aktie, zeitraum3, 10);
+		sV.bewerteSignale(aktie, zeitraum2, 10);
+		sV.bewerteSignale(aktie, zeitraum3, 10);
 
 		List<SignalBewertung> sBs = sA.getBewertungen();
 		// die Bewertungen werden gespeichert

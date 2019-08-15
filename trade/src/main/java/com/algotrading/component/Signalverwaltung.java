@@ -1,4 +1,4 @@
-package com.algotrading.signal;
+package com.algotrading.component;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -10,16 +10,34 @@ import org.springframework.transaction.annotation.Transactional;
 import com.algotrading.aktie.Aktie;
 import com.algotrading.indikator.IndikatorAlgorithmus;
 import com.algotrading.indikator.IndikatorAlgorithmusDAO;
+import com.algotrading.signal.SignalBewertung;
+import com.algotrading.signal.SignalBewertungDAO;
+import com.algotrading.signal.SignalBewertungenDAO;
 import com.algotrading.util.Zeitraum;
 
 @Service
 public class Signalverwaltung {
 
 	@Autowired
-	SignalBewertungDAO signalBewertungDAO;
+	private SignalBewertungDAO signalBewertungDAO;
 
 	@Autowired
-	IndikatorAlgorithmusDAO iADAO;
+	private IndikatorAlgorithmusDAO iADAO;
+
+	@Autowired
+	private SignalBewertungenDAO sBsDAO;
+
+	/**
+	 * Bewertet alle Signale, die an der Aktie hängen
+	 * 
+	 * @param zeitraum   der Zeitraum in dem die signale auftreten Wenn null, dann
+	 *                   maximaler Zeitraum, für den Signale vorliegen.
+	 * @param tageVoraus für die Erfolgsmessung in die Zukunft
+	 */
+	public void bewerteSignale(Aktie aktie, Zeitraum zeitraum, int tage) {
+		aktie.bewerteSignale(zeitraum, tage);
+
+	}
 
 	@Transactional
 	public SignalBewertung save(SignalBewertung sB) {

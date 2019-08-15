@@ -12,9 +12,9 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import com.algotrading.Application;
 import com.algotrading.aktie.Aktie;
 import com.algotrading.aktie.AktieVerzeichnis;
+import com.algotrading.component.Signalverwaltung;
 import com.algotrading.signal.SignalBewertungDAO;
 import com.algotrading.signal.SignalBewertungRepository;
-import com.algotrading.signal.Signalverwaltung;
 
 import junit.framework.TestCase;
 
