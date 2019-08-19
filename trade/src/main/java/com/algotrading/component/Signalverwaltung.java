@@ -68,6 +68,11 @@ public class Signalverwaltung {
 		sBsDAO.deleteByID(id);
 	}
 
+	@Transactional
+	public SignalBewertungen getSignalBewertungen(Long id) {
+		return sBsDAO.find(id);
+	}
+
 	/**
 	 * Führt signalbewertung durch für Liste Zeiträume und Liste Tage
 	 */

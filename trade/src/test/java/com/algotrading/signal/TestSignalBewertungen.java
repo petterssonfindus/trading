@@ -36,8 +36,17 @@ public class TestSignalBewertungen {
 	@Test
 	public void testDeletesignalBewertungen() {
 		sV.printCount();
-		sV.deleteSignalBewertungen(new Long(986));
+		sV.deleteSignalBewertungen(new Long(1127));
 		sV.printCount();
+	}
+
+	@Test
+	public void testGetSignalBewertungen() {
+		SignalBewertungen sB = sV.getSignalBewertungen(1268l);
+		System.out.println("Signalbewertung: " + sB.getId() + " Anzahl: " + sB.getSignalBewertungen().size());
+		for (SignalBewertung sBew : sB.getSignalBewertungen()) {
+			System.out.println(sBew.toString());
+		}
 	}
 
 	@Test

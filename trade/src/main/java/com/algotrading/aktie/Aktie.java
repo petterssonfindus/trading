@@ -141,9 +141,11 @@ public class Aktie extends Parameter {
 			return null;
 		}
 		ArrayList<Kurs> kurse = this.getKursListe();
+		// TODO hier könnte Performance gespart werden, wenn nicht von vorne iteriert
+		// wird, sondern intelligent gesucht wird
 		for (Kurs kurs : kurse) {
 			// wenn die Tage exakt passen oder die Tage-Gleichheit übersprungen wurde
-			if (DateUtil.istGleicherKalendertag(datum, kurs.datum) || kurs.datum.before(datum)) {
+			if (DateUtil.istGleicherKalendertag(datum, kurs.datum) || datum.before(kurs.datum)) {
 				return kurs;
 			}
 
@@ -336,8 +338,9 @@ public class Aktie extends Parameter {
 	 * Rechnet die Performance der Aktie im gewünschten Zeitraum
 	 */
 	public float rechnePerformance(Zeitraum zeitraum) {
-		if (zeitraum == null)
+		if (zeitraum == null) {
 			log.error("Performance-Berechnung mit Zeitraum = null");
+		}
 		Kurs kursBeginn = this.getKurs(zeitraum.beginn);
 		if (kursBeginn == null) {
 			log.error("Performance-Berechnung mit Kursbeginn = null");
@@ -404,7 +407,7 @@ public class Aktie extends Parameter {
 		List<SignalBewertung> result = new ArrayList<SignalBewertung>();
 		// alle Signal-Typen an der Aktie
 		for (SignalAlgorithmus sA : this.signalAlgorithmen) {
-			// an der Beschreibung eine neue Gesamt-Bewertung erzeugen
+			// an der Beschreibung eine neue Bewertung erzeugen
 			SignalBewertung sBW = sA.createBewertung();
 			sBW.setTage(tage);
 			if (zeitraum == null) {
@@ -423,12 +426,12 @@ public class Aktie extends Parameter {
 
 			// für alle Signale zu dieser SignalBeschreibung
 			for (Signal signal : signale) {
-				// nur Signale im vorgegebenen Zeitraum
+				// Signale im vorgegebenen Zeitraum filtern
 				if (!DateUtil.istInZeitraum(signal.getKurs().getDatum(), zeitraum))
 					continue;
 				// die Bewertung des Signals: Kursentwicklung in die Zukunft
 				staerke = signal.getStaerke();
-				// die Bewertung wird ermittelt
+				// die Bewertung wird am Signal ermittelt
 				Float bewertung = signal.getBewertung(tage);
 				if (bewertung == null)
 					continue; // wenn keine Bewertung vorhanden ist, dann nächstes Signal
