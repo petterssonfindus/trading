@@ -5,11 +5,15 @@ import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.List;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
@@ -17,7 +21,10 @@ import javax.persistence.Transient;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
+import com.algotrading.component.AktieVerwaltung;
 import com.algotrading.data.DBManager;
 import com.algotrading.depot.Order;
 import com.algotrading.indikator.IndikatorAlgorithmus;
@@ -37,11 +44,16 @@ import com.algotrading.util.Zeitraum;
  * auch Berechnungsvorschriften zu Indikatoren und Signalen
  * 
  */
+@Service
 @Entity
 @Table(name = "aktiestamm")
 public class Aktie extends Parameter {
 	@Transient
 	private static final Logger log = LogManager.getLogger(Aktie.class);
+
+	@Transient
+	@Autowired
+	private AktieVerwaltung aV;
 
 	@Id
 	@Column(name = "id", nullable = false)
@@ -79,9 +91,9 @@ public class Aktie extends Parameter {
 	@Column(name = "boersenplatz")
 	public byte boersenplatz = 0;
 
-	// kein öffentlicher Zugriff auf kurse, weil Initialisierung über DB erfolgt.
-	@Transient
-	private ArrayList<Kurs> kurse;
+	@OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+	@JoinColumn(name = "aktie")
+	private List<Kurs> kurse = new ArrayList<Kurs>();
 
 	// der Kurs, der zum aktuellen Datum des Depot gehört. NextKurs() sorgt für die Aktualisierung
 	@Transient
@@ -140,7 +152,7 @@ public class Aktie extends Parameter {
 	 * 
 	 * @return
 	 */
-	public ArrayList<Kurs> getKurse() {
+	public List<Kurs> getKurse() {
 		if (this.kurse == null)
 			log.error("Kurse sind null");
 		return this.kurse;
@@ -185,7 +197,7 @@ public class Aktie extends Parameter {
 		// wird, sondern intelligent gesucht wird
 		for (Kurs kurs : kurse) {
 			// wenn die Tage exakt passen oder die Tage-Gleichheit übersprungen wurde
-			if (DateUtil.istGleicherKalendertag(datum, kurs.datum) || datum.before(kurs.datum)) {
+			if (DateUtil.istGleicherKalendertag(datum, kurs.getDatum()) || datum.before(kurs.getDatum())) {
 				return kurs;
 			}
 
@@ -224,7 +236,7 @@ public class Aktie extends Parameter {
 	private ArrayList<Kurs> sucheBoersenkurse(Zeitraum zeitraum) {
 		ArrayList<Kurs> kurse = new ArrayList<Kurs>();
 		for (Kurs kurs : this.getKursListe()) {
-			if (DateUtil.istInZeitraum(kurs.datum, zeitraum)) {
+			if (DateUtil.istInZeitraum(kurs.getDatum(), zeitraum)) {
 				kurse.add(kurs);
 			}
 		}
@@ -243,7 +255,7 @@ public class Aktie extends Parameter {
 		if (this.kurse == null) {
 			this.kurse = DBManager.getKursreihe(name);
 		}
-		return kurse;
+		return (ArrayList<Kurs>) kurse;
 	}
 
 	/**
@@ -277,7 +289,7 @@ public class Aktie extends Parameter {
 		if (x > this.kurse.size() - 2) {
 			log.error(
 					"Kursreihe zu Ende " + this.aktuellerKurs.getWertpapier() + DateUtil
-							.formatDate(this.aktuellerKurs.datum));
+							.formatDate(this.aktuellerKurs.getDatum()));
 			return this.aktuellerKurs;
 		}
 		Kurs kurs = this.kurse.get(x + 1);
@@ -316,13 +328,11 @@ public class Aktie extends Parameter {
 		if (this.kurse == null) {
 			this.kurse = DBManager.getKursreihe(name, beginn);
 		}
-		return kurse;
+		return (ArrayList<Kurs>) kurse;
 	}
 
 	/**
 	 * hängt einen Kurs an das Ende der bestehenden Kette an
-	 * 
-	 * @param ein beliebiger Kurs
 	 */
 	public void addKurs(Kurs kurs) {
 		if (kurs == null)
@@ -330,7 +340,9 @@ public class Aktie extends Parameter {
 		if (kurse == null) { // Aktie aus Depobewertung, die noch keine Kursliste besitzt
 			this.kurse = new ArrayList<Kurs>();
 		}
-		kurse.add(kurs);
+		Aktie newAktie = aV.getAktieMitKurse(this.getId());
+		this.kurse = newAktie.getKurse();
+		this.kurse.add(kurs);
 	}
 
 	/**
@@ -569,7 +581,7 @@ public class Aktie extends Parameter {
 			// #TODO der Vergleich mässte mit before() oder after() geläst werden, nicht mit
 			// Milli-Vergleich
 			kurs = this.kurse.get(i);
-			if (kurs.datum.getTimeInMillis() >= datum.getTimeInMillis()) {
+			if (kurs.getDatum().getTimeInMillis() >= datum.getTimeInMillis()) {
 				log.debug("Kurs gefunden: " + kurs);
 				this.aktuellerKurs = kurs;
 				this.startKurs = kurs;
@@ -647,7 +659,7 @@ public class Aktie extends Parameter {
 		if (this.zeitraumKurse != null)
 			result = this.zeitraumKurse;
 		else
-			result = new Zeitraum(this.kurse.get(0).datum, this.kurse.get(this.kurse.size()).datum);
+			result = new Zeitraum(this.kurse.get(0).getDatum(), this.kurse.get(this.kurse.size()).getDatum());
 		return result;
 	}
 
@@ -778,6 +790,10 @@ public class Aktie extends Parameter {
 
 	public Date getTimestamp() {
 		return timestamp;
+	}
+
+	public void setaV(AktieVerwaltung aV) {
+		this.aV = aV;
 	}
 
 }

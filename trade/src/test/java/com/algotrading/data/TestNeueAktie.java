@@ -33,7 +33,7 @@ public class TestNeueAktie {
 		aktie.setQuelle(3);
 		aktie.setISIN("");
 
-		aV.createAktie(aktie);
+		aV.saveAktie(aktie);
 		//		DBManager.neueAktie(aktie);
 
 		// Kurse einlesen

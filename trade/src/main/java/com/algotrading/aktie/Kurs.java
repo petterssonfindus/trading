@@ -44,9 +44,9 @@ public class Kurs {
 	@Transient
 	private AktieVerwaltung aV;
 
-	// Referenz auf die zugehörige Aktien-Kursliste
+	// Referenz auf die zugehörige Aktie
 	@Transient
-	private KursAktie kursAktie;
+	private Aktie aktie;
 
 	@Id
 	@Column(name = "id", nullable = false)
@@ -100,8 +100,8 @@ public class Kurs {
 	public Kurs() {
 	}
 
-	public Kurs(KursAktie kursAktie) {
-		this.kursAktie = kursAktie;
+	public Kurs(Aktie aktie) {
+		this.aktie = aktie;
 	}
 
 	/**
@@ -217,7 +217,7 @@ public class Kurs {
 	 * @return die Aktie, zu dem der Kurs gehört 
 	 */
 	public Aktie getAktie() {
-		return aV.getVerzeichnis().getAktieOhneKurse(this.getKursAktie().getAktieName());
+		return this.aktie;
 	}
 
 	/**
@@ -282,15 +282,7 @@ public class Kurs {
 	}
 
 	public String getWertpapier() {
-		return getKursAktie().getAktieName();
-	}
-
-	public KursAktie getKursAktie() {
-		return kursAktie;
-	}
-
-	public void setKursAktie(KursAktie kursAktie) {
-		this.kursAktie = kursAktie;
+		return this.aktie.getName();
 	}
 
 }

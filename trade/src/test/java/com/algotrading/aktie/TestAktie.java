@@ -19,17 +19,13 @@ public class TestAktie extends AbstractTest {
 	@Test
 	public void testKursAktie() {
 		Aktie aktie = aV.getAktie(31l);
-
-		// eine neue KursListe
-		KursDAX kursDAX = new KursDAX();
-
 		// ein neuer Kurs
 		Kurs kurs = new Kurs();
 		kurs.setDatum(new GregorianCalendar());
 		kurs.close = 100;
-		kursDAX.addKurs(kurs);
+		aktie.addKurs(kurs);
 		// die Kursliste speichern
-		aV.saveKursAktie(kursDAX);
+		aV.saveAktie(aktie);
 	}
 
 	public void testGetKursZukunft() {

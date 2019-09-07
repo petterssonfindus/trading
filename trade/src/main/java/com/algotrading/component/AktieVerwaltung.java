@@ -7,11 +7,9 @@ import com.algotrading.aktie.Aktie;
 import com.algotrading.aktie.AktieVerzeichnis;
 import com.algotrading.aktie.Aktien;
 import com.algotrading.aktie.Kurs;
-import com.algotrading.aktie.KursAktie;
 import com.algotrading.data.DBManager;
 import com.algotrading.data.ReadDataFinanzen;
 import com.algotrading.jpa.AktieDAO;
-import com.algotrading.jpa.KursAktieDAO;
 
 @Service
 public class AktieVerwaltung {
@@ -19,17 +17,22 @@ public class AktieVerwaltung {
 	@Autowired
 	private AktieDAO aktieDAO;
 
-	@Autowired
-	private KursAktieDAO kADAO;
-
 	private AktieVerzeichnis aktieVerzeichnis;
 
-	public Aktie createAktie(Aktie aktie) {
-		return aktieDAO.createAktie(aktie);
+	public Aktie saveAktie(Aktie aktie) {
+		return aktieDAO.saveAktie(aktie);
 	}
 
 	public Aktie getAktie(Long id) {
-		return aktieDAO.findAktie(id);
+		Aktie aktie = aktieDAO.getAktie(id);
+		aktie.setaV(this);
+		return aktie;
+	}
+
+	public Aktie getAktieMitKurse(Long id) {
+		Aktie aktie = aktieDAO.getAktieMitKurse(id);
+		aktie.setaV(this);
+		return aktie;
 	}
 
 	public Aktie getAktie(String name) {
@@ -67,10 +70,6 @@ public class AktieVerwaltung {
 			aktieVerzeichnis.setAktien(getAll());
 		}
 		return aktieVerzeichnis;
-	}
-
-	public KursAktie saveKursAktie(KursAktie kursAktie) {
-		return kADAO.saveKursAktie(kursAktie);
 	}
 
 	public void checkKursreiheTage(String name) {

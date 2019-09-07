@@ -58,7 +58,7 @@ public class AbstractTest extends TestCase {
 		aktie.setFirmenname("AG");
 		aktie.setBoersenplatz((byte) 2);
 
-		aV.createAktie(aktie);
+		aV.saveAktie(aktie);
 
 	}
 
