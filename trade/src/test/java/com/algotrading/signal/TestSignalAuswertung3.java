@@ -13,30 +13,28 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import com.algotrading.Application;
 import com.algotrading.aktie.Aktie;
-import com.algotrading.aktie.AktieVerzeichnis;
 import com.algotrading.component.Signalverwaltung;
 import com.algotrading.indikator.IndikatorAlgorithmus;
 import com.algotrading.indikator.IndikatorGDalt;
 import com.algotrading.indikator.IndikatorOBV;
 import com.algotrading.signalbewertung.SignalBewertung;
+import com.algotrading.util.AbstractTest;
 import com.algotrading.util.DateUtil;
 import com.algotrading.util.Zeitraum;
-
-import junit.framework.TestCase;
 
 @ActiveProfiles("test")
 @RunWith(SpringJUnit4ClassRunner.class)
 @SpringBootTest(classes = Application.class, webEnvironment = WebEnvironment.RANDOM_PORT)
 @DirtiesContext
-public class TestSignalAuswertung3 extends TestCase {
+public class TestSignalAuswertung3 extends AbstractTest {
 
 	@Autowired
 	Signalverwaltung sV;
 
 	@Test
 	public void testSignalAuswertung() {
-		Aktie aktie = AktieVerzeichnis.getInstance().getAktieOhneKurse("^gdaxi");
-//		List<Aktie> aktien = AktieVerzeichnis.getInstance().getAktien(DateUtil.createGregorianCalendar(1, 1, 2000));
+		Aktie aktie = aV.getVerzeichnis().getAktieOhneKurse("^gdaxi");
+		//		List<Aktie> aktien = aV.getVerzeichnis().getAktien(DateUtil.createGregorianCalendar(1, 1, 2000));
 		IndikatorAlgorithmus iA = new IndikatorGDalt();
 		iA.addParameter("dauer", 10);
 		// AktieVerzeichnis.addIndikatorAlgorithmus(aktien, iA);
@@ -49,10 +47,10 @@ public class TestSignalAuswertung3 extends TestCase {
 
 		aktie.rechneIndikatoren();
 
-//		SignalBeschreibung sB = aktie.createSignalBeschreibung(Signal.MinMax);
-//		sB.addParameter("dauer", 30);
-//		sB.addParameter("indikator" , iA);
-//		sB.addParameter("schwelle" , 2f);
+		//		SignalBeschreibung sB = aktie.createSignalBeschreibung(Signal.MinMax);
+		//		sB.addParameter("dauer", 30);
+		//		sB.addParameter("indikator" , iA);
+		//		sB.addParameter("schwelle" , 2f);
 		SignalAlgorithmus sA2 = aktie.addSignalAlgorithmus(new SignalMinMax());
 		sA2.addParameter("dauer", 30);
 		sA2.addParameter("indikator", iA2);
@@ -70,7 +68,7 @@ public class TestSignalAuswertung3 extends TestCase {
 		@SuppressWarnings("unused")
 		List<SignalBewertung> bewertungen = sV.bewerteSignalListe(aktie, liste, tage);
 
-//		aktie.writeFileKursIndikatorSignal();
+		//		aktie.writeFileKursIndikatorSignal();
 	}
 
 }

@@ -13,7 +13,6 @@ import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.GregorianCalendar;
-import java.util.List;
 import java.util.zip.GZIPInputStream;
 
 import org.apache.http.client.utils.URIBuilder;
@@ -21,15 +20,14 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import com.algotrading.aktie.Aktie;
-import com.algotrading.aktie.AktieVerzeichnis;
+import com.algotrading.aktie.Aktien;
 import com.algotrading.aktie.Kurs;
 import com.algotrading.util.DateUtil;
 import com.algotrading.util.FileUtil;
 import com.algotrading.util.Util;
 
+public class ReadDataFinanzen {
 
-	public class ReadDataFinanzen {
-		
 	private static final Logger log = LogManager.getLogger(ReadDataFinanzen.class);
 
 	/**
@@ -37,17 +35,15 @@ import com.algotrading.util.Util;
 	 * Schreibt die Ergebnisse in das Log-Verzeichnis und in die Kurse-DB
 	 * Jede Aktie muss Kurse haben. Neue Aktie muss manuell mit Kurse versorgt werden. 
 	 */
-	public static void FinanzenWSAktienController () {
-		AktieVerzeichnis aktien = AktieVerzeichnis.getInstance(); 
-		List<Aktie> alleAktien = aktien.getAllAktien();
-		for (Aktie aktie : alleAktien) {
+	public static void FinanzenWSAktienController(Aktien aktien) {
+		for (Aktie aktie : aktien) {
 			// wenn die Quelle 2 ist, dann Kurs über Finanzen aktualisieren 
 			if (aktie.getQuelle() == 2) {
-				FinanzenWSController(aktie.name, true, true, null);
+				FinanzenWSController(aktie, true, true, null);
 			}
 		}
 	}
-	
+
 	/**
 	 * Steuert das Einlesen der Kurse aus dem Finanzen-WebService mit bestehender Aktie
 	 * Ermittelt die benötigte Zeitspanne 
@@ -57,53 +53,55 @@ import com.algotrading.util.Util;
 	 * @param writeFile: true schreibt ein File mit dem Inhalt des Service-Response
 	 * @param beginn: der Tag, ab dem das Einlesen beginnt. Wenn null, dann ab letztem vorhandenem Kurs 
 	 */
-	public static String FinanzenWSController (String name, boolean writeFile, boolean writeDB, GregorianCalendar beginn) {
-		String result = null; 
+	public static String FinanzenWSController(Aktie aktie, boolean writeFile, boolean writeDB,
+			GregorianCalendar beginn) {
+		String result = null;
 		GregorianCalendar beginnEinlesen;	// der Beginn des einzulesenden Kurs-Zeitraums
-		// die Aktie 
-		Aktie aktie = AktieVerzeichnis.getInstance().getAktieOhneKurse(name);
 		// wenn ein Beginn-Datum vorgegeben ist, wird dieses verwendet
 		if (beginn != null) {
 			beginnEinlesen = beginn;
-		}
-		else {	// das Beginn-Datum wird berechnet
+		} else {	// das Beginn-Datum wird berechnet
 			beginnEinlesen = aktie.ermittleNextKurs();
 		}
-		
+
 		GregorianCalendar endeEinlesen = DateUtil.getLetzterHandelstag();
-		
+
 		int diff = DateUtil.anzahlKalenderTage(beginnEinlesen, endeEinlesen);
-		System.out.println(name + ": Anfrage von: " + DateUtil.formatDate(beginnEinlesen) + " bis: " + DateUtil.formatDate(endeEinlesen) + " Diff " + diff);
+		System.out.println(
+				aktie.getName() + ": Anfrage von: " + DateUtil.formatDate(beginnEinlesen) + " bis: " + DateUtil
+						.formatDate(endeEinlesen) + " Diff " + diff);
 		// wenn eine Aktualisierung notwendig ist 
 		// der letzte Kurs liegt vor dem letzten Handelstag 
-		if (diff >= 3) {	
-			
+		if (diff >= 3) {
+
 			// Aufruf des Finanzen-Service und in ein String-Array stecken.
-			ArrayList<String> stringKurse = readFinanzenWS(name, beginnEinlesen, endeEinlesen);
+			ArrayList<String> stringKurse = readFinanzenWS(aktie.getName(), beginnEinlesen, endeEinlesen);
 			// in ein txt-File schreiben
-			if (writeFile){
+			if (writeFile) {
 				// schreibt das Ergebnis in eine csv-Datei
-				File file = FileUtil.writeCSVFile(stringKurse, name + "%" + endeEinlesen.getTimeInMillis());
+				File file = FileUtil.writeCSVFile(stringKurse, aktie.getName() + "%" + endeEinlesen.getTimeInMillis());
 				result = file.getName();
 			}
 			// in die DB schreiben
 			if (writeDB) {
 				// aus dem String-Array ein ImportKursreihe transformieren 
-				ImportKursreihe importKursreihe = transformFinanzenWSToKursreihe(stringKurse, name);
+				ImportKursreihe importKursreihe = transformFinanzenWSToKursreihe(stringKurse, aktie.getName());
 				// ImportKursreihe in die Kurs-DB schreiben
 				DBManager.schreibeKurse(importKursreihe);
 			}
+		} else {
+			System.out.println(
+					"Kein Einlesen notwendig für " + aktie.getName() + " Erster fehlender Kurs: " + DateUtil
+							.formatDate(beginnEinlesen));
 		}
-		else {
-			System.out.println("Kein Einlesen notwendig für " + name + " Erster fehlender Kurs: " + DateUtil.formatDate(beginnEinlesen));
-		}
-		return result; 
+		return result;
 	}
+
 	/**
 	 * Liest eine gespeicherte Datei und schreibt die Daten in die DB
 	 * Dateiname enthält die Extension z.B. '.txt'
 	 */
-	public static void readFileWriteDB (String dateiname, String kursname) {
+	public static void readFileWriteDB(String dateiname, String kursname) {
 		// den Inhalt der Datei auslesen
 		ArrayList<String> kurse = FileUtil.readContent(dateiname);
 		// aus dem String-Array ein ImportKursreihe machen 
@@ -111,78 +109,78 @@ import com.algotrading.util.Util;
 		// die Kursreihe in die DB schreiben
 		DBManager.schreibeKurse(importKursreihe);
 	}
-	
+
 	/**
 	 * Ermittelt den Aktien-Namen aus dem Dateinamen anhand des %-Zeichens
 	 */
-	public static void readFileWriteDB (String dateiname) {
-		
-		
+	public static void readFileWriteDB(String dateiname) {
+
 	}
-	
-	private static ImportKursreihe transformFinanzenWSToKursreihe (ArrayList<String> response, String name) {
+
+	private static ImportKursreihe transformFinanzenWSToKursreihe(ArrayList<String> response, String name) {
 		ImportKursreihe kursreihe = new ImportKursreihe(name);
 		ArrayList<Kurs> kurse = kursreihe.kurse;
 		String line = "";
-		int zaehler = 1; 
+		int zaehler = 1;
 		line = response.get(zaehler);
-		
+
 		// warte so lange, bis 'Tagestief' in der Zeile auftaucht. Das müsste Zeile 16 sein. 
-		while (! line.contains("Tagestief")) {
-			zaehler ++; 
+		while (!line.contains("Tagestief")) {
+			zaehler++;
 			line = response.get(zaehler);
 		}
-		zaehler ++; //  </tr>
-		zaehler ++; //  <tr>   - darauf wird getestet
-		String test = null; 
+		zaehler++; //  </tr>
+		zaehler++; //  <tr>   - darauf wird getestet
+		String test = null;
 		// bis in einer Zeile 'table' erscheint 
 		// enthält entweder <tr> oder </table>
-		while (! (response.get(zaehler).indexOf("table") > 0)) {
+		while (!(response.get(zaehler).indexOf("table") > 0)) {
 			test = response.get(zaehler);
 			// jetzt folgen Sequenzen mit jeweils 7 Zeilen 
 			// Zeile 1 enthält tr
-			zaehler ++;
+			zaehler++;
 			// zeile 2 enthält das Datum
 			test = response.get(zaehler);
 			String datum = holeWertZwischenKlammern(test);
 			System.out.println("eingelesen: " + datum);
-			zaehler ++; 
+			zaehler++;
 			test = response.get(zaehler);
 			String schluss = holeWertZwischenKlammern(response.get(zaehler));
-			zaehler ++; 
+			zaehler++;
 			test = response.get(zaehler);
 			String eroeffnung = holeWertZwischenKlammern(response.get(zaehler));
-			zaehler ++; 
+			zaehler++;
 			String hoch = holeWertZwischenKlammern(response.get(zaehler));
-			zaehler ++; 
+			zaehler++;
 			String tief = holeWertZwischenKlammern(response.get(zaehler));
-			zaehler ++; // nächste Zeile </tr>
-			zaehler ++; // nächste Zeile <tr> oder </table> 
-	    	Kurs kurs = new Kurs();
-	    	kurs.wertpapier = name;	// in jedem Kurs ist der Wertpapiername enthalten 
-	    	kurs.datum = DateUtil.parseDatum(datum);
-	    	try {
+			zaehler++; // nächste Zeile </tr>
+			zaehler++; // nächste Zeile <tr> oder </table> 
+			Kurs kurs = new Kurs();
+			kurs.setWertpapier(name);	// in jedem Kurs ist der Wertpapiername enthalten 
+			kurs.datum = DateUtil.parseDatum(datum);
+			try {
 				kurs.open = Util.parseFloat(eroeffnung);
 				kurs.high = Util.parseFloat(hoch);
 				kurs.low = Util.parseFloat(tief);
 				kurs.close = Util.parseFloat(schluss);
-	
-	        	kurse.add(kurs);
-	        // wenn beim Parsen etwas schief geht, wird der Kurs nicht eingetragen. 
-	    	} catch (NumberFormatException e1) {
-	    		log.error("FormatException: " + datum + " - " + schluss + " - " + eroeffnung
-	    				+ " - " + hoch + " - " + tief);
-	    	}
-    	}
-		return kursreihe; 
+
+				kurse.add(kurs);
+				// wenn beim Parsen etwas schief geht, wird der Kurs nicht eingetragen. 
+			} catch (NumberFormatException e1) {
+				log.error(
+						"FormatException: " + datum + " - " + schluss + " - " + eroeffnung + " - " + hoch + " - " + tief);
+			}
+		}
+		return kursreihe;
 	}
+
 	/**
 	 * Holt den Wert, der sich zwischen >< enthalten ist (entweder Datum oder Wert) 
 	 * wenn leer, dann ein leerer String
 	 *                 <td   >27.11.2018</td>
 	 *                                 <td   >19,39</td>
 	 */
-	private static String holeWertZwischenKlammern (String input) {
+	private static String holeWertZwischenKlammern(String input) {
 		// erstes Auftreten des '>' - Zeichens 
 		int stelle1 = input.indexOf('>');
 		// zweites Auftreten des '<' - Zeichens
@@ -190,13 +188,13 @@ import com.algotrading.util.Util;
 		// lese den Wert dazwischen 
 		String datum = "";
 		try {
-			datum = input.substring(stelle1+1, stelle2);
+			datum = input.substring(stelle1 + 1, stelle2);
 		} catch (Exception e) {
 			System.out.print("Exception beim Parsen: " + input);
 		}
-		return datum; 
+		return datum;
 	}
-	
+
 	/**
 	 * Liest von der Finanzen-Seite automatisiert Kurse ein zum gewünschten Zeitraum 
 	 * @param name
@@ -207,19 +205,18 @@ import com.algotrading.util.Util;
 	public static ArrayList<String> readFinanzenWS(String name, GregorianCalendar beginn, GregorianCalendar ende) {
 
 		URL finanzenURL = null;
-		ArrayList<String> result = null; 
+		ArrayList<String> result = null;
 		OutputStreamWriter writer = null;
-		
+
 		if (ende.before(beginn)) {
 			System.out.println("Ende " + DateUtil.formatDate(ende) + " liegt vor Beginn" + DateUtil.formatDate(beginn));
 		}
 		// die URL zusammen bauen 
 		try {
 			if (beginn == null) {
-				finanzenURL = new URL (getFinanzenURL(name));
-			}
-			else {
-				finanzenURL = new URL (getFinanzenURL(name, beginn, ende));
+				finanzenURL = new URL(getFinanzenURL(name));
+			} else {
+				finanzenURL = new URL(getFinanzenURL(name, beginn, ende));
 			}
 		} catch (MalformedURLException e1) {
 			e1.printStackTrace();
@@ -228,7 +225,7 @@ import com.algotrading.util.Util;
 
 		HttpURLConnection con = null;
 		// String body = "param1=" + URLEncoder.encode( "value1", "UTF-8" ) + "&" +
-	    //          "param2=" + URLEncoder.encode( "value2", "UTF-8" );
+		//          "param2=" + URLEncoder.encode( "value2", "UTF-8" );
 
 		try {
 			con = (HttpURLConnection) finanzenURL.openConnection();
@@ -240,21 +237,22 @@ import com.algotrading.util.Util;
 			con.setRequestProperty("__atts", "2019-04-06-13-39-00");
 			con.setRequestProperty("__atcrv", "669908818");
 			con.setRequestProperty("Host", "www.finanzen.net");
-			con.setRequestProperty("User-Agent", "Mozilla/5.0 (Windows NT 6.1; WOW64; rv:60.0) Gecko/20100101 Firefox/60.0");
+			con.setRequestProperty(
+					"User-Agent",
+					"Mozilla/5.0 (Windows NT 6.1; WOW64; rv:60.0) Gecko/20100101 Firefox/60.0");
 			con.setRequestProperty("Accept", "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8");
 			con.setRequestProperty("Accept-Language", "de,en-US;q=0.7,en;q=0.3");
 			con.setRequestProperty("Accept-Encoding", "gzip, deflate, br");
-//			con.setRequestProperty("Content-Type", "gzip, deflate, br");
+			//			con.setRequestProperty("Content-Type", "gzip, deflate, br");
 			con.setRequestProperty("Content-Type", "application/x-www-form-urlencoded");
 			con.setRequestProperty("Content-Length", "0");
-//			con.setRequestProperty("Content-Length", String.valueOf(body.length()));
+			//			con.setRequestProperty("Content-Length", String.valueOf(body.length()));
 
 			writer = new OutputStreamWriter(con.getOutputStream());
 			writer.write("");
 			writer.flush();
 
-		} 
-		catch (IOException e) {
+		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
@@ -268,19 +266,19 @@ import com.algotrading.util.Util;
 			InputStreamReader iSR = new InputStreamReader(gzipiS);
 			// gibt das Ganze an einen BufferedReader, um zeilenweise zu lesen. 
 			in = new BufferedReader(iSR);
-	        String inputLine;
-	        result = new ArrayList<String>();
-	        
-	        while ((inputLine = in.readLine()) != null) {
-	        	result.add(inputLine);
-	        	System.out.println(inputLine);
-	        }
-	        in.close();
+			String inputLine;
+			result = new ArrayList<String>();
+
+			while ((inputLine = in.readLine()) != null) {
+				result.add(inputLine);
+				System.out.println(inputLine);
+			}
+			in.close();
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		return result; 
+		return result;
 	}
 
 	/**
@@ -290,42 +288,42 @@ import com.algotrading.util.Util;
 	 * @param period2 Ende-Tag als GregorianCalendar
 	 * @return
 	 */
-	private static String getFinanzenURL (String name, GregorianCalendar beginn, GregorianCalendar ende) {
-//  https://www.finanzen.net/Ajax/IndicesController_HistoricPriceList/VDAX_NEW/19.11.2014_19.12.2018/false
+	private static String getFinanzenURL(String name, GregorianCalendar beginn, GregorianCalendar ende) {
+		//  https://www.finanzen.net/Ajax/IndicesController_HistoricPriceList/VDAX_NEW/19.11.2014_19.12.2018/false
 		URI uri = null;
 		String von = DateUtil.formatDate(beginn, ".", false);
 		String bis = DateUtil.formatDate(ende, ".", false);
 		try {
 			uri = new URIBuilder()
-			        .setScheme("https")
-			        .setHost("www.finanzen.net")
-			        .setPath("/Ajax/IndicesController_HistoricPriceList/" + name + "/" + von + "_" + bis + "/false")
-			        .build();
+					.setScheme("https")
+					.setHost("www.finanzen.net")
+					.setPath("/Ajax/IndicesController_HistoricPriceList/" + name + "/" + von + "_" + bis + "/false")
+					.build();
 		} catch (URISyntaxException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 
 		return uri.toString();
-		
-	}
-	private static String getFinanzenURL (String name) {
-	//  https://www.finanzen.net/historische-kurse/Fresenius
-			URI uri = null;
-			try {
-				uri = new URIBuilder()
-				        .setScheme("https")
-				        .setHost("www.finanzen.net")
-				        .setPath("/historische-kurse/" + name )
-				        .build();
-			} catch (URISyntaxException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
 
-			return uri.toString();
-			
+	}
+
+	private static String getFinanzenURL(String name) {
+		//  https://www.finanzen.net/historische-kurse/Fresenius
+		URI uri = null;
+		try {
+			uri = new URIBuilder()
+					.setScheme("https")
+					.setHost("www.finanzen.net")
+					.setPath("/historische-kurse/" + name)
+					.build();
+		} catch (URISyntaxException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}
-	
-	
+
+		return uri.toString();
+
+	}
+
 }

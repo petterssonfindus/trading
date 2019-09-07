@@ -3,8 +3,8 @@ package com.algotrading.depot;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import com.algotrading.signal.Signal;
 import com.algotrading.aktie.Kurs;
+import com.algotrading.signal.Signal;
 
 public class StrategieAlleSignale extends SignalStrategie {
 	static final Logger log = LogManager.getLogger(StrategieAlleSignale.class);
@@ -16,21 +16,21 @@ public class StrategieAlleSignale extends SignalStrategie {
 	@Override
 	public Order entscheideSignal(Signal signal, Depot depot) {
 		Kurs kurs = signal.getKurs();
-		String wertpapier = kurs.wertpapier;
-		Order order = null; 
-		
+		String wertpapier = kurs.getWertpapier();
+		Order order = null;
+
 		if (signal.getKaufVerkauf() == Order.KAUF) {
-			log.debug("Signal->Kauf: " + signal.toString() );
-			order = depot.kaufe(depot.anfangsbestand/3, wertpapier);
+			log.debug("Signal->Kauf: " + signal.toString());
+			order = depot.kaufe(depot.anfangsbestand / 3, wertpapier);
 		}
 		if (signal.getKaufVerkauf() == Order.VERKAUF) {
 			// Ein Verkauf erfolgt nur, wenn ein Bestand dieses Wertpapiers vorhanden ist 
 			if (depot.getWertpapierBestand(wertpapier) != null) {
-				log.debug("Signal->Verkauf: " + signal.toString() );
+				log.debug("Signal->Verkauf: " + signal.toString());
 				order = depot.verkaufe(wertpapier);
 			}
 		}
-		return order; 
+		return order;
 	}
 
 }

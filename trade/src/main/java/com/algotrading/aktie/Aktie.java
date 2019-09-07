@@ -1,8 +1,19 @@
 package com.algotrading.aktie;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.List;
+
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.Table;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
+import javax.persistence.Transient;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -26,63 +37,92 @@ import com.algotrading.util.Zeitraum;
  * auch Berechnungsvorschriften zu Indikatoren und Signalen
  * 
  */
-
+@Entity
+@Table(name = "aktiestamm")
 public class Aktie extends Parameter {
+	@Transient
 	private static final Logger log = LogManager.getLogger(Aktie.class);
+
+	@Id
+	@Column(name = "id", nullable = false)
+	@GeneratedValue(strategy = GenerationType.AUTO)
+	private Long id;
+
+	@Column(name = "name", length = 64, unique = true, nullable = false)
 	public String name;
+
+	@Column(name = "timestamp", columnDefinition = "TIMESTAMP DEFAULT CURRENT_TIMESTAMP", updatable = false, nullable = false)
+	@Temporal(TemporalType.TIMESTAMP)
+	private Date timestamp;
+
+	@Column(name = "firmenname", length = 64)
 	public String firmenname;
+
+	@Column(name = "indexname", length = 64)
+	public String indexname;
+
+	@Column(name = "land")
+	private int land;
+
+	@Column(name = "waehrung")
+	private int waehrung = 0;
+
+	@Transient
+	@Column(name = "isin", length = 12)
+	private String ISIN;
+
+	// die Datenquelle 1=Yahoo 2=Finanzen 3=Ariva
+	@Column(name = "quelle")
+	private int quelle = 0;
+
+	// 2 = Xetra
+	@Column(name = "boersenplatz")
+	public byte boersenplatz = 0;
+
 	// kein öffentlicher Zugriff auf kurse, weil Initialisierung über DB erfolgt.
+	@Transient
 	private ArrayList<Kurs> kurse;
-	// der Kurs, der zum aktuellen Datum des Depot gehört. NextKurs() sorgt für die
-	// Aktualisierung
+
+	// der Kurs, der zum aktuellen Datum des Depot gehört. NextKurs() sorgt für die Aktualisierung
+	@Transient
 	private Kurs aktuellerKurs;
+
 	// der Kurs, der zum Start der Simulation gehört
+	@Transient
 	private Kurs startKurs;
 	// der Zeitraum in dem Kurse vorhanden sind - stammt aus der DB
+	@Transient
 	private Zeitraum zeitraumKurse;
+	@Transient
 	private ArrayList<Kurs> kurseZeitraum;
 	// ein Cache für die aktuell ermittelte Kursreihe
+	@Transient
 	private Zeitraum zeitraum;
-	public String indexname;
-	private int land;
-	private int waehrung;
-	private String ISIN;
-	// die Datenquelle 1=Yahoo 2=Finanzen 3=Ariva
-	private int quelle;
-	// 2 = Xetra
-	public byte boersenplatz;
+
 	/*
 	 * die Indikator-Algorithmen, die an der Aktie hängen - Zugriff über Getter die
 	 * Liste stellt die Reihenfolge sicher
 	 */
+	@Transient
 	private List<IndikatorAlgorithmus> indikatorAlgorithmen = new ArrayList<IndikatorAlgorithmus>();
 
+	@Transient
 	private boolean indikatorenSindBerechnet = false;
 	// die Signal-Algorithmen werden an der Aktie festgehalten und beim Berechnen an
 	// die Kurse gehängt
+	@Transient
 	private List<SignalAlgorithmus> signalAlgorithmen = new ArrayList<SignalAlgorithmus>();
+	@Transient
 	private boolean signaleSindBerechnet = false;
 
-	/**
-	 * Wird nur für Hibernate benötigt
-	 */
-	protected Aktie() {
+	Aktie() {
 	}
 
 	/**
-	 * ein Konstruktor für die Klasse Aktien enthält alles, außer den Kursen
 	 * 
-	 * @param name         Kurzname, Kürzel - intern wird immer mit LowerCase
-	 *                     gearbeitet
-	 * @param firmenname   offizieller Firmenname, zur Beschriftung verwendet
-	 * @param indexname    zugehöriger Index zu Vergleichszwecken
-	 * @param boersenplatz
 	 */
-	public Aktie(String name, String firmenname, String indexname, byte boersenplatz) {
+	public Aktie(String name) {
 		this.name = name.toLowerCase();
-		this.firmenname = firmenname;
-		this.indexname = indexname;
-		this.boersenplatz = boersenplatz;
 	}
 
 	/**
@@ -236,7 +276,7 @@ public class Aktie extends Parameter {
 		int x = this.kurse.indexOf(this.aktuellerKurs);
 		if (x > this.kurse.size() - 2) {
 			log.error(
-					"Kursreihe zu Ende " + this.aktuellerKurs.wertpapier + DateUtil
+					"Kursreihe zu Ende " + this.aktuellerKurs.getWertpapier() + DateUtil
 							.formatDate(this.aktuellerKurs.datum));
 			return this.aktuellerKurs;
 		}
@@ -426,6 +466,7 @@ public class Aktie extends Parameter {
 
 			// für alle Signale zu dieser SignalBeschreibung
 			for (Signal signal : signale) {
+				//				System.out.println("signal" + signal.toString());
 				// Signale im vorgegebenen Zeitraum filtern
 				if (!DateUtil.istInZeitraum(signal.getKurs().getDatum(), zeitraum))
 					continue;
@@ -705,6 +746,38 @@ public class Aktie extends Parameter {
 
 	public void setQuelle(int quelle) {
 		this.quelle = quelle;
+	}
+
+	public Long getId() {
+		return id;
+	}
+
+	public String getFirmenname() {
+		return firmenname;
+	}
+
+	public void setFirmenname(String firmenname) {
+		this.firmenname = firmenname;
+	}
+
+	public String getIndexname() {
+		return indexname;
+	}
+
+	public void setIndexname(String indexname) {
+		this.indexname = indexname;
+	}
+
+	public byte getBoersenplatz() {
+		return boersenplatz;
+	}
+
+	public void setBoersenplatz(byte boersenplatz) {
+		this.boersenplatz = boersenplatz;
+	}
+
+	public Date getTimestamp() {
+		return timestamp;
 	}
 
 }

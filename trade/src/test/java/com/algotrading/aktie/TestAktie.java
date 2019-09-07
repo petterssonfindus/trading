@@ -5,29 +5,38 @@ import java.util.GregorianCalendar;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.mockito.Mock;
-import org.mockito.Mock.*;
+import org.junit.Test;
 
-import com.algotrading.aktie.Aktie;
-import com.algotrading.aktie.AktieVerzeichnis;
-import com.algotrading.aktie.Kurs;
+import com.algotrading.util.AbstractTest;
 
-import junit.framework.TestCase;
-
-public class TestAktie extends TestCase {
+public class TestAktie extends AbstractTest {
 	private static final Logger log = LogManager.getLogger(TestAktie.class);
 
 	public void setUp() {
-		
+
 	}
-	
+
+	@Test
+	public void testKursAktie() {
+		Aktie aktie = aV.getAktie(31l);
+
+		// eine neue KursListe
+		KursDAX kursDAX = new KursDAX();
+
+		// ein neuer Kurs
+		Kurs kurs = new Kurs();
+		kurs.setDatum(new GregorianCalendar());
+		kurs.close = 100;
+		kursDAX.addKurs(kurs);
+		// die Kursliste speichern
+		aV.saveKursAktie(kursDAX);
+	}
+
 	public void testGetKursZukunft() {
-		
-		Aktie aktie = AktieVerzeichnis.getInstance().getAktieOhneKurse("testaktie");
-		ArrayList<Kurs> kursreihe = aktie.getKursListe(); 
-		
-		
-		
+
+		Aktie aktie = aV.getVerzeichnis().getAktieOhneKurse("testaktie");
+		ArrayList<Kurs> kursreihe = aktie.getKursListe();
+
 		assertNotNull(kursreihe);
 		assertTrue(kursreihe.size() > 1);
 		Kurs kurs = kursreihe.get(100);
@@ -38,10 +47,10 @@ public class TestAktie extends TestCase {
 		assertEquals(23.03f, kurs3.getKurs());
 		// 
 	}
-	
-	public void testGetKurse () {
-		Aktie aktie = AktieVerzeichnis.getInstance().getAktieOhneKurse("AA");
-		ArrayList<Kurs> kursreihe = aktie.getKursListe(); 
+
+	public void testGetKurse() {
+		Aktie aktie = aV.getVerzeichnis().getAktieOhneKurse("AA");
+		ArrayList<Kurs> kursreihe = aktie.getKursListe();
 		assertNotNull(kursreihe);
 		assertTrue(kursreihe.size() > 1);
 		log.info("Kursreihe hat Kurse: " + kursreihe.size());
@@ -52,25 +61,25 @@ public class TestAktie extends TestCase {
 		assertEquals(5.4468f, kurs.high);
 		assertEquals(45900, kurs.volume);
 	}
-	
-/*
-	public void testKursreihe() {
-		log.info("Start AktieTest");
-		Aktie aktie = Aktien.getInstance().getAktie("AA");
-		ArrayList<Kurs> kursreihe = aktie.getBoersenkurse(); 
-		
-		Statistik.rechneVola(aktie, 10);
-		Statistik.rechneVola(aktie, 30);
-		Statistik.rechneVola(aktie, 100);
-		log.info("Kursreihe hat Kurse: " + kursreihe.size());
-		Statistik.rechneIndikatoren(aktie);
-		log.info("Schreibe File " );
-		
-		aktie.writeFileIndikatoren();
-//		Statistik.rechneIndikatoren(kursreihe);
-//		Signalsuche.rechneSignale(kursreihe);
-//		kursreihe.writeIndikatorenSignale();
-	}
- */
-		
+
+	/*
+		public void testKursreihe() {
+			log.info("Start AktieTest");
+			Aktie aktie = Aktien.getInstance().getAktie("AA");
+			ArrayList<Kurs> kursreihe = aktie.getBoersenkurse(); 
+			
+			Statistik.rechneVola(aktie, 10);
+			Statistik.rechneVola(aktie, 30);
+			Statistik.rechneVola(aktie, 100);
+			log.info("Kursreihe hat Kurse: " + kursreihe.size());
+			Statistik.rechneIndikatoren(aktie);
+			log.info("Schreibe File " );
+			
+			aktie.writeFileIndikatoren();
+	//		Statistik.rechneIndikatoren(kursreihe);
+	//		Signalsuche.rechneSignale(kursreihe);
+	//		kursreihe.writeIndikatorenSignale();
+		}
+	 */
+
 }

@@ -252,7 +252,8 @@ public abstract class SignalAlgorithmus extends Parameter {
 	 * enthält den Kurznamen und eine Liste der vorhandenen Parameter
 	 */
 	public String toString() {
-		String result = ";I:" + getKurzname();
+//		String result = ";I:" + getKurzname();
+		String result = getKurzname();
 		for (String name : this.getAllParameter().keySet()) {
 			result = result + (Util.separatorCSV + name + ":" + this.getParameter(name));
 		}

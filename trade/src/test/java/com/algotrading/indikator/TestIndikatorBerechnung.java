@@ -4,17 +4,16 @@ import java.util.List;
 
 import com.algotrading.aktie.Aktie;
 import com.algotrading.aktie.AktieVerzeichnis;
+import com.algotrading.util.AbstractTest;
 
-import junit.framework.TestCase;
+public class TestIndikatorBerechnung extends AbstractTest {
 
-public class TestIndikatorBerechnung extends TestCase {
+	static Aktie aktie;
 
-	static Aktie aktie; 
-	
 	public void setUp() {
 		aktie = AktieVerzeichnis.newInstance().getAktieOhneKurse("testaktie");
 	}
-	
+
 	/**
 	 * stellt sicher, dass die Reihenfolge des Einstellens bei der Berechnung gleich bleibt. 
 	 */
@@ -31,14 +30,14 @@ public class TestIndikatorBerechnung extends TestCase {
 		iA5.addParameter("test", 5);
 		IndikatorAlgorithmus iA6 = aktie.addIndikatorAlgorithmus(new IndikatorGDalt());
 		iA6.addParameter("test", 6);
-		
+
 		List<IndikatorAlgorithmus> algos = aktie.getIndikatorAlgorithmen();
 		for (IndikatorAlgorithmus iATest : algos) {
 			int t = (Integer) iATest.getParameter("test");
-			if (t == 4) assertEquals(iATest, iA4);
+			if (t == 4)
+				assertEquals(iATest, iA4);
 		}
-		
+
 	}
-	
-	
+
 }

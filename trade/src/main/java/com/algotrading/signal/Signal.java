@@ -67,7 +67,7 @@ public class Signal {
 	 */
 	public void setStaerke(float staerke) {
 		if (staerke == 0) {
-			System.out.println("Staerke wird gesetzt auf 0");
+			// 			System.out.println("Staerke wird gesetzt auf 0");
 		}
 		this.staerke = staerke;
 	}
@@ -153,7 +153,7 @@ public class Signal {
 	 */
 	public String toString() {
 		String result;
-		result = this.kurs.wertpapier + Util.separatorCSV + DateUtil.formatDate(
+		result = this.kurs.getWertpapier() + Util.separatorCSV + DateUtil.formatDate(
 				this.kurs.datum) + Util.separatorCSV + this.kaufVerkaufToString() + Util.separatorCSV + this.sA
 						.getKurzname() + Util.separatorCSV + Util.toString(this.staerke) + this.toStringBewertungen();
 		return result;

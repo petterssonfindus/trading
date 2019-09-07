@@ -10,7 +10,7 @@ import org.junit.Test;
 
 import junit.framework.TestCase;
 
-public class UtilTest extends TestCase {
+public class UtilTest extends AbstractTest {
 	private static final Logger log = LogManager.getLogger(UtilTest.class);
 
 	@Test

@@ -8,7 +8,6 @@ import java.util.List;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import com.algotrading.data.DBManager;
 import com.algotrading.indikator.IndikatorAlgorithmus;
 import com.algotrading.util.Zeitraum;
 
@@ -23,6 +22,7 @@ import com.algotrading.util.Zeitraum;
  *
  */
 public class AktieVerzeichnis {
+
 	private static final Logger log = LogManager.getLogger(AktieVerzeichnis.class);
 	public static final byte BOERSEDEPOT = 0;
 	public static final byte BOERSEINDEX = 1;
@@ -50,8 +50,6 @@ public class AktieVerzeichnis {
 	public static AktieVerzeichnis getInstance() {
 		if (instance == null) {
 			instance = new AktieVerzeichnis();
-			// das Verzeichnis wird versorgt
-			initialisiereVerzeichnis();
 		}
 		return instance;
 	}
@@ -65,8 +63,14 @@ public class AktieVerzeichnis {
 	public static AktieVerzeichnis newInstance() {
 		instance = new AktieVerzeichnis();
 		// das Verzeichnis wird versorgt
-		initialisiereVerzeichnis();
+		// initialisiereVerzeichnis();
 		return instance;
+	}
+
+	public void setAktien(Iterable<Aktie> aktien) {
+		for (Aktie aktie : aktien) {
+			this.verzeichnis.put(aktie.getName(), aktie);
+		}
 	}
 
 	/**
@@ -110,7 +114,7 @@ public class AktieVerzeichnis {
 		for (Aktie aktie : verzeichnis.values()) {
 			result.add(aktie);
 			// ein Versuch, das Aktien-Verzeichnis über JPA zu persistieren wurde verworfen
-//			aktieRepository.save(aktie);
+			//			aktieRepository.save(aktie);
 		}
 		return result;
 	}
@@ -151,14 +155,6 @@ public class AktieVerzeichnis {
 		for (Aktie aktie : aktien) {
 			aktie.addIndikatorAlgorithmus(iA);
 		}
-	}
-
-	/**
-	 * das Verzeichnis wird beim Erstellen initialisiert aus der DB
-	 */
-	private static void initialisiereVerzeichnis() {
-		verzeichnis = DBManager.getVerzeichnis();
-
 	}
 
 }
