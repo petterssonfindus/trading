@@ -13,29 +13,37 @@ import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.GregorianCalendar;
+import java.util.List;
 import java.util.zip.GZIPInputStream;
 
 import org.apache.http.client.utils.URIBuilder;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 import com.algotrading.aktie.Aktie;
 import com.algotrading.aktie.Aktien;
 import com.algotrading.aktie.Kurs;
+import com.algotrading.component.AktieVerwaltung;
 import com.algotrading.util.DateUtil;
 import com.algotrading.util.FileUtil;
 import com.algotrading.util.Util;
 
+@Service
 public class ReadDataFinanzen {
 
 	private static final Logger log = LogManager.getLogger(ReadDataFinanzen.class);
+
+	@Autowired
+	private AktieVerwaltung aV;
 
 	/**
 	 * Liest für alle Aktien mit Quelle=Finanzen aktuelle Kurse ein. 
 	 * Schreibt die Ergebnisse in das Log-Verzeichnis und in die Kurse-DB
 	 * Jede Aktie muss Kurse haben. Neue Aktie muss manuell mit Kurse versorgt werden. 
 	 */
-	public static void FinanzenWSAktienController(Aktien aktien) {
+	public void FinanzenWSAktienController(Aktien aktien) {
 		for (Aktie aktie : aktien) {
 			// wenn die Quelle 2 ist, dann Kurs über Finanzen aktualisieren 
 			if (aktie.getQuelle() == 2) {
@@ -53,15 +61,17 @@ public class ReadDataFinanzen {
 	 * @param writeFile: true schreibt ein File mit dem Inhalt des Service-Response
 	 * @param beginn: der Tag, ab dem das Einlesen beginnt. Wenn null, dann ab letztem vorhandenem Kurs 
 	 */
-	public static String FinanzenWSController(Aktie aktie, boolean writeFile, boolean writeDB,
+	public String FinanzenWSController(Aktie aktie, boolean writeFile, boolean writeDB,
 			GregorianCalendar beginn) {
 		String result = null;
+		GregorianCalendar letzterKurs;
 		GregorianCalendar beginnEinlesen;	// der Beginn des einzulesenden Kurs-Zeitraums
 		// wenn ein Beginn-Datum vorgegeben ist, wird dieses verwendet
 		if (beginn != null) {
 			beginnEinlesen = beginn;
 		} else {	// das Beginn-Datum wird berechnet
-			beginnEinlesen = aktie.ermittleNextKurs();
+			letzterKurs = aV.getDatumLetzterKurs(aktie.getId());
+			beginnEinlesen = DateUtil.addTage(letzterKurs, 1);
 		}
 
 		GregorianCalendar endeEinlesen = DateUtil.getLetzterHandelstag();
@@ -75,7 +85,7 @@ public class ReadDataFinanzen {
 		if (diff >= 3) {
 
 			// Aufruf des Finanzen-Service und in ein String-Array stecken.
-			ArrayList<String> stringKurse = readFinanzenWS(aktie.getName(), beginnEinlesen, endeEinlesen);
+			List<String> stringKurse = readFinanzenWS(aktie.getName(), beginnEinlesen, endeEinlesen);
 			// in ein txt-File schreiben
 			if (writeFile) {
 				// schreibt das Ergebnis in eine csv-Datei
@@ -101,13 +111,17 @@ public class ReadDataFinanzen {
 	 * Liest eine gespeicherte Datei und schreibt die Daten in die DB
 	 * Dateiname enthält die Extension z.B. '.txt'
 	 */
-	public static void readFileWriteDB(String dateiname, String kursname) {
+	public void readFileWriteDB(String dateiName, String aktieName) {
 		// den Inhalt der Datei auslesen
-		ArrayList<String> kurse = FileUtil.readContent(dateiname);
+		List<String> kurse = FileUtil.readContent(dateiName);
 		// aus dem String-Array ein ImportKursreihe machen 
-		ImportKursreihe importKursreihe = transformFinanzenWSToKursreihe(kurse, kursname);
+		ImportKursreihe importKursreihe = transformFinanzenWSToKursreihe(kurse, aktieName);
+		// Aktie holen 
+		Aktie aktie = aV.getAktie(aktieName);
+		aktie.setKurse(importKursreihe.getKurse());
 		// die Kursreihe in die DB schreiben
-		DBManager.schreibeKurse(importKursreihe);
+		aV.saveAktie(aktie);
+		//		DBManager.schreibeKurse(importKursreihe);
 	}
 
 	/**
@@ -117,9 +131,8 @@ public class ReadDataFinanzen {
 
 	}
 
-	private static ImportKursreihe transformFinanzenWSToKursreihe(ArrayList<String> response, String name) {
+	private ImportKursreihe transformFinanzenWSToKursreihe(List<String> response, String name) {
 		ImportKursreihe kursreihe = new ImportKursreihe(name);
-		ArrayList<Kurs> kurse = kursreihe.kurse;
 		String line = "";
 		int zaehler = 1;
 		line = response.get(zaehler);
@@ -156,15 +169,14 @@ public class ReadDataFinanzen {
 			zaehler++; // nächste Zeile </tr>
 			zaehler++; // nächste Zeile <tr> oder </table> 
 			Kurs kurs = new Kurs();
-			kurs.setWertpapier(name);	// in jedem Kurs ist der Wertpapiername enthalten 
-			kurs.datum = DateUtil.parseDatum(datum);
+			kurs.setDatum(DateUtil.parseDatum(datum));
 			try {
 				kurs.open = Util.parseFloat(eroeffnung);
 				kurs.high = Util.parseFloat(hoch);
 				kurs.low = Util.parseFloat(tief);
 				kurs.close = Util.parseFloat(schluss);
 
-				kurse.add(kurs);
+				kursreihe.kurse.add(kurs);
 				// wenn beim Parsen etwas schief geht, wird der Kurs nicht eingetragen. 
 			} catch (NumberFormatException e1) {
 				log.error(

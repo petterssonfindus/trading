@@ -7,6 +7,7 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.List;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -21,12 +22,12 @@ public class FileUtil {
 		File file = FileUtil.openFile(filename);
 		return FileUtil.readContent(file);
 	}
-	
+
 	/**
 	 * Liest anhand eines Files den Inhalt zeilenweise 
 	 * Zum Einlesen der Kurse aus verschiedenen Quellen 
 	 */
-	public static ArrayList<String> readContent (File file) {
+	public static ArrayList<String> readContent(File file) {
 		ArrayList<String> result = new ArrayList<String>();
 		FileReader fr = null;
 		// ein File-Reader erzeugen 
@@ -36,56 +37,58 @@ public class FileUtil {
 			log.error("Datei konnte nicht geöffnet werden: " + file.getName());
 		}
 		// mit dem BufferedReader kann man zeilenweise lesen 
-        BufferedReader br = new BufferedReader(fr);
-        {
-        	log.info("File einlesen: " + file.getName());
-        	String zeile; 
-            try {
+		BufferedReader br = new BufferedReader(fr);
+		{
+			log.info("File einlesen: " + file.getName());
+			String zeile;
+			try {
 				while ((zeile = br.readLine()) != null) {
 					result.add(zeile);
 				}
 			} catch (IOException e) {
 				log.error("Fehler beim Lesen der Datei: " + file.getName());
 			}
-        }
-        return result; 
-		
+		}
+		return result;
+
 	}
+
 	/**
 	 * Aus einem Filenamen im Kurs-Pfad ein bestehendes File öffnen 
 	 */
-	public static File openFile (String filename) {
-		String pfad = getPfadKurs() + filename ;
+	public static File openFile(String filename) {
+		String pfad = getPfadKurs() + filename;
 		File file = new File(pfad);
-		return file; 
-		
+		return file;
+
 	}
-	
+
 	/**
 	 * Der Pfad zum Log-Verzeichnis 
 	 */
-	private static String getPfadLog () {
+	private static String getPfadLog() {
 		return "C:\\Users\\XK02200\\Documents\\data\\programmierung\\gittrade\\trade\\log\\";
 	}
-	
+
 	/**
 	 * Der Pfad zum csv-Verzeichnis 
 	 */
-	private static String getPfadCSV () {
+	private static String getPfadCSV() {
 		return "C:\\Users\\XK02200\\Documents\\data\\programmierung\\gittrade\\trade\\csv\\";
 	}
 
 	/**
 	 * Der Pfad zum Kurs-Verzeichnis für die Datei-Speicherung von Kursdaten 
 	 */
-	private static String getPfadKurs () {
-		return "C:\\Users\\XK02200\\Documents\\data\\programmierung\\gittrade\\trade\\kurs\\";
+	private static String getPfadKurs() {
+		return "C:\\Users\\XK02200\\Documents\\data\\programmierung\\gittrade\\trade\\csv\\";
 	}
+
 	/**
 	 * Schreibt eine Datei mit dem übergebenen Inhalt 
 	 * pro String eine Zeile
 	 */
-	public static File writeCSVFile (ArrayList<String> zeilen, String dateiname) {
+	public static File writeCSVFile(List<String> zeilen, String dateiname) {
 		File file = FileUtil.createCSVFile(dateiname);
 		FileWriter fileWriter = FileUtil.createFileWriter(file);
 		for (String zeile : zeilen) {
@@ -102,14 +105,14 @@ public class FileUtil {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		return file; 
+		return file;
 	}
 
 	/**
 	 * erzeugt einen FileWriter im Standard-Ausgabeverzeichnis
 	 * wenn etwas schief geht, dann return = null
 	 */
-	static FileWriter createFileWriter (File file) {
+	static FileWriter createFileWriter(File file) {
 		FileWriter fileWriter = null;
 		try {
 			fileWriter = new FileWriter(file, true);
@@ -123,18 +126,18 @@ public class FileUtil {
 	/**
 	 * ermittelt den kompletten Pfad zur angegebenen csv-Datei 
 	 */
-	public static File createCSVFile (String dateiname) {
-		File file = null; 
+	public static File createCSVFile(String dateiname) {
+		File file = null;
 		String filename = "";
 		try {
-			filename =  getPfadCSV() + dateiname;
-			file = new File (filename + ".csv");
-			
-		} catch(Exception e) {
+			filename = getPfadCSV() + dateiname;
+			file = new File(filename + ".csv");
+
+		} catch (Exception e) {
 			Util.log.error("das File ist vermutlich geöffnet:" + filename);
 			e.printStackTrace();
 		}
-		return file; 
+		return file;
 	}
 
 }

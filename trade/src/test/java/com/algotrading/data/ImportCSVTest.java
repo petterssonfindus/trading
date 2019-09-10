@@ -7,8 +7,8 @@ import org.apache.logging.log4j.Logger;
 
 import junit.framework.TestCase;
 
-public class ImportCSVsimpleTest extends TestCase {
-	private static final Logger log = LogManager.getLogger(ImportCSVsimple.class);
+public class ImportCSVTest extends TestCase {
+	private static final Logger log = LogManager.getLogger(ImportCSV.class);
 	private static String name = "wkn_846931_historic";
 
 	/*
@@ -31,9 +31,9 @@ public class ImportCSVsimpleTest extends TestCase {
 
 	public void testImportCSVAriva() {
 		// holt sich ein File der gewünschten Datei
-		File file = ImportCSVsimple.getCSVFile("wkn__historic");
+		File file = ImportCSV.getCSVFile("wkn__historic");
 		String aktiename = "umlaufrendite-de-oeffentliche-hand";
-		ImportKursreihe kursreihe = ImportCSVsimple.readKurseArivaCSV(file, aktiename);
+		ImportKursreihe kursreihe = ImportCSV.readKurseArivaCSV(file, aktiename);
 		assertNotNull(kursreihe);
 		log.info("Kursreihe wurde eingelesen: " + kursreihe.kuerzel);
 		//		DBManager.schreibeNeueAktieTabelle(kursreihe.kuerzel);

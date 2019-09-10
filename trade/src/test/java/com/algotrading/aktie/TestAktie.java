@@ -6,14 +6,64 @@ import java.util.GregorianCalendar;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.junit.Test;
+import org.springframework.beans.factory.annotation.Autowired;
 
+import com.algotrading.data.ImportCSV;
+import com.algotrading.data.ReadDataYahoo;
 import com.algotrading.util.AbstractTest;
 
 public class TestAktie extends AbstractTest {
 	private static final Logger log = LogManager.getLogger(TestAktie.class);
 
-	public void setUp() {
+	@Autowired
+	private ReadDataYahoo readDataYahoo;
 
+	@Autowired
+	private ImportCSV importCSV;
+
+	@Test
+	public void testNewAktieMinimal() {
+		Aktie aktie = new Aktie("VDAX_NEW");
+		aV.saveAktie(aktie);
+	}
+
+	@Test
+	public void testNewAktieAriva() {
+		Aktie aktie = new Aktie("Amazon USD");
+		aktie.setISIN(null);
+		aktie.setQuelle(aV.QUELLE_Ariva);
+		aktie.setWkn("906866");
+		aktie.setKuerzel(null);
+		aV.saveAktie(aktie);
+		aktie.setaV(aV);
+		Aktie aktieNew = importCSV.readKurseArivaCSV("wkn_906866_historicamazonusd", aktie);
+	}
+
+	@Test
+	public void testChangeAktie() {
+		Aktie aktie = aV.getAktie("VDAX_NEW1M");
+		aktie.setQuelle(1);
+		aV.saveAktie(aktie);
+		Aktie aktie2 = aV.getAktie(aktie.getId());
+	}
+
+	@Test
+	public void testGetAktieByName() {
+		Aktie aktie = aV.getAktie("umalauf1567762383227");
+		assertNotNull(aktie);
+		Aktie aktie2 = aV.getAktie("umal");
+		assertNull(aktie2);
+
+	}
+
+	@Test
+	public void testDelete() {
+		aV.deleteAktie(aV.getAktie("dax"));
+	}
+
+	@Test
+	public void testDeleteByID() {
+		aV.deleteAktie(aV.getAktie(33L));
 	}
 
 	@Test

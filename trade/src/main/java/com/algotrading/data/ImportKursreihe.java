@@ -1,6 +1,7 @@
 package com.algotrading.data;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import com.algotrading.aktie.Kurs;
 
@@ -10,12 +11,16 @@ import com.algotrading.aktie.Kurs;
  * @author Oskar
  */
 public class ImportKursreihe {
-	
-	protected String kuerzel; 
-	protected ArrayList<Kurs> kurse = new ArrayList<Kurs>();
-	
-	ImportKursreihe (String kuerzel) {
-		this.kuerzel = kuerzel; 
+
+	protected String kuerzel;
+	protected List<Kurs> kurse = new ArrayList<Kurs>();
+
+	ImportKursreihe(String kuerzel) {
+		this.kuerzel = kuerzel;
 	}
-	
+
+	public List<Kurs> getKurse() {
+		return kurse;
+	}
+
 }

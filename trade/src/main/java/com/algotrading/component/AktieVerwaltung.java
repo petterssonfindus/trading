@@ -1,5 +1,7 @@
 package com.algotrading.component;
 
+import java.util.GregorianCalendar;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -8,7 +10,6 @@ import com.algotrading.aktie.AktieVerzeichnis;
 import com.algotrading.aktie.Aktien;
 import com.algotrading.aktie.Kurs;
 import com.algotrading.data.DBManager;
-import com.algotrading.data.ReadDataFinanzen;
 import com.algotrading.jpa.AktieDAO;
 
 @Service
@@ -18,6 +19,11 @@ public class AktieVerwaltung {
 	private AktieDAO aktieDAO;
 
 	private AktieVerzeichnis aktieVerzeichnis;
+
+	public static final int QUELLE_Unbekannt = 0;
+	public static final int QUELLE_Yahoo = 1;
+	public static final int QUELLE_Finanzen = 2;
+	public static final int QUELLE_Ariva = 3;
 
 	public Aktie saveAktie(Aktie aktie) {
 		return aktieDAO.saveAktie(aktie);
@@ -36,7 +42,9 @@ public class AktieVerwaltung {
 	}
 
 	public Aktie getAktie(String name) {
-		return aktieDAO.findByName(name);
+		Aktie aktie = aktieDAO.findByName(name);
+		aktie.setaV(this);
+		return aktie;
 	}
 
 	public Aktie getAktie(Kurs kurs) {
@@ -48,6 +56,14 @@ public class AktieVerwaltung {
 	 */
 	public Iterable<Aktie> getAll() {
 		return aktieDAO.findAll();
+	}
+
+	public void deleteAktie(Aktie aktie) {
+		aktieDAO.deleteAktie(aktie);
+	}
+
+	public void deleteAktieByID(Long id) {
+		aktieDAO.deleteAktieByID(id);
 	}
 
 	public Aktien getAktien() {
@@ -78,8 +94,12 @@ public class AktieVerwaltung {
 		DBManager.checkKursreiheTage(aktie, referenz);
 	}
 
-	public void FinanzenWSAktienController() {
-		ReadDataFinanzen.FinanzenWSAktienController(getAktien());
+	public GregorianCalendar getDatumLetzterKurs(Long id) {
+		return aktieDAO.getDatumLetzterKurs(id);
+	}
+
+	public GregorianCalendar getDatumErsterKurs(Long id) {
+		return aktieDAO.getDatumErsterKurs(id);
 	}
 
 }

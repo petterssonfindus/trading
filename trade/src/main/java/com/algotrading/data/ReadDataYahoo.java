@@ -116,8 +116,7 @@ public class ReadDataYahoo {
 			String splitBy = ",";
 			String[] zeile = line.split(splitBy);
 			Kurs kurs = new Kurs();
-			kurs.setWertpapier(name);	// in jedem Kurs ist der Wertpapiername enthalten 
-			kurs.datum = DateUtil.parseDatum(zeile[0]);
+			kurs.setDatum(DateUtil.parseDatum(zeile[0]));
 			try {
 				kurs.open = Float.parseFloat(zeile[1]);
 				kurs.high = Float.parseFloat(zeile[2]);

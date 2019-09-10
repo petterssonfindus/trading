@@ -51,7 +51,7 @@ public class Jahrestag extends SignalAlgorithmus {
 		if (tageskurs == null)
 			log.error("Inputvariable ist null");
 		boolean result = false;
-		GregorianCalendar datum = tageskurs.datum;
+		GregorianCalendar datum = tageskurs.getDatum();
 		int dayofyear = datum.get(Calendar.DAY_OF_YEAR);
 		int year = datum.get(Calendar.YEAR);
 		if (dayofyear > jahrestag && year > jahreszahl) {

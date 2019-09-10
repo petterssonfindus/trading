@@ -31,11 +31,11 @@ public class IndikatorSteigung extends IndikatorAlgorithmus {
 		int dauer = ((Integer) getParameter("dauer")).intValue();
 
 		if (kurse.length <= dauer)
-			log.error(aktie.name + " zu wenig Kurse: " + kurse.length + " vorhanden: " + dauer + " benoetigt."); // wenn
-																													// weniger
-																													// Kurse
-																													// vorhanden
-																													// sind
+			log.error(aktie.getName() + " zu wenig Kurse: " + kurse.length + " vorhanden: " + dauer + " benoetigt."); // wenn
+																														// weniger
+																														// Kurse
+																														// vorhanden
+																														// sind
 
 		float kapitalBeginn = 0;
 		float kapitalEnde = 0;

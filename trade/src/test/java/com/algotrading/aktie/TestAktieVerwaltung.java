@@ -22,9 +22,18 @@ public class TestAktieVerwaltung extends AbstractTest {
 	}
 
 	@Test
-	public void testGetAktie() {
-		Aktie aktie = aV.getAktie(31l);
+	public void testGetAktieLazyLoading() {
+		Aktie aktie = aV.getAktieMitKurse(31l);
 		assertNotNull(aktie);
+		aktie.getKurse();
+		System.out.println("Aktienkurse: " + aktie.getKurse().size());
 	}
 
+	@Test
+	public void testGetAktieLazy() {
+		Aktie aktie = aV.getAktie(31l);
+		assertNotNull(aktie);
+		aktie.getKurse();
+		System.out.println("Aktienkurse: " + aktie.getKurse().size());
+	}
 }

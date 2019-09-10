@@ -4,12 +4,17 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
-import java.util.ArrayList;
+
+import javax.transaction.Transactional;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
+import com.algotrading.aktie.Aktie;
 import com.algotrading.aktie.Kurs;
+import com.algotrading.component.AktieVerwaltung;
 import com.algotrading.util.DateUtil;
 import com.algotrading.util.Util;
 
@@ -17,8 +22,12 @@ import com.algotrading.util.Util;
  * Importiert CSV-Dateien mit Kursdaten 
  * @author oskar
  */
-public class ImportCSVsimple {
-	private static final Logger log = LogManager.getLogger(ImportCSVsimple.class);
+@Service
+public class ImportCSV {
+	private static final Logger log = LogManager.getLogger(ImportCSV.class);
+
+	@Autowired
+	private AktieVerwaltung aV;
 
 	//	static String pfad = "/home/oskar/Documents/finance/DAXkurz1.csv";
 	//	static String pfad = "/home/oskar/Documents/finance/";
@@ -32,13 +41,33 @@ public class ImportCSVsimple {
 				.getFileSeparator() + "nysekurse" + Util.getFileSeparator();
 	}
 
+	private static String getPfadCSVAriva() {
+//		@formatter:off
+		return Util.getUserProperty("home") + Util.getFileSeparator() + 
+				"Documents" + Util.getFileSeparator() + 
+				"data" + Util.getFileSeparator() + 
+				"programmierung" + Util.getFileSeparator() + 
+				"gittrade" + Util.getFileSeparator() + 
+				"trade" + Util.getFileSeparator() + 
+				"csv" + Util.getFileSeparator() + 
+				"kurse" + Util.getFileSeparator();
+		//		C:\Users\XK02200\Documents\data\programmierung\gittrade\trade\csv\kurse
+//		@formatter:on
+	}
+
+	private static File getCSVFileAriva(String dateiName) {
+		String pfad = getPfadCSVAriva() + dateiName + ".csv";
+		File file = new File(pfad);
+		return file;
+	}
+
 	/**
 	 * Steuert das Einlesen aller CSV-Dateien, die sich im o.g. Pfad befinden. 
 	 * Erzeugt Tabellen mit dem Dateinamen als Kürzel mit allen enthaltenen Kursen. 
 	 * Es dürfen nur csv-Files enthalten sein #TODO die anderen Files ignorieren
 	 * Ist die Tabelle vorhanden, geschieht nichts. 
 	 */
-	public static void readPfadKurseYahooCSV() {
+	public void readPfadKurseYahooCSV() {
 		// holt sich alle Dateien im o.g. Verzeichnis 
 		File[] directoryListing = getCSVFilesInPath();
 		ImportKursreihe importkursreihe;
@@ -81,17 +110,18 @@ public class ImportCSVsimple {
 
 	/**
 	 * Liest eine csv-Datei mit Kursen von Ariva ein 
+	 * Die Kurse werden an die Aktie angehängt 
 	 * @param file die csv-Datei 
 	 * @param name Name der Aktie in den Kurse-Stammdaten
 	 * @return die Kursreihe aus der man DB-Einträge erzeugen kann 
 	 */
-	public static ImportKursreihe readKurseArivaCSV(File file, String name) {
+	@Transactional
+	public Aktie readKurseArivaCSV(String fileName, Aktie aktie) {
 		String line = "";
 		String cvsSplitBy = ";";
-		ImportKursreihe importKursreihe = new ImportKursreihe(name);
-		importKursreihe.kuerzel = name;
-		ArrayList<Kurs> kursreihe = importKursreihe.kurse;
 		String[] zeile = null;
+
+		File file = getCSVFileAriva(fileName);
 
 		try (BufferedReader br = new BufferedReader(new FileReader(file))) {
 			log.info("CSV-Datei einlesen: " + file.getName());
@@ -103,19 +133,18 @@ public class ImportCSVsimple {
 					continue;
 				// erst die Tausender-Punkte entfernen 
 				line = line.replace(".", "");
-				// dann die Dezmal-Trennung "," durch Punkt ersetzen 
+				// dann die Dezimal-Trennung "," durch Punkt ersetzen 
 				line = line.replaceAll(",", ".");
-				// die Zeile aufteilen nahnd der Trennzeichen 
+				// die Zeile aufteilen anhand der Trennzeichen 
 				zeile = line.split(cvsSplitBy);
 				// wenn die erste Spalte "null" enthält wird die Zeile ignoriert 
 				if (!zeile[1].contains("null")) {
 					Kurs kurs = new Kurs();
-					kurs.setWertpapier(name);
+					aktie.addKurs(kurs);
 
 					try {
-						kurs.datum = DateUtil.parseDatum(zeile[0]);
+						kurs.setDatum(DateUtil.parseDatum(zeile[0]));
 					} catch (Exception e1) {
-						// Pflicht Zeile 
 						continue;
 					}
 
@@ -157,10 +186,8 @@ public class ImportCSVsimple {
 						}
 						*/
 					}
-
-					kursreihe.add(kurs);
-				}
-			}
+				}  // end if zeile.contains(null) 
+			}  // end try Buffered Reader 
 
 		} catch (IOException e) {
 			log.error("Feher beim Einlesen Datei: " + file.getAbsolutePath());
@@ -169,8 +196,8 @@ public class ImportCSVsimple {
 			log.error("NumberFormatException beim String: " + zeile.toString());
 			e.printStackTrace();
 		}
-
-		return importKursreihe;
+		aV.saveAktie(aktie);
+		return aktie;
 	}
 
 	private static Float parseFloat(String input) {
@@ -194,16 +221,11 @@ public class ImportCSVsimple {
 	 * Aus jeder Zeile wird ein Kurs erzeugt
 	 * @return
 	 */
-	public static ImportKursreihe readKurseYahooCSV(File file) {
+	@Transactional
+	public Aktie readKurseYahooCSV(String fileName, Aktie aktie) {
 		String line = "";
 		String cvsSplitBy = ",";
-		// aus dem Dateinamen einen Tabellennamen machen 
-		String kuerzel = file.getName().replace(".csv", "");
-		kuerzel = kuerzel.replace("^", "xxx");  // bei Indizes muss das Sonderzeichen entfernt werden wegen der DB.
-		kuerzel = kuerzel.toLowerCase();
-		// die Kursreihe mit dem Kürzel erzeugen
-		ImportKursreihe importKursreihe = new ImportKursreihe(kuerzel);
-		ArrayList<Kurs> kursreihe = importKursreihe.kurse;
+		File file = getCSVFile(fileName);
 
 		try (BufferedReader br = new BufferedReader(new FileReader(file))) {
 			log.info("CSV-Datei einlesen: " + file.getName());
@@ -216,8 +238,7 @@ public class ImportCSVsimple {
 				// wenn der erste Kurs "null" enthält wird die Zeile ignoriert 
 				if (!zeile[1].contains("null")) {
 					Kurs kurs = new Kurs();
-					kurs.setWertpapier(kuerzel);
-					kurs.datum = DateUtil.parseDatum(zeile[0]);
+					kurs.setDatum(DateUtil.parseDatum(zeile[0]));
 					kurs.open = Float.parseFloat(zeile[1]);
 					kurs.high = Float.parseFloat(zeile[2]);
 					kurs.low = Float.parseFloat(zeile[3]);
@@ -236,8 +257,8 @@ public class ImportCSVsimple {
 							// keine Problem, wenn das nicht funktioniert 
 						}
 					}
-
-					kursreihe.add(kurs);
+					// wenn alles funktioniert hat, wird der Kurs an die Aktie gehängt
+					aktie.addKurs(kurs);
 				}
 			}
 
@@ -245,9 +266,9 @@ public class ImportCSVsimple {
 			log.error("Feher beim Einlesen Datei: " + file.getAbsolutePath());
 			e.printStackTrace();
 		}
-
-		return importKursreihe;
-
+		aV.saveAktie(aktie);
+		System.out.println("Kurs eingelesen " + aktie.getName() + " - " + aktie.getKurse().size());
+		return aktie;
 	}
 
 }

@@ -61,7 +61,10 @@ public class Aktie extends Parameter {
 	private Long id;
 
 	@Column(name = "name", length = 64, unique = true, nullable = false)
-	public String name;
+	private String name;
+
+	@Column(name = "kuerzel", length = 64, unique = true, nullable = true)
+	private String kuerzel;
 
 	@Column(name = "timestamp", columnDefinition = "TIMESTAMP DEFAULT CURRENT_TIMESTAMP", updatable = false, nullable = false)
 	@Temporal(TemporalType.TIMESTAMP)
@@ -74,18 +77,20 @@ public class Aktie extends Parameter {
 	public String indexname;
 
 	@Column(name = "land")
-	private int land;
+	private int land = 1; // default = Deutschland
 
 	@Column(name = "waehrung")
-	private int waehrung = 0;
+	private int waehrung = 1;  // default = Euro
 
-	@Transient
 	@Column(name = "isin", length = 12)
 	private String ISIN;
 
-	// die Datenquelle 1=Yahoo 2=Finanzen 3=Ariva
+	@Column(name = "wkn", length = 6)
+	private String wkn;
+
+	// die Datenquelle 1=Finanzen 2=Yahoo 3=Ariva
 	@Column(name = "quelle")
-	private int quelle = 0;
+	private int quelle = 1;  // default = Finanzen
 
 	// 2 = Xetra
 	@Column(name = "boersenplatz")
@@ -256,25 +261,6 @@ public class Aktie extends Parameter {
 			this.kurse = DBManager.getKursreihe(name);
 		}
 		return (ArrayList<Kurs>) kurse;
-	}
-
-	/**
-	 * Ein Tag nach dem letzten vorhandenen Kurs in der DB Ab diesem Tag muss
-	 * eingelesen werden.
-	 */
-	public GregorianCalendar ermittleNextKurs() {
-		// der letzte Kurs wird ermittelt
-		GregorianCalendar letzterKurs = DBManager.getLastKurs(this);
-		// bei einer ganz neuen Aktie gibt es keine Kurse.
-		// das Beginn-Datum muss dann manuell gesetzt werden.
-		if (letzterKurs == null) {
-			log.error("Aktie ohne Kurse! BeginnDatum muss manuell vorgegeben werden: " + this.getName());
-			return null;
-		}
-		// der nächste erwartete Kurs wird einfach 1 Tag hoch gezählt. Das stimmt nicht
-		// genau, spielt aber keine Rolle.
-		GregorianCalendar result = DateUtil.addTage(letzterKurs, 1);
-		return result;
 	}
 
 	/**
@@ -524,12 +510,7 @@ public class Aktie extends Parameter {
 	}
 
 	public String toString() {
-		String result;
-		result = name + " " + kurse.size() + " Kurse";
-		for (int i = 0; i < kurse.size(); i++) {
-			result = result + (kurse.get(i).toString());
-		}
-		return result;
+		return this.name;
 	}
 
 	/**
@@ -794,6 +775,30 @@ public class Aktie extends Parameter {
 
 	public void setaV(AktieVerwaltung aV) {
 		this.aV = aV;
+	}
+
+	public void setKurse(List<Kurs> kurse) {
+		this.kurse = kurse;
+	}
+
+	public void setName(String name) {
+		this.name = name.toLowerCase();
+	}
+
+	public String getWkn() {
+		return wkn;
+	}
+
+	public void setWkn(String wkn) {
+		this.wkn = wkn;
+	}
+
+	public String getKuerzel() {
+		return kuerzel;
+	}
+
+	public void setKuerzel(String kuerzel) {
+		this.kuerzel = kuerzel;
 	}
 
 }

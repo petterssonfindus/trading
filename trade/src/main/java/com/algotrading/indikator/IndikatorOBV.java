@@ -59,12 +59,12 @@ public class IndikatorOBV extends IndikatorAlgorithmus {
 
 		// addiert die Umsätze der vergangenen x(dauer) Tage.
 		if (kurse.size() <= dauer)
-			log.error(aktie.name + " zu wenig Kurse: " + kurse.size() + " vorhanden: " + dauer + " benoetigt."); // wenn
-																													// weniger
-																													// Kurse
-																													// vorhanden
-																													// sind
-		// k zählt von x(dauer) + 1 Tag , bis zum Ende
+			log.error(aktie.getName() + " zu wenig Kurse: " + kurse.size() + " vorhanden: " + dauer + " benoetigt."); // wenn
+																														// weniger
+																														// Kurse
+																														// vorhanden
+																														// sind
+																														// k zählt von x(dauer) + 1 Tag , bis zum Ende
 		for (int k = dauer + 1; k < kurse.size(); k++) {
 			// für jeden Kurs x-Tage zurück
 			// i zählt von 0 bis 9
@@ -79,7 +79,7 @@ public class IndikatorOBV extends IndikatorAlgorithmus {
 					// das Volumen wird hinzu addiert
 					summe += umsatzHeute;
 				} else { // der Kurs ist gefallen oder gleich geblieben #TODO gleiche Kurse geschieht
-							// nichts
+						// nichts
 					summe -= umsatzHeute;
 				}
 			}
