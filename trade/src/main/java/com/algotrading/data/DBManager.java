@@ -134,7 +134,7 @@ public class DBManager {
 	 * # TODO Fehlerbehandlung, wenn Kurs bereits vorhanden. 
 	 */
 	public static boolean addKurs(Kurs kurs, Connection connection) {
-		String name = kurs.getWertpapier();
+		String name = kurs.getAktieName();
 		String datum = addApostroph(DateUtil.formatSQLDate(kurs.datum), false);
 		String close = addApostroph(kurs.getClose(), true);
 		String open = addApostroph(Float.toString(kurs.open), true);
@@ -157,7 +157,7 @@ public class DBManager {
 			if (e.getSQLState().matches("23000")) {
 				return true;
 			} else {
-				log.error("Fehler beim Schreiben von Kurs " + kurs.getWertpapier() + kurs.toString());
+				log.error("Fehler beim Schreiben von Kurs " + kurs.getAktieName() + kurs.toString());
 				log.error(insert);
 				return false;
 			}
@@ -290,7 +290,7 @@ public class DBManager {
 			log.error("Referenzkurs im xxxdja nicht gefunden: " + DateUtil.formatDate(kurs1.datum));
 		} else {
 			// geht durch alle Kurse der zu präfenden Aktie 
-			for (Kurs kurs : aktie.getKurse()) {
+			for (Kurs kurs : aktie.getKursListe()) {
 				// in beiden Kursreihen wird ein Tag weiter gespult und der Tag wird verglichen
 
 			}

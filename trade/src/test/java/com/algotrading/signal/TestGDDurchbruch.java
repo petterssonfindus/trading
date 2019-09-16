@@ -26,7 +26,7 @@ public class TestGDDurchbruch extends AbstractTest {
 		// TODO Auto-generated method stub
 		super.setUp();
 
-		aktie = aV.getAktie("testaktie");
+		aktie = aV.getAktieLazy("testaktie");
 		assertNotNull(aktie);
 		assertTrue(aktie.getKursListe().size() > 1);
 

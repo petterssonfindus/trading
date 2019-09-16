@@ -11,7 +11,7 @@ public class TestMathUtil extends AbstractTest {
 	static Aktie aktie;
 
 	public void setUp() {
-		aktie = aV.getAktie("testaktie");
+		aktie = aV.getAktieLazy("testaktie");
 	}
 
 	public static void testRechneStandardabweichung() {
@@ -29,7 +29,7 @@ public class TestMathUtil extends AbstractTest {
 
 	@Test
 	public void testRechneAbweichung() {
-		Aktie aktie = aV.getAktie("dax");
+		Aktie aktie = aV.getAktieLazy("dax");
 		IndikatorAlgorithmus iA = aktie.addIndikatorAlgorithmus(new IndikatorAbweichung());
 		iA.addParameter("typ", 1);
 		aktie.rechneIndikatoren();

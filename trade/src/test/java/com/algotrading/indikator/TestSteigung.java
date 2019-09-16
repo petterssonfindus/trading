@@ -17,7 +17,7 @@ public class TestSteigung extends AbstractTest {
 
 		iB.addParameter("dauer", 10);
 		iB.rechne(aktie);
-		float x = aktie.getKurse().get(50).getIndikatorWert(iB);
+		float x = aktie.getKursListe().get(50).getIndikatorWert(iB);
 		System.out.println("Steigung50: " + x);
 		assertEquals(ergebnis, x);
 	}

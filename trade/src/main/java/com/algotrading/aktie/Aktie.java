@@ -154,17 +154,6 @@ public class Aktie extends Parameter {
 	}
 
 	/**
-	 * Gibt den Inhalt der Kurse, ohne diese zu initialisieren
-	 * 
-	 * @return
-	 */
-	public List<Kurs> getKurse() {
-		if (this.kurse == null)
-			log.error("Kurse sind null");
-		return this.kurse;
-	}
-
-	/**
 	 * ermittelt zu einem gegebenen Kurs den Vortageskurs wenn es der erste Kurs
 	 * ist, dann null
 	 * 
@@ -252,10 +241,6 @@ public class Aktie extends Parameter {
 	/**
 	 * ermittelt und initialisiert eine Kursreihe mit allen vorhandenen Kursen
 	 * ungeeignet für Depot-Kursreihen
-	 * 
-	 * @param beginn
-	 * @param ende
-	 * @return
 	 */
 	public List<Kurs> getKursListe() {
 		try {
@@ -270,7 +255,9 @@ public class Aktie extends Parameter {
 	 * Liest Kurse aus der DB und hängt sie an die Aktie
 	 */
 	private void initializeKurse() {
-		Aktie aktie = aV.getAktieMitKurse(this.getId());
+		// eine vollständige Aktie in einer Transaktion laden 
+		Aktie aktie = aV.getAktieMitKurseNew(getId());
+		// die Kurse übernehmen 
 		this.setKurse(aktie.getKurse());
 	}
 
@@ -285,7 +272,7 @@ public class Aktie extends Parameter {
 		int x = this.kurse.indexOf(this.aktuellerKurs);
 		if (x > this.kurse.size() - 2) {
 			log.error(
-					"Kursreihe zu Ende " + this.aktuellerKurs.getWertpapier() + DateUtil
+					"Kursreihe zu Ende " + this.aktuellerKurs.getAktieName() + DateUtil
 							.formatDate(this.aktuellerKurs.getDatum()));
 			return this.aktuellerKurs;
 		}
@@ -338,7 +325,7 @@ public class Aktie extends Parameter {
 			this.kurse = new ArrayList<Kurs>();
 		}
 		Aktie newAktie = aV.getAktieMitKurse(this.getId());
-		this.kurse = newAktie.getKurse();
+		this.kurse = newAktie.getKursListe();
 		this.kurse.add(kurs);
 	}
 
@@ -810,6 +797,10 @@ public class Aktie extends Parameter {
 
 	public void setKuerzel(String kuerzel) {
 		this.kuerzel = kuerzel;
+	}
+
+	public List<Kurs> getKurse() {
+		return kurse;
 	}
 
 }

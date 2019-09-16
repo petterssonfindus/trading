@@ -11,7 +11,7 @@ public class TestMultiplikation extends AbstractTest {
 
 	public void setUp() {
 		super.setUp();
-		aktie = aV.getAktie("testaktie");
+		aktie = aV.getAktieLazy("testaktie");
 	}
 
 	/**

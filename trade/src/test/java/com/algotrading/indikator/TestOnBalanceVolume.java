@@ -14,7 +14,7 @@ public class TestOnBalanceVolume extends AbstractTest {
 	@Override
 	public void setUp() {
 		super.setUp();
-		aktie = aV.getAktie("testaktie");
+		aktie = aV.getAktieLazy("testaktie");
 	}
 
 	/*

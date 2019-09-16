@@ -29,26 +29,30 @@ public class AktieVerwaltung {
 		return aktieDAO.saveAktie(aktie);
 	}
 
-	public Aktie getAktie(Long id) {
-		Aktie aktie = aktieDAO.getAktie(id);
+	public Aktie getAktieLazy(Long id) {
+		Aktie aktie = this.getVerzeichnis().getAktieOhneKurse(id);
 		aktie.setaV(this);
 		return aktie;
+	}
+
+	public Aktie getAktieLazy(String name) {
+		Aktie aktie = this.getVerzeichnis().getAktieOhneKurse(name);
+		aktie.setaV(this);
+		return aktie;
+	}
+
+	public Aktie getAktieLazy(Kurs kurs) {
+		return getAktieLazy(kurs.getAktieName());
 	}
 
 	public Aktie getAktieMitKurse(Long id) {
-		Aktie aktie = aktieDAO.getAktieMitKurse(id);
+		Aktie aktie = this.getVerzeichnis().getAktieMitKurse(id);
 		aktie.setaV(this);
 		return aktie;
 	}
 
-	public Aktie getAktie(String name) {
-		Aktie aktie = aktieDAO.findByName(name);
-		aktie.setaV(this);
-		return aktie;
-	}
-
-	public Aktie getAktie(Kurs kurs) {
-		return getAktie(kurs.getWertpapier());
+	public Aktie getAktieMitKurseNew(Long id) {
+		return aktieDAO.getAktieMitKurse(id);
 	}
 
 	public List<Aktie> getAktienListe() {
@@ -97,8 +101,8 @@ public class AktieVerwaltung {
 	}
 
 	public void checkKursreiheTage(String name) {
-		Aktie aktie = getAktie(name);
-		Aktie referenz = getAktie("dow");
+		Aktie aktie = getAktieLazy(name);
+		Aktie referenz = getAktieLazy("dow");
 		DBManager.checkKursreiheTage(aktie, referenz);
 	}
 

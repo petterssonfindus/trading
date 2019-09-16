@@ -30,7 +30,7 @@ public class SimulatorTest extends AbstractTest {
 
 		// Aktienliste erzeugen und befüllen
 		Aktien aktien = aV.createAktien();
-		Aktie aktie = aV.getAktie("xxxdja");
+		Aktie aktie = aV.getAktieLazy("xxxdja");
 		aktien.addAktie(aktie);
 
 		// Indikatoren konfigurieren 
@@ -85,7 +85,7 @@ public class SimulatorTest extends AbstractTest {
 		// Aktienliste bestimmen
 
 		Aktien aktien = aV.createAktien();
-		aktien.add(aV.getAktie("xxxdja"));
+		aktien.add(aV.getAktieLazy("xxxdja"));
 		//		aktien.add(Aktien.getInstance().getAktie("aa"));
 
 		//		ArrayList<Aktie> aktien = Aktien.getInstance().getAktien(zeitraum, false);

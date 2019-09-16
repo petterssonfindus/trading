@@ -17,7 +17,7 @@ public class TestSAR extends AbstractTest {
 		// TODO Auto-generated method stub
 		super.setUp();
 
-		aktie = aV.getAktie("sardata5");
+		aktie = aV.getAktieLazy("sardata5");
 		iA = aktie.addIndikatorAlgorithmus(new IndikatorStatisticSAR());
 		iA.addParameter("start", 0.02f);
 		iA.addParameter("stufe", 0.02f);

@@ -40,6 +40,8 @@ public class AbstractTest extends TestCase {
 
 	public Aktie aktie;
 
+	private final Long testAktieId = 122126L;
+
 	@Before
 	public void setUp() {
 		System.out.println("JUnitSetup() ausgeführt");
@@ -60,6 +62,10 @@ public class AbstractTest extends TestCase {
 
 		aV.saveAktie(aktie);
 
+	}
+
+	public Long getTestAktieId() {
+		return testAktieId;
 	}
 
 }

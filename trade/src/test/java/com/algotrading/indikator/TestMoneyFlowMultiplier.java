@@ -16,7 +16,7 @@ public class TestMoneyFlowMultiplier extends AbstractTest {
 	public void setUp() {
 		super.setUp();
 
-		aktie = aV.getAktie("testaktie");
+		aktie = aV.getAktieLazy("testaktie");
 		iA = aktie.addIndikatorAlgorithmus(new IndikatorMFM());
 		aktie.addIndikatorAlgorithmus(iA);
 		iA.addParameter("dauer", 10);

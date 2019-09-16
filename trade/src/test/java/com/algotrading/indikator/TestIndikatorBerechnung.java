@@ -11,7 +11,7 @@ public class TestIndikatorBerechnung extends AbstractTest {
 	static Aktie aktie;
 
 	public void setUp() {
-		aktie = aV.getAktie("testaktie");
+		aktie = aV.getAktieLazy("testaktie");
 	}
 
 	/**

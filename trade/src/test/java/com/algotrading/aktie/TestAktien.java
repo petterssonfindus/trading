@@ -10,7 +10,7 @@ public class TestAktien extends AbstractTest {
 
 	public void setUp() {
 
-		aktie = aV.getAktie("testaktie");
+		aktie = aV.getAktieLazy("testaktie");
 
 	}
 

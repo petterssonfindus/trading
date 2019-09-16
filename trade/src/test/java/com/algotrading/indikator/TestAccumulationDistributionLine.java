@@ -17,7 +17,7 @@ public class TestAccumulationDistributionLine extends AbstractTest {
 		// TODO Auto-generated method stub
 		super.setUp();
 
-		aktie = aV.getAktie("testaktie");
+		aktie = aV.getAktieLazy("testaktie");
 		iA = aktie.addIndikatorAlgorithmus(new IndikatorADL());
 		aktie.addIndikatorAlgorithmus(iA);
 		iA.addParameter("dauer", 10);

@@ -42,7 +42,7 @@ public class IndikatorAbweichung extends IndikatorAlgorithmus {
 		Kurs kurs2a = null;
 		Object oa = getParameter("aktie");
 		if (oa != null) {
-			aktie2 = aV.getAktieMitKurse(aV.getAktie(oa.toString()).getId());
+			aktie2 = aV.getAktieMitKurse(aV.getAktieLazy(oa.toString()).getId());
 		} else {
 			aktie2 = aktie;
 		}

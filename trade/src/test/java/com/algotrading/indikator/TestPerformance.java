@@ -18,7 +18,7 @@ public class TestPerformance extends AbstractTest {
 
 		performance.addParameter("dauer", 10);
 		performance.rechne(aktie);
-		float x = aktie.getKurse().get(50).getIndikatorWert(performance);
+		float x = aktie.getKursListe().get(50).getIndikatorWert(performance);
 		System.out.println("Performance 50: " + x);
 		assertEquals(ergebnis, x);
 	}
@@ -35,7 +35,7 @@ public class TestPerformance extends AbstractTest {
 
 		performance.addParameter("dauer", -13);
 		performance.rechne(aktie);
-		float x = aktie.getKurse().get(50).getIndikatorWert(performance);
+		float x = aktie.getKursListe().get(50).getIndikatorWert(performance);
 		float x2 = Util.rundeBetrag(x);
 		System.out.println("NPerformance 50: " + x);
 		assertEquals(-0.51f, x2);

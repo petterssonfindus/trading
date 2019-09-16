@@ -18,7 +18,7 @@ public class TestVolatilitaet extends AbstractTest {
 		// TODO Auto-generated method stub
 		super.setUp();
 
-		aktie = aV.getAktie("sardata5");
+		aktie = aV.getAktieLazy("sardata5");
 
 		IndikatorAlgorithmus10 = aktie.addIndikatorAlgorithmus(new IndikatorVolatilitaet());
 		aktie.addIndikatorAlgorithmus(IndikatorAlgorithmus10);

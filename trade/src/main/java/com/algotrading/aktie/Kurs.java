@@ -281,7 +281,7 @@ public class Kurs {
 		return signal;
 	}
 
-	public String getWertpapier() {
+	public String getAktieName() {
 		return this.aktie.getName();
 	}
 

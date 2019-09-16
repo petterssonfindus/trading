@@ -24,14 +24,14 @@ public class StrategieJahrAlleSignale extends SignalStrategie {
 	@Override
 	public Order entscheideSignal(Signal signal, Depot depot) {
 		Kurs kurs = signal.getKurs();
-		String wertpapier = kurs.getWertpapier();
+		String wertpapier = kurs.getAktieName();
 		Order order = null;
 		// wenn es ein Jahrestag-Signal ist 
 		if (signal.getSignalAlgorithmus().getClass().getName() == "signal.Jahrestag") {
 
 			if (signal.getKaufVerkauf() == Order.KAUF) {
 				// Speichert an der Aktie über einen Parameter die Phase
-				aV.getAktie(signal.getKurs()).addParameter("phase", 1);
+				aV.getAktieLazy(signal.getKurs()).addParameter("phase", 1);
 				log.debug("JahrestagSignal Kauf: " + signal.toString());
 				order = depot.kaufe(depot.geld, kurs.getAktie());
 			}
@@ -41,7 +41,7 @@ public class StrategieJahrAlleSignale extends SignalStrategie {
 				// Order wird nur dann ausgefährt, wenn ein Bestand vorhanden ist
 				order = depot.verkaufeGesamtbestand();
 				// Speichert an der Aktie äber einen Parameter die Phase
-				aV.getAktie(signal.getKurs()).addParameter("phase", 0);
+				aV.getAktieLazy(signal.getKurs()).addParameter("phase", 0);
 				if (order != null) {
 					log.debug("JahrestagSignal Verkauf: " + signal.toString() + " Order: " + order.toString());
 				}

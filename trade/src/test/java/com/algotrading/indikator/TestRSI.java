@@ -18,7 +18,7 @@ public class TestRSI extends AbstractTest {
 	IndikatorAlgorithmus rsi;
 
 	public void setUp() {
-		rsiAktie = aV.getAktie("sardata5");
+		rsiAktie = aV.getAktieLazy("sardata5");
 	}
 
 	public void testRSI() {

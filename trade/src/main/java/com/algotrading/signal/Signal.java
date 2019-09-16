@@ -153,7 +153,7 @@ public class Signal {
 	 */
 	public String toString() {
 		String result;
-		result = this.kurs.getWertpapier() + Util.separatorCSV + DateUtil.formatDate(
+		result = this.kurs.getAktieName() + Util.separatorCSV + DateUtil.formatDate(
 				this.kurs.getDatum()) + Util.separatorCSV + this.kaufVerkaufToString() + Util.separatorCSV + this.sA
 						.getKurzname() + Util.separatorCSV + Util.toString(this.staerke) + this.toStringBewertungen();
 		return result;

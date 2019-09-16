@@ -22,7 +22,7 @@ public class TestGleitenderDurchschnitt extends AbstractTest {
 		// TODO Auto-generated method stub
 		super.setUp();
 
-		aktie = aV.getAktie("sardata5");
+		aktie = aV.getAktieLazy("sardata5");
 
 		iA10 = aktie.addIndikatorAlgorithmus(new IndikatorGD());
 		iA10.addParameter("dauer", 10);

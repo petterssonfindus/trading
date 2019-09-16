@@ -17,7 +17,7 @@ public class TestMinMax extends AbstractTest {
 		iA.addParameter("dauer", 10);
 		aktie.rechneIndikatoren();
 
-		Kurs kurs = aktie.getKurse().get(20);
+		Kurs kurs = aktie.getKursListe().get(20);
 		float test = kurs.getIndikatorWert(iA);
 		System.out.println("test" + test);
 		assertEquals(0.43922076f, test);

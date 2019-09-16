@@ -68,7 +68,7 @@ public class TestSignalBewertungEquals extends AbstractTest {
 	 * Erzeugt eine SignalBewertung, die als Vorlage genutzt werden kann
 	 */
 	private SignalBewertung createSignalBewertungDurchBerechnung() {
-		aktie = aV.getAktieMitKurse(aV.getAktie("testaktie").getId());
+		aktie = aV.getAktieMitKurse(aV.getAktieLazy("testaktie").getId());
 
 		// Indikator konfigurieren und an Aktie hängen
 		IndikatorAlgorithmus iA = aktie.addIndikatorAlgorithmus(new IndikatorAbweichung());

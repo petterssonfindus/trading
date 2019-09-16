@@ -490,7 +490,7 @@ public class Depot {
 			Kurs kurs = aktie.getAktuellerKurs();
 			for (Signal signal : kurs.getSignale()) {
 				result.append(
-						kurs.getWertpapier() + " _ " + signal.getKaufVerkauf() + " _ " + signal.getSignalAlgorithmus()
+						kurs.getAktieName() + " _ " + signal.getKaufVerkauf() + " _ " + signal.getSignalAlgorithmus()
 								.getKurzname() + Util.separatorCSV);
 			}
 		}

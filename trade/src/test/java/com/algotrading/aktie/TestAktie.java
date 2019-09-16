@@ -30,29 +30,29 @@ public class TestAktie extends AbstractTest {
 
 	@Test
 	public void testNewAktieAriva() {
-		Aktie aktie = new Aktie("Umlaufrendite");
+		Aktie aktie = new Aktie("testaktie");
 		aktie.setISIN(null);
 		aktie.setQuelle(aV.QUELLE_Ariva);
 		aktie.setWkn(null);
 		aktie.setKuerzel(null);
 		aV.saveAktie(aktie);
 		aktie.setaV(aV);
-		Aktie aktieNew = importCSV.readKurseArivaCSV("wkn_umlaufrendite__historic", aktie);
+		Aktie aktieNew = importCSV.readKurseArivaCSV("wkn_846900_historic", aktie);
 	}
 
 	@Test
 	public void testChangeAktie() {
-		Aktie aktie = aV.getAktie("VDAX_NEW1M");
+		Aktie aktie = aV.getAktieLazy("VDAX_NEW1M");
 		aktie.setQuelle(1);
 		aV.saveAktie(aktie);
-		Aktie aktie2 = aV.getAktie(aktie.getId());
+		Aktie aktie2 = aV.getAktieLazy(aktie.getId());
 	}
 
 	@Test
 	public void testGetAktieByName() {
-		Aktie aktie = aV.getAktie("umalauf1567762383227");
+		Aktie aktie = aV.getAktieLazy("umalauf1567762383227");
 		assertNotNull(aktie);
-		Aktie aktie2 = aV.getAktie("umal");
+		Aktie aktie2 = aV.getAktieLazy("umal");
 		assertNull(aktie2);
 
 	}
@@ -63,24 +63,24 @@ public class TestAktie extends AbstractTest {
 		aktie = aV.getAktieMitKurse(8112l);
 		long ende = new GregorianCalendar().getTimeInMillis();
 		System.out.println("Auswertung dauerte Sekunden: " + ((ende - beginn) / 1000));
-		System.out.println("Kurs0: " + DateUtil.formatDate(aktie.getKurse().get(0).getDatum()));
+		System.out.println("Kurs0: " + DateUtil.formatDate(aktie.getKursListe().get(0).getDatum()));
 		System.out
-				.println("Kursn: " + DateUtil.formatDate(aktie.getKurse().get(aktie.getKurse().size() - 1).getDatum()));
+				.println("Kursn: " + DateUtil.formatDate(aktie.getKursListe().get(aktie.getKursListe().size() - 1).getDatum()));
 	}
 
 	@Test
 	public void testDelete() {
-		aV.deleteAktie(aV.getAktie("dax"));
+		aV.deleteAktie(aV.getAktieLazy("dax"));
 	}
 
 	@Test
 	public void testDeleteByID() {
-		aV.deleteAktie(aV.getAktie(33L));
+		aV.deleteAktie(aV.getAktieLazy(33L));
 	}
 
 	@Test
 	public void testKursAktie() {
-		Aktie aktie = aV.getAktie(257l);
+		Aktie aktie = aV.getAktieLazy(257l);
 		// ein neuer Kurs
 		Kurs kurs = new Kurs();
 		kurs.setDatum(new GregorianCalendar());
@@ -92,8 +92,8 @@ public class TestAktie extends AbstractTest {
 
 	public void testGetKursZukunft() {
 
-		Aktie aktie = aV.getAktie("dax");
-		List<Kurs> kursreihe = aktie.getKurse();
+		Aktie aktie = aV.getAktieLazy("dax");
+		List<Kurs> kursreihe = aktie.getKursListe();
 
 		assertNotNull(kursreihe);
 		assertTrue(kursreihe.size() > 1);
@@ -107,7 +107,7 @@ public class TestAktie extends AbstractTest {
 	}
 
 	public void testGetKurse() {
-		Aktie aktie = aV.getAktie("dax");
+		Aktie aktie = aV.getAktieLazy("dax");
 		List<Kurs> kursreihe = aktie.getKursListe();
 		assertNotNull(kursreihe);
 		assertTrue(kursreihe.size() > 1);

@@ -267,7 +267,7 @@ public class ImportCSV {
 			e.printStackTrace();
 		}
 		aV.saveAktie(aktie);
-		System.out.println("Kurs eingelesen " + aktie.getName() + " - " + aktie.getKurse().size());
+		System.out.println("Kurs eingelesen " + aktie.getName() + " - " + aktie.getKursListe().size());
 		return aktie;
 	}
 

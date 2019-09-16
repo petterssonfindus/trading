@@ -68,8 +68,8 @@ public class AktieDAO {
 	 */
 	public GregorianCalendar getDatumLetzterKurs(Long id) {
 		Aktie aktie = getAktieMitKurse(id);
-		if (aktie.getKurse() != null && aktie.getKurse().size() > 0) {
-			Kurs kurs = aktie.getKurse().get(aktie.getKurse().size() - 1);
+		if (aktie.getKursListe() != null && aktie.getKursListe().size() > 0) {
+			Kurs kurs = aktie.getKursListe().get(aktie.getKursListe().size() - 1);
 			return kurs.getDatum();
 		}
 		return null;
@@ -82,8 +82,8 @@ public class AktieDAO {
 	public GregorianCalendar getDatumErsterKurs(Long id) {
 		// Aktie mit Kursen laden 
 		Aktie aktie = getAktieMitKurse(id);
-		if (aktie.getKurse() != null && aktie.getKurse().size() > 0) {
-			Kurs kurs = aktie.getKurse().get(0);
+		if (aktie.getKursListe() != null && aktie.getKursListe().size() > 0) {
+			Kurs kurs = aktie.getKursListe().get(0);
 			return kurs.getDatum();
 		}
 		return null;

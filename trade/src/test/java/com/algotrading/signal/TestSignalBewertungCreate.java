@@ -31,7 +31,7 @@ public class TestSignalBewertungCreate extends AbstractTest {
 	 */
 	@Test
 	public void test1SA() {
-		Aktie aktie = aV.getAktie("dax");
+		Aktie aktie = aV.getAktieLazy("testaktie");
 		assertNotNull(aktie);
 		assertTrue(aktie.getKursListe().size() > 1);
 
@@ -80,7 +80,7 @@ public class TestSignalBewertungCreate extends AbstractTest {
 	}
 
 	public SignalBewertung createSignalBewertung() {
-		Aktie aktie = aV.getAktie("testaktie");
+		Aktie aktie = aV.getAktieLazy("testaktie");
 
 		// Indikator konfigurieren und an Aktie hängen
 		IndikatorAlgorithmus iA2 = aktie.addIndikatorAlgorithmus(new IndikatorGD());

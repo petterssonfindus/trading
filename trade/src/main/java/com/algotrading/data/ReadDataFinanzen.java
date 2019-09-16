@@ -117,7 +117,7 @@ public class ReadDataFinanzen {
 		// aus dem String-Array ein ImportKursreihe machen 
 		ImportKursreihe importKursreihe = transformFinanzenWSToKursreihe(kurse, aktieName);
 		// Aktie holen 
-		Aktie aktie = aV.getAktie(aktieName);
+		Aktie aktie = aV.getAktieLazy(aktieName);
 		aktie.setKurse(importKursreihe.getKurse());
 		// die Kursreihe in die DB schreiben
 		aV.saveAktie(aktie);
