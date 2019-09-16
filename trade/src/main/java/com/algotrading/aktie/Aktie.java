@@ -21,6 +21,7 @@ import javax.persistence.Transient;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.hibernate.LazyInitializationException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -51,8 +52,8 @@ public class Aktie extends Parameter {
 	@Transient
 	private static final Logger log = LogManager.getLogger(Aktie.class);
 
-	@Transient
 	@Autowired
+	@Transient
 	private AktieVerwaltung aV;
 
 	@Id
@@ -197,7 +198,7 @@ public class Aktie extends Parameter {
 			log.error("gewünschtes Kursdatum: " + testDatum + " liegt vor erstem vorhandenen Kurs: " + kurse.get(0));
 			return null;
 		}
-		ArrayList<Kurs> kurse = this.getKursListe();
+		List<Kurs> kurse = this.getKursListe();
 		// TODO hier könnte Performance gespart werden, wenn nicht von vorne iteriert
 		// wird, sondern intelligent gesucht wird
 		for (Kurs kurs : kurse) {
@@ -220,7 +221,7 @@ public class Aktie extends Parameter {
 	 * @param ende
 	 * @return
 	 */
-	public ArrayList<Kurs> getKurse(Zeitraum zeitraum) {
+	public List<Kurs> getKurse(Zeitraum zeitraum) {
 		ArrayList<Kurs> result = null;
 		if (zeitraum == null)
 			return this.getKursListe();
@@ -256,11 +257,21 @@ public class Aktie extends Parameter {
 	 * @param ende
 	 * @return
 	 */
-	public ArrayList<Kurs> getKursListe() {
-		if (this.kurse == null) {
-			this.kurse = DBManager.getKursreihe(name);
+	public List<Kurs> getKursListe() {
+		try {
+			this.kurse.size();
+		} catch (LazyInitializationException e) {
+			this.initializeKurse();
 		}
-		return (ArrayList<Kurs>) kurse;
+		return this.kurse;
+	}
+
+	/**
+	 * Liest Kurse aus der DB und hängt sie an die Aktie
+	 */
+	private void initializeKurse() {
+		Aktie aktie = aV.getAktieMitKurse(this.getId());
+		this.setKurse(aktie.getKurse());
 	}
 
 	/**

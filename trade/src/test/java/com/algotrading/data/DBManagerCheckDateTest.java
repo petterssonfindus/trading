@@ -8,7 +8,7 @@ import com.algotrading.util.AbstractTest;
 public class DBManagerCheckDateTest extends AbstractTest {
 
 	public void testCheckKursreiheTage() {
-		List<Aktie> aktien = aV.getVerzeichnis().getAllAktien();
+		List<Aktie> aktien = aV.getAktienListe();
 		for (Aktie aktie : aktien) {
 			DBManager.checkKursreiheTage(aktie.name);
 		}

@@ -13,7 +13,7 @@ public class TestRSI2 extends AbstractTest {
 	@Test
 	public void testRSI2() {
 
-		Aktie aktie = aV.getVerzeichnis().getAktieOhneKurse("testaktie");
+		Aktie aktie = aV.getAktieOhneKurse("testaktie");
 		IndikatorAlgorithmus iA = aktie.addIndikatorAlgorithmus(new IndikatorRSI2());
 		iA.addParameter("dauer", 10);
 

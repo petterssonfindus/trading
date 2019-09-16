@@ -1,10 +1,10 @@
 package com.algotrading.indikator;
 
-import java.util.ArrayList;
+import java.util.List;
 
 import com.algotrading.aktie.Aktie;
-import com.algotrading.aktie.AktieVerzeichnis;
 import com.algotrading.aktie.Kurs;
+import com.algotrading.component.AktieVerzeichnis;
 import com.algotrading.util.AbstractTest;
 
 public class TestGleitenderDurchschnitt extends AbstractTest {
@@ -18,11 +18,11 @@ public class TestGleitenderDurchschnitt extends AbstractTest {
 	private static IndikatorAlgorithmus iAlog;
 
 	@Override
-	protected void setUp() {
+	public void setUp() {
 		// TODO Auto-generated method stub
 		super.setUp();
 
-		aktie = AktieVerzeichnis.newInstance().getAktieOhneKurse("sardata5");
+		aktie = aV.getAktie("sardata5");
 
 		iA10 = aktie.addIndikatorAlgorithmus(new IndikatorGD());
 		iA10.addParameter("dauer", 10);
@@ -52,7 +52,7 @@ public class TestGleitenderDurchschnitt extends AbstractTest {
 
 	public void testRechne() {
 		aktie.rechneIndikatoren();
-		ArrayList<Kurs> kurse = aktie.getKursListe();
+		List<Kurs> kurse = aktie.getKursListe();
 
 		Kurs kurs23 = aktie.getKursListe().get(23);
 		float gd10 = kurs23.getIndikatorWert(iA10);

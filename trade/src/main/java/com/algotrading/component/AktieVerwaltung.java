@@ -1,12 +1,12 @@
 package com.algotrading.component;
 
 import java.util.GregorianCalendar;
+import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.algotrading.aktie.Aktie;
-import com.algotrading.aktie.AktieVerzeichnis;
 import com.algotrading.aktie.Aktien;
 import com.algotrading.aktie.Kurs;
 import com.algotrading.data.DBManager;
@@ -51,10 +51,14 @@ public class AktieVerwaltung {
 		return getAktie(kurs.getWertpapier());
 	}
 
+	public List<Aktie> getAktienListe() {
+		return this.getVerzeichnis().getAllAktien();
+	}
+
 	/**
 	 * Ermittelt das Ergebnis aus der Datenbank 
 	 */
-	public Iterable<Aktie> getAll() {
+	public Iterable<Aktie> getAktienAusDB() {
 		return aktieDAO.findAll();
 	}
 
@@ -68,7 +72,7 @@ public class AktieVerwaltung {
 
 	public Aktien getAktien() {
 		Aktien aktien = new Aktien(this);
-		aktien.addIterable(getAll());
+		aktien.addIterable(getAktienAusDB());
 		return aktien;
 	}
 
@@ -80,12 +84,16 @@ public class AktieVerwaltung {
 	 * Gibt die einzige Instanz des Aktienverzeichnis zurück 
 	 * Wenn sie bisher null war, wird sie befüllt 
 	 */
-	public AktieVerzeichnis getVerzeichnis() {
+	private AktieVerzeichnis getVerzeichnis() {
 		if (aktieVerzeichnis == null) {
-			aktieVerzeichnis = AktieVerzeichnis.newInstance();
-			aktieVerzeichnis.setAktien(getAll());
+			aktieVerzeichnis = new AktieVerzeichnis();
+			aktieVerzeichnis.setVerzeichnis(getAktienAusDB(), this);
 		}
 		return aktieVerzeichnis;
+	}
+
+	public List<Aktie> getAktien(GregorianCalendar beginn) {
+		return this.getVerzeichnis().getAktien(beginn);
 	}
 
 	public void checkKursreiheTage(String name) {

@@ -10,7 +10,7 @@ public class TestAktien extends AbstractTest {
 
 	public void setUp() {
 
-		aktie = AktieVerzeichnis.newInstance().getAktieOhneKurse("testaktie");
+		aktie = aV.getAktie("testaktie");
 
 	}
 
@@ -29,7 +29,7 @@ public class TestAktien extends AbstractTest {
 	*/
 	public void testVerzeichnis() {
 		assertNotNull(aktie);
-		List<Aktie> alleAktien = aV.getVerzeichnis().getAllAktien();
+		List<Aktie> alleAktien = aV.getAktienListe();
 		assertNotNull(alleAktien);
 		assertTrue(alleAktien.size() > 10);
 		for (Aktie aktie : alleAktien) {

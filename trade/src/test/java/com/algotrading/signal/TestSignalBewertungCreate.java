@@ -1,8 +1,6 @@
 package com.algotrading.signal;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
 
 import java.util.List;
 
@@ -10,7 +8,6 @@ import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import com.algotrading.aktie.Aktie;
-import com.algotrading.aktie.AktieVerzeichnis;
 import com.algotrading.component.Signalverwaltung;
 import com.algotrading.indikator.IndikatorAbweichung;
 import com.algotrading.indikator.IndikatorAlgorithmus;
@@ -34,7 +31,7 @@ public class TestSignalBewertungCreate extends AbstractTest {
 	 */
 	@Test
 	public void test1SA() {
-		Aktie aktie = aV.getVerzeichnis().getAktieOhneKurse("testaktie");
+		Aktie aktie = aV.getAktie("dax");
 		assertNotNull(aktie);
 		assertTrue(aktie.getKursListe().size() > 1);
 
@@ -82,9 +79,8 @@ public class TestSignalBewertungCreate extends AbstractTest {
 
 	}
 
-	@Test
 	public SignalBewertung createSignalBewertung() {
-		Aktie aktie = AktieVerzeichnis.newInstance().getAktieOhneKurse("testaktie");
+		Aktie aktie = aV.getAktie("testaktie");
 
 		// Indikator konfigurieren und an Aktie hängen
 		IndikatorAlgorithmus iA2 = aktie.addIndikatorAlgorithmus(new IndikatorGD());
@@ -116,9 +112,10 @@ public class TestSignalBewertungCreate extends AbstractTest {
 
 	@Test
 	public void test1SA2IA() {
-		Aktie aktie = aV.getVerzeichnis().getAktieOhneKurse("testaktie");
+		Aktie aktie = aV.getAktieMitKurse(257l);
 		assertNotNull(aktie);
-		assertTrue(aktie.getKursListe().size() > 1);
+		int size = aktie.getKursListe().size();
+		assertTrue(size > 1);
 
 		// Indikator konfigurieren und an Aktie hängen
 		IndikatorAlgorithmus iA = aktie.addIndikatorAlgorithmus(new IndikatorAbweichung());

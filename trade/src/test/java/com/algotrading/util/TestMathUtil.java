@@ -3,7 +3,6 @@ package com.algotrading.util;
 import org.junit.Test;
 
 import com.algotrading.aktie.Aktie;
-import com.algotrading.aktie.AktieVerzeichnis;
 import com.algotrading.indikator.IndikatorAbweichung;
 import com.algotrading.indikator.IndikatorAlgorithmus;
 
@@ -12,7 +11,7 @@ public class TestMathUtil extends AbstractTest {
 	static Aktie aktie;
 
 	public void setUp() {
-		aktie = AktieVerzeichnis.newInstance().getAktieOhneKurse("testaktie");
+		aktie = aV.getAktie("testaktie");
 	}
 
 	public static void testRechneStandardabweichung() {
@@ -30,7 +29,7 @@ public class TestMathUtil extends AbstractTest {
 
 	@Test
 	public void testRechneAbweichung() {
-		Aktie aktie = aV.getVerzeichnis().getAktieOhneKurse("testaktie");
+		Aktie aktie = aV.getAktie("dax");
 		IndikatorAlgorithmus iA = aktie.addIndikatorAlgorithmus(new IndikatorAbweichung());
 		iA.addParameter("typ", 1);
 		aktie.rechneIndikatoren();

@@ -30,7 +30,8 @@ public class SimulatorTest extends AbstractTest {
 
 		// Aktienliste erzeugen und befüllen
 		Aktien aktien = aV.createAktien();
-		Aktie aktie = aktien.addAktie("xxxdja");
+		Aktie aktie = aV.getAktie("xxxdja");
+		aktien.addAktie(aktie);
 
 		// Indikatoren konfigurieren 
 		// Indikator am Aktien-Behälter ist für alle Aktien gültig. 
@@ -84,7 +85,7 @@ public class SimulatorTest extends AbstractTest {
 		// Aktienliste bestimmen
 
 		Aktien aktien = aV.createAktien();
-		aktien.add(aV.getVerzeichnis().getAktieOhneKurse("xxxdja"));
+		aktien.add(aV.getAktie("xxxdja"));
 		//		aktien.add(Aktien.getInstance().getAktie("aa"));
 
 		//		ArrayList<Aktie> aktien = Aktien.getInstance().getAktien(zeitraum, false);

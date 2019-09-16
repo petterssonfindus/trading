@@ -20,7 +20,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.algotrading.aktie.Aktie;
-import com.algotrading.aktie.AktieVerzeichnis;
 import com.algotrading.aktie.Kurs;
 import com.algotrading.component.AktieVerwaltung;
 import com.algotrading.util.DateUtil;
@@ -67,11 +66,10 @@ public class ReadDataYahoo {
 	 * Liest für alle Aktien mit Quelle=Yahoo aktuelle Kurse ein. 
 	 */
 	public void YahooWSAktienController() {
-		AktieVerzeichnis aktien = aV.getVerzeichnis();
-		List<Aktie> alleAktien = aktien.getAllAktien();
+		List<Aktie> alleAktien = aV.getAktienListe();
 		for (Aktie aktie : alleAktien) {
 			if (aktie.getQuelle() == 1) {
-				YahooWSController(aktie.name);
+				YahooWSController(aktie.getName());
 			}
 		}
 	}
@@ -84,9 +82,9 @@ public class ReadDataYahoo {
 	public void YahooWSController(String name) {
 
 		// die Aktie 
-		Aktie aktie = aV.getVerzeichnis().getAktieOhneKurse(name);
+		Aktie aktie = aV.getAktie(name);
 
-		GregorianCalendar nextKurs = aktie.ermittleNextKurs();
+		GregorianCalendar nextKurs = aktie.nextKurs();
 		// wenn es noch keine Kurse gibt, muss das Datum manuell bestimmt werden. 
 		if (nextKurs == null) {
 			nextKurs = new GregorianCalendar(1980, 1, 1);

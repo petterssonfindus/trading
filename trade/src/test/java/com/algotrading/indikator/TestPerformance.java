@@ -7,7 +7,7 @@ import com.algotrading.util.Util;
 public class TestPerformance extends AbstractTest {
 
 	public void testPerformancePositiv() {
-		Aktie aktie = aV.getVerzeichnis().getAktieOhneKurse("testaktie");
+		Aktie aktie = aV.getAktieOhneKurse("testaktie");
 		IndikatorAlgorithmus performance = aktie.addIndikatorAlgorithmus(new IndikatorPerformance());
 		float kurs = aktie.getKursListe().get(50).getKurs();
 		System.out.println("Performancekurs " + kurs);
@@ -24,7 +24,7 @@ public class TestPerformance extends AbstractTest {
 	}
 
 	public void testPerformanceNegativ() {
-		Aktie aktie = aV.getVerzeichnis().getAktieOhneKurse("testaktie");
+		Aktie aktie = aV.getAktieOhneKurse("testaktie");
 		IndikatorAlgorithmus performance = aktie.addIndikatorAlgorithmus(new IndikatorPerformance());
 		float kurs = aktie.getKursListe().get(50).getKurs();
 		System.out.println("NPerformancekurs " + kurs);

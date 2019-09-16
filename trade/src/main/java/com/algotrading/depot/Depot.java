@@ -12,8 +12,8 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import com.algotrading.aktie.Aktie;
-import com.algotrading.aktie.AktieVerzeichnis;
 import com.algotrading.aktie.Kurs;
+import com.algotrading.component.AktieVerzeichnis;
 import com.algotrading.indikator.IndikatorAlgorithmus;
 import com.algotrading.signal.Signal;
 import com.algotrading.util.DateUtil;
@@ -235,7 +235,7 @@ public class Depot {
 	 * @return die Kauf-Order falls gekauft wurde - ansonsten null 
 	 */
 	protected Order kaufe(float betrag, String wertpapier) {
-		Aktie aktie = aV.getVerzeichnis().getAktieOhneKurse(wertpapier);
+		Aktie aktie = aV.getAktieOhneKurse(wertpapier);
 		return this.kaufe(betrag, aktie);
 	}
 
@@ -267,7 +267,7 @@ public class Depot {
 	}
 
 	protected Order verkaufe(String wertpapier) {
-		Aktie aktie = aV.getVerzeichnis().getAktieOhneKurse(wertpapier);
+		Aktie aktie = aV.getAktieOhneKurse(wertpapier);
 		return verkaufe(aktie);
 	}
 
@@ -314,7 +314,7 @@ public class Depot {
 		float result = 0;
 		if (this.wertpapierbestand.keySet().size() > 0) {
 			for (Wertpapierbestand wertpapierbestand : this.wertpapierbestand.values()) {
-				float kurs = aV.getVerzeichnis().getAktieOhneKurse(wertpapierbestand.wertpapier).getAktuellerKurs()
+				float kurs = aV.getAktieOhneKurse(wertpapierbestand.wertpapier).getAktuellerKurs()
 						.getKurs();
 				result += kurs * wertpapierbestand.bestand;
 			}

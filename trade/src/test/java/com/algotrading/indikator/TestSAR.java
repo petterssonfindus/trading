@@ -1,10 +1,10 @@
 package com.algotrading.indikator;
 
-import java.util.ArrayList;
+import java.util.List;
 
 import com.algotrading.aktie.Aktie;
-import com.algotrading.aktie.AktieVerzeichnis;
 import com.algotrading.aktie.Kurs;
+import com.algotrading.component.AktieVerzeichnis;
 import com.algotrading.util.AbstractTest;
 
 public class TestSAR extends AbstractTest {
@@ -17,7 +17,7 @@ public class TestSAR extends AbstractTest {
 		// TODO Auto-generated method stub
 		super.setUp();
 
-		aktie = AktieVerzeichnis.newInstance().getAktieOhneKurse("sardata5");
+		aktie = aV.getAktie("sardata5");
 		iA = aktie.addIndikatorAlgorithmus(new IndikatorStatisticSAR());
 		iA.addParameter("start", 0.02f);
 		iA.addParameter("stufe", 0.02f);
@@ -27,7 +27,7 @@ public class TestSAR extends AbstractTest {
 	public void testSAR() {
 		aktie.rechneIndikatoren();
 
-		ArrayList<Kurs> kurse = aktie.getKursListe();
+		List<Kurs> kurse = aktie.getKursListe();
 		Kurs testKurs;
 		testKurs = kurse.get(3);
 		assertEquals(46.55f, testKurs.getIndikatorWert(iA));

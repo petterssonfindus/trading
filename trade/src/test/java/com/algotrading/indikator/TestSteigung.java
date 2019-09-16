@@ -6,7 +6,7 @@ import com.algotrading.util.AbstractTest;
 public class TestSteigung extends AbstractTest {
 
 	public void testPerformancePositiv() {
-		Aktie aktie = aV.getVerzeichnis().getAktieOhneKurse("testaktie");
+		Aktie aktie = aV.getAktieOhneKurse("testaktie");
 		IndikatorAlgorithmus iB = aktie.addIndikatorAlgorithmus(new IndikatorSteigung());
 		float kurs = aktie.getKursListe().get(50).getKurs();
 		System.out.println("Performancekurs " + kurs);

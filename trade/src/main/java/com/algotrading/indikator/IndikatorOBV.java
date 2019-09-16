@@ -1,6 +1,6 @@
 package com.algotrading.indikator;
 
-import java.util.ArrayList;
+import java.util.List;
 
 import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
@@ -32,7 +32,7 @@ public class IndikatorOBV extends IndikatorAlgorithmus {
 	@Override
 	public void rechne(Aktie aktie) {
 		// holt die Kurse, an denen die Umsätze dran hängen.
-		ArrayList<Kurs> kurse = aktie.getKursListe();
+		List<Kurs> kurse = aktie.getKursListe();
 
 		// holt den Parameter aus dem Indikator
 		int dauer = (Integer) getParameter("dauer");

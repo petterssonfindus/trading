@@ -41,6 +41,8 @@ public class SignalBewertung {
 
 	private String aktieName;
 
+	private Long aktieID;
+
 	private String ISIN;
 
 	@Column(name = "SAName")
@@ -88,7 +90,9 @@ public class SignalBewertung {
 	public SignalBewertung(SignalAlgorithmus sA) {
 		this.signalAlgorithmus = sA;
 		this.aktieName = sA.getAktie().getName();
+		this.aktieID = sA.getAktie().getId();
 		this.ISIN = sA.getAktie().getISIN();
+
 	}
 
 	@PrePersist
@@ -395,6 +399,14 @@ public class SignalBewertung {
 
 	public SignalAlgorithmus getSignalAlgorithmus() {
 		return signalAlgorithmus;
+	}
+
+	public Long getAktieID() {
+		return aktieID;
+	}
+
+	public void setAktieID(Long aktieID) {
+		this.aktieID = aktieID;
 	}
 
 }

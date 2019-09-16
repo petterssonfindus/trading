@@ -1,7 +1,7 @@
 package com.algotrading.indikator;
 
 import com.algotrading.aktie.Aktie;
-import com.algotrading.aktie.AktieVerzeichnis;
+import com.algotrading.component.AktieVerzeichnis;
 import com.algotrading.util.AbstractTest;
 import com.algotrading.util.Util;
 
@@ -11,7 +11,7 @@ public class TestMultiplikation extends AbstractTest {
 
 	public void setUp() {
 		super.setUp();
-		aktie = AktieVerzeichnis.newInstance().getAktieOhneKurse("testaktie");
+		aktie = aV.getAktie("testaktie");
 	}
 
 	/**

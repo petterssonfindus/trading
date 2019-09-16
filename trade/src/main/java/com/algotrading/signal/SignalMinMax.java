@@ -1,6 +1,6 @@
 package com.algotrading.signal;
 
-import java.util.ArrayList;
+import java.util.List;
 
 import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
@@ -62,7 +62,7 @@ public class SignalMinMax extends SignalAlgorithmus {
 		boolean durchbruchOben = false;
 		boolean durchbruchUnten = false;
 
-		ArrayList<Kurs> kurse = aktie.getKursListe();
+		List<Kurs> kurse = aktie.getKursListe();
 		Kurs kurs;
 		DescriptiveStatistics stats = new DescriptiveStatistics();
 		// beim Einfügen weiterer Werte fliegt automatisch der erst raus

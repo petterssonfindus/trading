@@ -27,8 +27,7 @@ public class Aktien extends ArrayList<Aktie> {
 		this.aV = aV;
 	}
 
-	public Aktie addAktie(String name) {
-		Aktie aktie = aV.getVerzeichnis().getAktieOhneKurse(name);
+	public Aktie addAktie(Aktie aktie) {
 		this.add(aktie);
 		return aktie;
 	}

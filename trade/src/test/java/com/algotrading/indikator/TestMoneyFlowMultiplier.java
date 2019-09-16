@@ -1,10 +1,10 @@
 package com.algotrading.indikator;
 
-import java.util.ArrayList;
+import java.util.List;
 
 import com.algotrading.aktie.Aktie;
-import com.algotrading.aktie.AktieVerzeichnis;
 import com.algotrading.aktie.Kurs;
+import com.algotrading.component.AktieVerzeichnis;
 import com.algotrading.util.AbstractTest;
 
 public class TestMoneyFlowMultiplier extends AbstractTest {
@@ -16,7 +16,7 @@ public class TestMoneyFlowMultiplier extends AbstractTest {
 	public void setUp() {
 		super.setUp();
 
-		aktie = AktieVerzeichnis.newInstance().getAktieOhneKurse("testaktie");
+		aktie = aV.getAktie("testaktie");
 		iA = aktie.addIndikatorAlgorithmus(new IndikatorMFM());
 		aktie.addIndikatorAlgorithmus(iA);
 		iA.addParameter("dauer", 10);
@@ -25,7 +25,7 @@ public class TestMoneyFlowMultiplier extends AbstractTest {
 	public void testMoneyFlowMultiplier() {
 		aktie.rechneIndikatoren();
 
-		ArrayList<Kurs> kurse = aktie.getKursListe();
+		List<Kurs> kurse = aktie.getKursListe();
 		assertNotNull(kurse);
 		Kurs testKurs;
 		testKurs = kurse.get(13);

@@ -38,7 +38,7 @@ public class TestIndikatorDAO extends AbstractTest {
 		List<IndikatorAlgorithmus> liste = iADAO.findAll();
 		IndikatorAlgorithmus iA1 = liste.get(0);
 
-		Aktie aktie = aV.getVerzeichnis().getAktieOhneKurse("testaktie");
+		Aktie aktie = aV.getAktieOhneKurse("testaktie");
 		IndikatorAlgorithmus iA2 = aktie.addIndikatorAlgorithmus(new IndikatorAbweichung());
 		iA2.addParameter("typ", 1);  // Typ 1 = open
 		aktie.rechneIndikatoren();

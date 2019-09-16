@@ -1,7 +1,7 @@
 package com.algotrading.aktie;
 
-import java.util.ArrayList;
 import java.util.GregorianCalendar;
+import java.util.List;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -11,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import com.algotrading.data.ImportCSV;
 import com.algotrading.data.ReadDataYahoo;
 import com.algotrading.util.AbstractTest;
+import com.algotrading.util.DateUtil;
 
 public class TestAktie extends AbstractTest {
 	private static final Logger log = LogManager.getLogger(TestAktie.class);
@@ -29,14 +30,14 @@ public class TestAktie extends AbstractTest {
 
 	@Test
 	public void testNewAktieAriva() {
-		Aktie aktie = new Aktie("Amazon USD");
+		Aktie aktie = new Aktie("Umlaufrendite");
 		aktie.setISIN(null);
 		aktie.setQuelle(aV.QUELLE_Ariva);
-		aktie.setWkn("906866");
+		aktie.setWkn(null);
 		aktie.setKuerzel(null);
 		aV.saveAktie(aktie);
 		aktie.setaV(aV);
-		Aktie aktieNew = importCSV.readKurseArivaCSV("wkn_906866_historicamazonusd", aktie);
+		Aktie aktieNew = importCSV.readKurseArivaCSV("wkn_umlaufrendite__historic", aktie);
 	}
 
 	@Test
@@ -57,6 +58,17 @@ public class TestAktie extends AbstractTest {
 	}
 
 	@Test
+	public void testGetAktieMitKurse() {
+		long beginn = new GregorianCalendar().getTimeInMillis();
+		aktie = aV.getAktieMitKurse(8112l);
+		long ende = new GregorianCalendar().getTimeInMillis();
+		System.out.println("Auswertung dauerte Sekunden: " + ((ende - beginn) / 1000));
+		System.out.println("Kurs0: " + DateUtil.formatDate(aktie.getKurse().get(0).getDatum()));
+		System.out
+				.println("Kursn: " + DateUtil.formatDate(aktie.getKurse().get(aktie.getKurse().size() - 1).getDatum()));
+	}
+
+	@Test
 	public void testDelete() {
 		aV.deleteAktie(aV.getAktie("dax"));
 	}
@@ -68,7 +80,7 @@ public class TestAktie extends AbstractTest {
 
 	@Test
 	public void testKursAktie() {
-		Aktie aktie = aV.getAktie(31l);
+		Aktie aktie = aV.getAktie(257l);
 		// ein neuer Kurs
 		Kurs kurs = new Kurs();
 		kurs.setDatum(new GregorianCalendar());
@@ -80,8 +92,8 @@ public class TestAktie extends AbstractTest {
 
 	public void testGetKursZukunft() {
 
-		Aktie aktie = aV.getVerzeichnis().getAktieOhneKurse("testaktie");
-		ArrayList<Kurs> kursreihe = aktie.getKursListe();
+		Aktie aktie = aV.getAktie("dax");
+		List<Kurs> kursreihe = aktie.getKurse();
 
 		assertNotNull(kursreihe);
 		assertTrue(kursreihe.size() > 1);
@@ -95,8 +107,8 @@ public class TestAktie extends AbstractTest {
 	}
 
 	public void testGetKurse() {
-		Aktie aktie = aV.getVerzeichnis().getAktieOhneKurse("AA");
-		ArrayList<Kurs> kursreihe = aktie.getKursListe();
+		Aktie aktie = aV.getAktie("dax");
+		List<Kurs> kursreihe = aktie.getKursListe();
 		assertNotNull(kursreihe);
 		assertTrue(kursreihe.size() > 1);
 		log.info("Kursreihe hat Kurse: " + kursreihe.size());

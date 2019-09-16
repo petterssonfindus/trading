@@ -3,7 +3,7 @@ package com.algotrading.indikator;
 import java.util.List;
 
 import com.algotrading.aktie.Aktie;
-import com.algotrading.aktie.AktieVerzeichnis;
+import com.algotrading.component.AktieVerzeichnis;
 import com.algotrading.util.AbstractTest;
 
 public class TestIndikatorBerechnung extends AbstractTest {
@@ -11,7 +11,7 @@ public class TestIndikatorBerechnung extends AbstractTest {
 	static Aktie aktie;
 
 	public void setUp() {
-		aktie = AktieVerzeichnis.newInstance().getAktieOhneKurse("testaktie");
+		aktie = aV.getAktie("testaktie");
 	}
 
 	/**

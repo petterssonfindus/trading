@@ -1,10 +1,10 @@
 package com.algotrading.indikator;
 
-import java.util.ArrayList;
+import java.util.List;
 
 import com.algotrading.aktie.Aktie;
-import com.algotrading.aktie.AktieVerzeichnis;
 import com.algotrading.aktie.Kurs;
+import com.algotrading.component.AktieVerzeichnis;
 import com.algotrading.util.AbstractTest;
 
 public class TestVolatilitaet extends AbstractTest {
@@ -18,7 +18,7 @@ public class TestVolatilitaet extends AbstractTest {
 		// TODO Auto-generated method stub
 		super.setUp();
 
-		aktie = AktieVerzeichnis.newInstance().getAktieOhneKurse("sardata5");
+		aktie = aV.getAktie("sardata5");
 
 		IndikatorAlgorithmus10 = aktie.addIndikatorAlgorithmus(new IndikatorVolatilitaet());
 		aktie.addIndikatorAlgorithmus(IndikatorAlgorithmus10);
@@ -32,7 +32,7 @@ public class TestVolatilitaet extends AbstractTest {
 	public void testRechne() {
 		aktie.rechneIndikatoren();
 
-		ArrayList<Kurs> kurse = aktie.getKursListe();
+		List<Kurs> kurse = aktie.getKursListe();
 		Kurs testKurs;
 		testKurs = kurse.get(13);
 		assertEquals(0.7262107f, testKurs.getIndikatorWert(IndikatorAlgorithmus10));

@@ -33,7 +33,7 @@ public class TestSignalAuswertung3 extends AbstractTest {
 
 	@Test
 	public void testSignalAuswertung() {
-		Aktie aktie = aV.getVerzeichnis().getAktieOhneKurse("^gdaxi");
+		Aktie aktie = aV.getAktieOhneKurse("^gdaxi");
 		//		List<Aktie> aktien = aV.getVerzeichnis().getAktien(DateUtil.createGregorianCalendar(1, 1, 2000));
 		IndikatorAlgorithmus iA = new IndikatorGDalt();
 		iA.addParameter("dauer", 10);

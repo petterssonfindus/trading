@@ -198,7 +198,7 @@ public class Kurs {
 	 * @param vorzurueck Anzahl Tage: positiv = Zukunft - negativ = Vergangenheit
 	 */
 	public Kurs getKursTage(int n) {
-		ArrayList<Kurs> kurse = this.getAktie().getKursListe();
+		List<Kurs> kurse = this.getAktie().getKursListe();
 		// an welcher Stelle ist der aktuelle Kurs ?
 		int x = kurse.indexOf(this);
 		try {

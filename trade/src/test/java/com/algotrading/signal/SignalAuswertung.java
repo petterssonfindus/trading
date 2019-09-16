@@ -10,7 +10,7 @@ import com.algotrading.util.AbstractTest;
 public class SignalAuswertung extends AbstractTest {
 
 	public void testSignalauswertung() {
-		Aktie aktie = aV.getVerzeichnis().getAktieOhneKurse("^gdaxi");
+		Aktie aktie = aV.getAktieOhneKurse("^gdaxi");
 
 		// Indikator konfigurieren und an Aktie hängen
 		IndikatorAlgorithmus iB = aktie.addIndikatorAlgorithmus(new IndikatorMinMax());

@@ -1,10 +1,10 @@
 package com.algotrading.indikator;
 
-import java.util.ArrayList;
+import java.util.List;
 
 import com.algotrading.aktie.Aktie;
-import com.algotrading.aktie.AktieVerzeichnis;
 import com.algotrading.aktie.Kurs;
+import com.algotrading.component.AktieVerzeichnis;
 import com.algotrading.util.AbstractTest;
 
 /**
@@ -18,7 +18,7 @@ public class TestRSI extends AbstractTest {
 	IndikatorAlgorithmus rsi;
 
 	public void setUp() {
-		rsiAktie = AktieVerzeichnis.newInstance().getAktieOhneKurse("sardata5");
+		rsiAktie = aV.getAktie("sardata5");
 	}
 
 	public void testRSI() {
@@ -27,7 +27,7 @@ public class TestRSI extends AbstractTest {
 
 		rsiAktie.rechneIndikatoren();
 
-		ArrayList<Kurs> kurse = rsiAktie.getKursListe();
+		List<Kurs> kurse = rsiAktie.getKursListe();
 		Kurs testKurs;
 		testKurs = kurse.get(13);
 		assertEquals(0.3162709f, testKurs.getIndikatorWert(rsi));
@@ -40,7 +40,7 @@ public class TestRSI extends AbstractTest {
 
 		rsiAktie.rechneIndikatoren();
 
-		ArrayList<Kurs> kurse = rsiAktie.getKursListe();
+		List<Kurs> kurse = rsiAktie.getKursListe();
 		Kurs testKurs = kurse.get(13);
 		assertEquals(0.3162709f, testKurs.getIndikatorWert(iA2));
 

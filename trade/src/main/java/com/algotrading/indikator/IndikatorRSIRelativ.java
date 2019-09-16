@@ -1,6 +1,6 @@
 package com.algotrading.indikator;
 
-import java.util.ArrayList;
+import java.util.List;
 
 import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
@@ -23,7 +23,7 @@ public class IndikatorRSIRelativ extends IndikatorAlgorithmus {
 	@Override
 	public void rechne(Aktie aktie) {
 		int tage = (Integer) getParameter("dauer");
-		ArrayList<Kurs> kurse = aktie.getKursListe();
+		List<Kurs> kurse = aktie.getKursListe();
 		float sumUp = 0; // Summe der positiven Wertveränderung
 		float sumDown = 0; // Summe der negativen Wertveränderung
 		float sumUpA = 0; // Summe Up Average

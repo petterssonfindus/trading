@@ -13,7 +13,7 @@ public class SignalsucheTest extends AbstractTest {
 	public void testSignalsuche() {
 
 		// Kursreihe erzeugen appl, dax
-		Aktie aktie = aV.getVerzeichnis().getAktieOhneKurse("testaktie");
+		Aktie aktie = aV.getAktieOhneKurse("testaktie");
 		assertNotNull(aktie);
 		assertTrue(aktie.getKursListe().size() > 1);
 		log.info("Kursreihe hat Kurse: " + aktie.getKursListe().size());

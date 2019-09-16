@@ -88,7 +88,7 @@ public class TestDBManager extends AbstractTest {
 	}
 
 	public void testGetZeitraumAktie() {
-		Zeitraum zeitraum = DBManager.getZeitraumVorhandeneKurse(aV.getVerzeichnis().getAktieOhneKurse("testaktie"));
+		Zeitraum zeitraum = DBManager.getZeitraumVorhandeneKurse(aV.getAktieOhneKurse("testaktie"));
 		assertNotNull(zeitraum);
 		assertEquals(1426633200000L, zeitraum.beginn.getTimeInMillis());
 		assertEquals(1518130800000L, zeitraum.ende.getTimeInMillis());
@@ -99,7 +99,7 @@ public class TestDBManager extends AbstractTest {
 	 * Der letzte gespeicherte Kurs
 	 */
 	public void testGetLastKurs() {
-		GregorianCalendar test = DBManager.getLastKurs(aV.getVerzeichnis().getAktieOhneKurse("testaktie"));
+		GregorianCalendar test = DBManager.getLastKurs(aV.getAktieOhneKurse("testaktie"));
 		assertNotNull(test);
 		assertEquals("2018-02-09", DateUtil.formatDate(test));
 	}

@@ -13,7 +13,7 @@ public class TestIndikatorRelativ extends AbstractTest {
 	@Test
 	public void testRSIRelativ() {
 
-		Aktie aktie = aV.getVerzeichnis().getAktieOhneKurse("testaktie");
+		Aktie aktie = aV.getAktieOhneKurse("testaktie");
 		IndikatorAlgorithmus iA = aktie.addIndikatorAlgorithmus(new IndikatorRSIRelativ());
 		iA.addParameter("dauer", 10);
 		IndikatorAlgorithmus iA2 = aktie.addIndikatorAlgorithmus(new IndikatorRSI2());

@@ -1,15 +1,15 @@
 package com.algotrading.indikator;
 
-import java.util.ArrayList;
+import java.util.List;
 
 import com.algotrading.aktie.Aktie;
 import com.algotrading.aktie.Kurs;
 
 public class IndikatorRSI extends IndikatorAlgorithmus {
 
+	public IndikatorRSI() {
+	};
 
-	public IndikatorRSI() {};
-	
 	/**
 	 * Relative-Stärke-Index
 	 * Das Verhältnis der durschnittlich positiven Tage zu den durchschnittlich negativen Tagen 
@@ -21,51 +21,57 @@ public class IndikatorRSI extends IndikatorAlgorithmus {
 	 * @param "dauer"
 	 */
 	@Override
-	public void rechne (Aktie aktie) {
-		int tage = (Integer) getParameter("dauer"); 
-		ArrayList<Kurs> kurse = aktie.getKursListe();
+	public void rechne(Aktie aktie) {
+		int tage = (Integer) getParameter("dauer");
+		List<Kurs> kurse = aktie.getKursListe();
 		float sumUp = 0;  // Summe der positiven Wertveränderung 
 		float sumDown = 0; // Summe der negativen Wertveränderung 
 		float sumUpA = 0; // Summe Up Average
 		float sumDownA = 0; // Summe Down Average
-		float rsi; 
-		float kurs = 0; 
-		float kursVortag = kurse.get(0).getKurs(); 
+		float rsi;
+		float kurs = 0;
+		float kursVortag = kurse.get(0).getKurs();
 		float differenz = 0;
 		float differenzAlt = 0;
 		float[] differenzen = new float[kurse.size()];
-		
+
 		// die ersten Tage dienen zur Vorbereitung - keine Indikator-Berechnung 
-		for (int i = 0 ; i < tage ; i++) {
+		for (int i = 0; i < tage; i++) {
 			kurs = kurse.get(i).getKurs();
 			differenz = kurs - kursVortag;
-			differenzen[i] = differenz; 
-			
+			differenzen[i] = differenz;
+
 			// Summen addieren
-			if (differenz > 0) sumUp += differenz;
-			else sumDown += differenz;
-	
-			kursVortag = kurs; 
+			if (differenz > 0)
+				sumUp += differenz;
+			else
+				sumDown += differenz;
+
+			kursVortag = kurs;
 		}
-		
-		for (int i = tage ; i < kurse.size() ; i++) {
-			Kurs kursO = kurse.get(i);                
-			kursVortag = kurs; 
+
+		for (int i = tage; i < kurse.size(); i++) {
+			Kurs kursO = kurse.get(i);
+			kursVortag = kurs;
 			kurs = kursO.getKurs();
 			// Kursschwankung als Differenz zum Vortag
 			differenz = kurs - kursVortag;
 			// die neue Differenz in ein Array einstellen an der Stelle des Kurses. 
-			differenzen[i] = differenz; 
+			differenzen[i] = differenz;
 			// die alte Differenz aus dem Array auslesen 
 			differenzAlt = differenzen[i - tage];
-			
+
 			// Summen anpassen: neue Differenz hinzuzählen
-			if (differenz > 0) sumUp += differenz;
-			else sumDown += differenz;
+			if (differenz > 0)
+				sumUp += differenz;
+			else
+				sumDown += differenz;
 			// Alte Differenz abziehen
-			if (differenzAlt > 0) sumUp -= differenzAlt;
-			else sumDown -= differenzAlt; 
-			
+			if (differenzAlt > 0)
+				sumUp -= differenzAlt;
+			else
+				sumDown -= differenzAlt;
+
 			// Durchschnitte berechnen
 			// alle +Differenzen / Tage 
 			sumUpA = sumUp / tage;
@@ -75,7 +81,7 @@ public class IndikatorRSI extends IndikatorAlgorithmus {
 			rsi = sumUpA / (sumUpA + sumDownA);
 			// RSI an den Kurs anhängen
 			kursO.addIndikator(this, rsi);
-		
+
 		}
 	}
 

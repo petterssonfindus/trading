@@ -12,7 +12,7 @@ import com.algotrading.util.AbstractTest;
 public class TestMinMax extends AbstractTest {
 
 	public void testMinMax() {
-		Aktie aktie = aV.getVerzeichnis().getAktieOhneKurse("testaktie");
+		Aktie aktie = aV.getAktieOhneKurse("testaktie");
 		IndikatorAlgorithmus iA = aktie.addIndikatorAlgorithmus(new IndikatorMinMax());
 		iA.addParameter("dauer", 10);
 		aktie.rechneIndikatoren();
