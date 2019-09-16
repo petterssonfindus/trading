@@ -240,7 +240,7 @@ public class Aktie extends Parameter {
 
 	/**
 	 * ermittelt und initialisiert eine Kursreihe mit allen vorhandenen Kursen
-	 * ungeeignet für Depot-Kursreihen
+	 * ungeeignet für Depot-Kursreihen 
 	 */
 	public List<Kurs> getKursListe() {
 		try {
