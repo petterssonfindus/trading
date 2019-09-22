@@ -1,1 +1,1 @@
-# trading
+# trading the index
