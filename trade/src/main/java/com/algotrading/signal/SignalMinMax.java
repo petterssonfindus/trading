@@ -1,6 +1,6 @@
 package com.algotrading.signal;
 
-import java.util.ArrayList;
+import java.util.List;
 
 import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
@@ -62,7 +62,7 @@ public class SignalMinMax extends SignalAlgorithmus {
 		boolean durchbruchOben = false;
 		boolean durchbruchUnten = false;
 
-		ArrayList<Kurs> kurse = aktie.getKursListe();
+		List<Kurs> kurse = aktie.getKursListe();
 		Kurs kurs;
 		DescriptiveStatistics stats = new DescriptiveStatistics();
 		// beim Einfügen weiterer Werte fliegt automatisch der erst raus
@@ -72,15 +72,19 @@ public class SignalMinMax extends SignalAlgorithmus {
 			kurs = kurse.get(i);
 			Float Value = getValue(indikator, kurs);
 			// wenn kein Indikator vorhanden ist, wird nichts unternommen
-			if (Value == null)
+			if (Value == null) {
+				System.out.println("Kurs ohne Indikator" + kurs.toString());
 				continue;
+			}
 			stats.addValue(Value);
 		}
 		for (int i = dauer; i < aktie.getKursListe().size(); i++) {
 			kurs = kurse.get(i);
 			Float Value = getValue(indikator, kurs); // der Einzel-Wert
-			if (Value == null)
+			if (Value == null) {
+				System.out.println("kein Indikatorwert");
 				continue;
+			}
 			float value = (float) Value;
 
 			stats.addValue(value);
@@ -139,6 +143,7 @@ public class SignalMinMax extends SignalAlgorithmus {
 	 * Rechnet die Staerke aus Differenz zwischen Wert und Durchschnitt im
 	 * Verhältnis zum Durchschnitt positiv, wenn Wert über Durchschnitt negativ,
 	 * wenn Wert unter Durchschnitt
+	 * Um das Wieviel-fache übersteigt der Kurs den Durchschnitt. 
 	 */
 	private void rechneStaerke(float value, double durchschnitt, Signal signal) {
 		signal.setStaerke((value - (float) durchschnitt) / (float) durchschnitt);

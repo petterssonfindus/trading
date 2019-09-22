@@ -4,7 +4,7 @@ import junit.framework.TestCase;
 
 public class TestReadYahooAll extends TestCase {
 
-	public void testReadYahooAktien () {
+	public void testReadYahooAktien() {
 		ReadDataYahoo.YahooWSAktienController();
 	}
 

@@ -5,7 +5,7 @@ import java.util.ArrayList;
 
 import junit.framework.TestCase;
 
-public class FileUtilTest extends TestCase {
+public class FileUtilTest extends AbstractTest {
 
 /*
 	public void testWriteFile() {

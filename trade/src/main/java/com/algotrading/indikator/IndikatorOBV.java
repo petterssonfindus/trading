@@ -1,6 +1,6 @@
 package com.algotrading.indikator;
 
-import java.util.ArrayList;
+import java.util.List;
 
 import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
@@ -32,7 +32,7 @@ public class IndikatorOBV extends IndikatorAlgorithmus {
 	@Override
 	public void rechne(Aktie aktie) {
 		// holt die Kurse, an denen die Umsätze dran hängen.
-		ArrayList<Kurs> kurse = aktie.getKursListe();
+		List<Kurs> kurse = aktie.getKursListe();
 
 		// holt den Parameter aus dem Indikator
 		int dauer = (Integer) getParameter("dauer");
@@ -59,12 +59,12 @@ public class IndikatorOBV extends IndikatorAlgorithmus {
 
 		// addiert die Umsätze der vergangenen x(dauer) Tage.
 		if (kurse.size() <= dauer)
-			log.error(aktie.name + " zu wenig Kurse: " + kurse.size() + " vorhanden: " + dauer + " benoetigt."); // wenn
-																													// weniger
-																													// Kurse
-																													// vorhanden
-																													// sind
-		// k zählt von x(dauer) + 1 Tag , bis zum Ende
+			log.error(aktie.getName() + " zu wenig Kurse: " + kurse.size() + " vorhanden: " + dauer + " benoetigt."); // wenn
+																														// weniger
+																														// Kurse
+																														// vorhanden
+																														// sind
+																														// k zählt von x(dauer) + 1 Tag , bis zum Ende
 		for (int k = dauer + 1; k < kurse.size(); k++) {
 			// für jeden Kurs x-Tage zurück
 			// i zählt von 0 bis 9
@@ -79,7 +79,7 @@ public class IndikatorOBV extends IndikatorAlgorithmus {
 					// das Volumen wird hinzu addiert
 					summe += umsatzHeute;
 				} else { // der Kurs ist gefallen oder gleich geblieben #TODO gleiche Kurse geschieht
-							// nichts
+						// nichts
 					summe -= umsatzHeute;
 				}
 			}

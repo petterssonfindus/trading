@@ -8,9 +8,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.junit.Test;
 
-import junit.framework.TestCase;
-
-public class UtilTest extends TestCase {
+public class UtilTest extends AbstractTest {
 	private static final Logger log = LogManager.getLogger(UtilTest.class);
 
 	@Test
@@ -150,7 +148,7 @@ public class UtilTest extends TestCase {
 	}
 
 	public void testDatumFormat() {
-//		GregorianCalendar beginn = new GregorianCalendar(2017,11,2);
+		//		GregorianCalendar beginn = new GregorianCalendar(2017,11,2);
 		GregorianCalendar beginn = DateUtil.createGregorianCalendar(2, 12, 2017);
 		assertTrue(DateUtil.formatDate(beginn).equalsIgnoreCase("2017-12-02"));
 		GregorianCalendar ende = new GregorianCalendar(2018, 0, 2);
@@ -264,6 +262,16 @@ public class UtilTest extends TestCase {
 		GregorianCalendar test = DateUtil.toGregorianCalendar(date);
 		assertEquals("1970-01-12", DateUtil.formatDate(test));
 
+	}
+
+	@Test
+	public void testString() {
+		System.out.println(concat("A", "B"));
+	}
+
+	private String concat(String a, String b) {
+		a = a.concat(b);
+		return a;
 	}
 
 }

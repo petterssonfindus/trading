@@ -6,7 +6,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import com.algotrading.aktie.Aktie;
-import com.algotrading.aktie.AktieVerzeichnis;
+import com.algotrading.component.AktieVerzeichnis;
 import com.algotrading.util.DateUtil;
 
 /**
@@ -29,7 +29,7 @@ public class StopLossStrategieStandard extends TagesStrategie {
 				for (String wertpapier : trades.keySet()) {
 					Trade trade = trades.get(wertpapier);
 	//			for (Trade trade : trades.values()) {
-					Aktie aktie = AktieVerzeichnis.getInstance().getAktieOhneKurse(trade.wertpapier);
+					Aktie aktie = aV.getAktieOhneKurse(trade.wertpapier);
 					float aktuellerKurs = aktie.getAktuellerKurs().getKurs();
 					float einstandsKurs = trade.investiertesKapital / trade.bestand;
 					if (einstandsKurs == 0) {

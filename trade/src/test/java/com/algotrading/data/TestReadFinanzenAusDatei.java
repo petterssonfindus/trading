@@ -1,11 +1,27 @@
 package com.algotrading.data;
 
-import junit.framework.TestCase;
+import org.junit.Test;
+import org.springframework.beans.factory.annotation.Autowired;
 
-public class TestReadFinanzenAusDatei extends TestCase {
-	
-	public void testReadKursAusFile () {
-		ReadDataFinanzen.readFileWriteDB("VDAX_NEW1545321804412.txt","VDAX_NEW");
+import com.algotrading.aktie.Aktie;
+import com.algotrading.util.AbstractTest;
+
+public class TestReadFinanzenAusDatei extends AbstractTest {
+
+	@Autowired
+	private ReadDataFinanzen readDataFinanzen;
+
+	@Test
+	public void testReadKursAusFile() {
+		readDataFinanzen.readFileWriteDB("vdax-new-3m%1554444002381.csv", "VDAX_NEW3M");
 	}
 
+	@Test
+	public void testCreateAndReadKursAusFile() {
+		Aktie aktie = new Aktie("VDAX_NEW9M");
+		aktie.setLand(1);
+		aktie.setQuelle(1);
+		Aktie newAktie = aV.saveAktie(aktie);
+		readDataFinanzen.readFileWriteDB("vdax-new-9m%1554444300167.csv", newAktie.getName());
+	}
 }

@@ -3,18 +3,16 @@ package com.algotrading.data;
 import java.util.List;
 
 import com.algotrading.aktie.Aktie;
-import com.algotrading.aktie.AktieVerzeichnis;
+import com.algotrading.util.AbstractTest;
 
-import junit.framework.TestCase;
+public class DBManagerCheckDateTest extends AbstractTest {
 
-public class DBManagerCheckDateTest extends TestCase {
-
-	public void testCheckKursreiheTage () {
-		List<Aktie> aktien = AktieVerzeichnis.getInstance().getAllAktien();
+	public void testCheckKursreiheTage() {
+		List<Aktie> aktien = aV.getAktienListe();
 		for (Aktie aktie : aktien) {
 			DBManager.checkKursreiheTage(aktie.name);
 		}
-		
+
 	}
-	
+
 }

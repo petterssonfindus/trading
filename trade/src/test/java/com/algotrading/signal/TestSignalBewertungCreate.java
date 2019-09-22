@@ -1,36 +1,23 @@
 package com.algotrading.signal;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
 
 import java.util.List;
 
 import org.junit.Test;
-import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.context.SpringBootTest.WebEnvironment;
-import org.springframework.test.annotation.DirtiesContext;
-import org.springframework.test.context.ActiveProfiles;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
-import com.algotrading.Application;
 import com.algotrading.aktie.Aktie;
-import com.algotrading.aktie.AktieVerzeichnis;
 import com.algotrading.component.Signalverwaltung;
 import com.algotrading.indikator.IndikatorAbweichung;
 import com.algotrading.indikator.IndikatorAlgorithmus;
 import com.algotrading.indikator.IndikatorGD;
 import com.algotrading.jpa.SignalBewertungDAO;
 import com.algotrading.signalbewertung.SignalBewertung;
+import com.algotrading.util.AbstractTest;
 import com.algotrading.util.Zeitraum;
 
-@ActiveProfiles("test")
-@RunWith(SpringJUnit4ClassRunner.class)
-@SpringBootTest(classes = Application.class, webEnvironment = WebEnvironment.RANDOM_PORT)
-@DirtiesContext
-public class TestSignalBewertungCreate {
+public class TestSignalBewertungCreate extends AbstractTest {
 
 	@Autowired
 	Signalverwaltung sV;
@@ -44,7 +31,7 @@ public class TestSignalBewertungCreate {
 	 */
 	@Test
 	public void test1SA() {
-		Aktie aktie = AktieVerzeichnis.getInstance().getAktieOhneKurse("testaktie");
+		Aktie aktie = aV.getAktieLazy("testaktie");
 		assertNotNull(aktie);
 		assertTrue(aktie.getKursListe().size() > 1);
 
@@ -57,10 +44,10 @@ public class TestSignalBewertungCreate {
 		// Signale berechnen und ausgeben
 		aktie.rechneSignale();
 		// Signal-Bewertung aggregieren und ausgeben
-//		Zeitraum zeitraum1 = new Zeitraum(2015, 2015);
+		//		Zeitraum zeitraum1 = new Zeitraum(2015, 2015);
 		Zeitraum zeitraum2 = new Zeitraum(2016, 2016);
 		Zeitraum zeitraum3 = new Zeitraum(2017, 2017);
-//		aktie.bewerteSignale(zeitraum1, 10);
+		//		aktie.bewerteSignale(zeitraum1, 10);
 		sV.bewerteSignale(aktie, zeitraum2, 10);
 		sV.bewerteSignale(aktie, zeitraum3, 10);
 
@@ -75,10 +62,10 @@ public class TestSignalBewertungCreate {
 		for (SignalBewertung sb : sBs) {
 			System.out.println("Sbs: " + sb);
 		}
-//		assertEquals(expected, actual);
+		//		assertEquals(expected, actual);
 
-//		aktie.writeFileKursIndikatorSignal();
-//		aktie.writeFileSignale();
+		//		aktie.writeFileKursIndikatorSignal();
+		//		aktie.writeFileSignale();
 	}
 
 	/**
@@ -93,7 +80,7 @@ public class TestSignalBewertungCreate {
 	}
 
 	public SignalBewertung createSignalBewertung() {
-		Aktie aktie = AktieVerzeichnis.newInstance().getAktieOhneKurse("testaktie");
+		Aktie aktie = aV.getAktieLazy("testaktie");
 
 		// Indikator konfigurieren und an Aktie hängen
 		IndikatorAlgorithmus iA2 = aktie.addIndikatorAlgorithmus(new IndikatorGD());
@@ -119,14 +106,16 @@ public class TestSignalBewertungCreate {
 		sV.bewerteSignale(aktie, zeitraum3, 10);
 
 		List<SignalBewertung> sBs = sA.getBewertungen();
+		aktie.writeFileKursIndikatorSignal();
 		return sBs.get(0);
 	}
 
 	@Test
 	public void test1SA2IA() {
-		Aktie aktie = AktieVerzeichnis.getInstance().getAktieOhneKurse("testaktie");
+		Aktie aktie = aV.getAktieMitKurse(48218L);
 		assertNotNull(aktie);
-		assertTrue(aktie.getKursListe().size() > 1);
+		int size = aktie.getKursListe().size();
+		assertTrue(size > 1);
 
 		// Indikator konfigurieren und an Aktie hängen
 		IndikatorAlgorithmus iA = aktie.addIndikatorAlgorithmus(new IndikatorAbweichung());
@@ -136,10 +125,6 @@ public class TestSignalBewertungCreate {
 
 		// Indikator berechnen und ausgeben
 		aktie.rechneIndikatoren();
-		// am ersten Tag 18.03.2015 ist der open-Kurs 19,50
-		assertThat(19.5f == aktie.getKursListe().get(0).getIndikatorWert(iA));
-		// der close-Kurs ist 20.05
-		assertThat(20.05f == aktie.getKursListe().get(0).getKurs());
 
 		// Signal konfigurieren und an Aktie hängen
 		SignalAlgorithmus sA = aktie.addSignalAlgorithmus(new SignalMinMax());
@@ -151,10 +136,11 @@ public class TestSignalBewertungCreate {
 		// Signale berechnen und ausgeben
 		aktie.rechneSignale();
 		// Signal-Bewertung aggregieren und ausgeben
-//		Zeitraum zeitraum1 = new Zeitraum(2015, 2015);
+		//		Zeitraum zeitraum1 = new Zeitraum(2015, 2015);
 		Zeitraum zeitraum2 = new Zeitraum(2016, 2016);
 		Zeitraum zeitraum3 = new Zeitraum(2017, 2017);
-//		aktie.bewerteSignale(zeitraum1, 10);
+		//		aktie.bewerteSignale(zeitraum1, 10);
+		long test = sV.countSignalBewertung();
 		sV.bewerteSignale(aktie, zeitraum2, 10);
 		sV.bewerteSignale(aktie, zeitraum3, 10);
 
@@ -169,10 +155,9 @@ public class TestSignalBewertungCreate {
 		for (SignalBewertung sb : sBs) {
 			System.out.println("Sbs: " + sb);
 		}
-//		assertEquals(expected, actual);
+		//		assertEquals(expected, actual);
 
-//		aktie.writeFileKursIndikatorSignal();
-//		aktie.writeFileSignale();
+		aktie.writeFileKursIndikatorSignal();
 	}
 
 }

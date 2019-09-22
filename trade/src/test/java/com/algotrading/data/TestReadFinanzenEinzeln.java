@@ -1,16 +1,23 @@
 package com.algotrading.data;
 
-import junit.framework.TestCase;
+import org.junit.Test;
+import org.springframework.beans.factory.annotation.Autowired;
 
-public class TestReadFinanzenEinzeln extends TestCase {
-	
+import com.algotrading.aktie.Aktie;
+import com.algotrading.util.AbstractTest;
 
-	public void testReadFinanzenEinzeln () {
+public class TestReadFinanzenEinzeln extends AbstractTest {
+
+	@Autowired
+	private ReadDataFinanzen rdf;
+
+	@Test
+	public void testReadFinanzenEinzeln() {
 		// liest Kurse und schreibt in eine Datei 
-		String name = "vdax-new-3m";
-		String datei = ReadDataFinanzen.FinanzenWSController(name ,true, true, null);
+		Aktie aktie = aV.getAktieLazy("dax");
+		String datei = rdf.FinanzenWSController(aktie, true, true, null);
 		System.out.println("Finanzen-Datei geschrieben: " + datei);
-// 		ReadDataFinanzen.readFileWriteDB(datei ,name);
+		// 		ReadDataFinanzen.readFileWriteDB(datei ,name);
 
 	}
 

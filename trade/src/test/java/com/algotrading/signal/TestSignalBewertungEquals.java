@@ -5,7 +5,6 @@ import java.util.List;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import com.algotrading.aktie.AktieVerzeichnis;
 import com.algotrading.indikator.IndikatorAbweichung;
 import com.algotrading.indikator.IndikatorAlgorithmus;
 import com.algotrading.indikator.IndikatorGD;
@@ -69,7 +68,7 @@ public class TestSignalBewertungEquals extends AbstractTest {
 	 * Erzeugt eine SignalBewertung, die als Vorlage genutzt werden kann
 	 */
 	private SignalBewertung createSignalBewertungDurchBerechnung() {
-		aktie = AktieVerzeichnis.newInstance().getAktieMitKurse("testaktie");
+		aktie = aV.getAktieMitKurse(aV.getAktieLazy("testaktie").getId());
 
 		// Indikator konfigurieren und an Aktie hängen
 		IndikatorAlgorithmus iA = aktie.addIndikatorAlgorithmus(new IndikatorAbweichung());
@@ -96,7 +95,7 @@ public class TestSignalBewertungEquals extends AbstractTest {
 
 		List<SignalBewertung> sBs = sA.getBewertungen();
 		SignalBewertung result = sBs.get(sBs.size() - 1);
-//		sV.save(result);
+		//		sV.save(result);
 		return result;
 
 	}

@@ -18,6 +18,7 @@ import javax.persistence.TemporalType;
 import javax.persistence.Transient;
 
 import com.algotrading.signal.SignalAlgorithmus;
+import com.algotrading.util.DateUtil;
 import com.algotrading.util.Util;
 import com.algotrading.util.Zeitraum;
 
@@ -39,6 +40,8 @@ public class SignalBewertung {
 	private int tage;
 
 	private String aktieName;
+
+	private Long aktieID;
 
 	private String ISIN;
 
@@ -87,7 +90,9 @@ public class SignalBewertung {
 	public SignalBewertung(SignalAlgorithmus sA) {
 		this.signalAlgorithmus = sA;
 		this.aktieName = sA.getAktie().getName();
+		this.aktieID = sA.getAktie().getId();
 		this.ISIN = sA.getAktie().getISIN();
+
 	}
 
 	@PrePersist
@@ -138,7 +143,7 @@ public class SignalBewertung {
 			return false;
 		// IndikatorAlgorithmen werden nicht verglichen
 		// über die Parameter der SignalAlgorithmen werden die IAs implizit verglichen
-// 		if (! this.equalsIndikatoren(sB.indikatorAlgorithmen)) return false; 
+		// 		if (! this.equalsIndikatoren(sB.indikatorAlgorithmen)) return false; 
 		return true;
 	}
 
@@ -170,6 +175,7 @@ public class SignalBewertung {
 		return result;
 	}
 
+//	@formatter:off
 	public String toString() {
 		return this.signalAlgorithmus + " Kauf:" + kauf + " korrekt:" + Util
 				.rundeBetrag(kaufKorrekt, 3) + " Signal:" + Util.rundeBetrag(summeSKauf, 3) + " Bewertung:" + Util
@@ -179,6 +185,34 @@ public class SignalBewertung {
 										.rundeBetrag(summeBVerkauf, 3) + " BewSumme:" + Util.rundeBetrag(
 												summeBewertungen,
 												3) + " Performance:" + Util.rundeBetrag(performance, 3);
+	}
+
+	/**
+	 * Kauf, KaufKorrekt, SummeSignalKauf, Bewertung, 
+	 * Verkauf, VerkaufKorrekt, SummeSignalVerkauf, Bewertung, 
+	 * BewertungSumme, Performance
+	 */
+//	@formatter:off
+	public String toCSVString() {
+		return this.signalAlgorithmus.toString() + Util.separatorCSV
+				.concat(DateUtil.formatDate(this.zeitraumBeginn) + Util.separatorCSV)
+				.concat(DateUtil.formatDate(this.zeitraumEnde) + Util.separatorCSV)
+				.concat(tage + Util.separatorCSV)
+				.concat(kauf + Util.separatorCSV)
+				.concat(Util.toString(Util.rundeBetrag(kaufKorrekt, 3)) + Util.separatorCSV)
+				.concat(Util.toString(Util.rundeBetrag(summeSKauf, 3)) + Util.separatorCSV)
+				.concat(Util.toString(Util.rundeBetrag(summeBKauf, 3)) + Util.separatorCSV) 
+				.concat(verkauf + Util.separatorCSV) 
+				.concat(Util.toString(Util.rundeBetrag(verkaufKorrekt,3)) + Util.separatorCSV) 
+				.concat(Util.toString(Util.rundeBetrag(summeSVerkauf, 3)) + Util.separatorCSV) 
+				.concat(Util.toString(Util.rundeBetrag(summeBVerkauf, 3)) + Util.separatorCSV) 
+				.concat(Util.toString(Util.rundeBetrag(summeBewertungen,3)) + Util.separatorCSV) 
+				.concat(Util.toString(Util.rundeBetrag(performance, 3)) + Util.separatorCSV);
+	}
+//	@formatter:on
+
+	private String toCSVStringKauf() {
+		return " Kauf:" + kauf + Util.separatorCSV;
 	}
 
 	public Long getId() {
@@ -365,6 +399,14 @@ public class SignalBewertung {
 
 	public SignalAlgorithmus getSignalAlgorithmus() {
 		return signalAlgorithmus;
+	}
+
+	public Long getAktieID() {
+		return aktieID;
+	}
+
+	public void setAktieID(Long aktieID) {
+		this.aktieID = aktieID;
 	}
 
 }

@@ -1,10 +1,10 @@
 package com.algotrading.data;
 
-import junit.framework.TestCase;
+import com.algotrading.util.AbstractTest;
 
-public class TestCheckKursreihe extends TestCase {
-	
-	public static void testCheckKursreihe () {
+public class TestCheckKursreihe extends AbstractTest {
+
+	public static void testCheckKursreihe() {
 		DBManager.checkKursreihe("xxxgdaxi", 0.1f);
 	}
 

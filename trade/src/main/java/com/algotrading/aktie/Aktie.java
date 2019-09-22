@@ -1,12 +1,33 @@
 package com.algotrading.aktie;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.List;
 
+import javax.persistence.CascadeType;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.OneToMany;
+import javax.persistence.OrderBy;
+import javax.persistence.Table;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
+import javax.persistence.Transient;
+
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.hibernate.LazyInitializationException;
+import org.hibernate.annotations.BatchSize;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
+import com.algotrading.component.AktieVerwaltung;
 import com.algotrading.data.DBManager;
 import com.algotrading.depot.Order;
 import com.algotrading.indikator.IndikatorAlgorithmus;
@@ -26,63 +47,104 @@ import com.algotrading.util.Zeitraum;
  * auch Berechnungsvorschriften zu Indikatoren und Signalen
  * 
  */
-
+@Service
+@Entity
+@Table(name = "aktiestamm")
 public class Aktie extends Parameter {
+	@Transient
 	private static final Logger log = LogManager.getLogger(Aktie.class);
-	public String name;
+
+	@Autowired
+	@Transient
+	private AktieVerwaltung aV;
+
+	@Id
+	@Column(name = "id", nullable = false)
+	@GeneratedValue(strategy = GenerationType.AUTO)
+	private Long id;
+
+	@Column(name = "name", length = 64, unique = true, nullable = false)
+	private String name;
+
+	@Column(name = "kuerzel", length = 64, unique = true, nullable = true)
+	private String kuerzel;
+
+	@Column(name = "timestamp", columnDefinition = "TIMESTAMP DEFAULT CURRENT_TIMESTAMP", updatable = false, nullable = false)
+	@Temporal(TemporalType.TIMESTAMP)
+	private Date timestamp;
+
+	@Column(name = "firmenname", length = 64)
 	public String firmenname;
-	// kein öffentlicher Zugriff auf kurse, weil Initialisierung über DB erfolgt.
-	private ArrayList<Kurs> kurse;
-	// der Kurs, der zum aktuellen Datum des Depot gehört. NextKurs() sorgt für die
-	// Aktualisierung
+
+	@Column(name = "indexname", length = 64)
+	public String indexname;
+
+	@Column(name = "land")
+	private int land = 1; // default = Deutschland
+
+	@Column(name = "waehrung")
+	private int waehrung = 1;  // default = Euro
+
+	@Column(name = "isin", length = 12)
+	private String ISIN;
+
+	@Column(name = "wkn", length = 6)
+	private String wkn;
+
+	// die Datenquelle 1=Finanzen 2=Yahoo 3=Ariva
+	@Column(name = "quelle")
+	private int quelle = 1;  // default = Finanzen
+
+	// 2 = Xetra
+	@Column(name = "boersenplatz")
+	public byte boersenplatz = 0;
+
+	@OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+	@JoinColumn(name = "aktie")
+	@OrderBy("datum")
+	@BatchSize(size = 100) // alternativ JOIN FETCH
+	private List<Kurs> kurse = new ArrayList<Kurs>();
+
+	// der Kurs, der zum aktuellen Datum des Depot gehört. NextKurs() sorgt für die Aktualisierung
+	@Transient
 	private Kurs aktuellerKurs;
+
 	// der Kurs, der zum Start der Simulation gehört
+	@Transient
 	private Kurs startKurs;
 	// der Zeitraum in dem Kurse vorhanden sind - stammt aus der DB
+	@Transient
 	private Zeitraum zeitraumKurse;
+	@Transient
 	private ArrayList<Kurs> kurseZeitraum;
 	// ein Cache für die aktuell ermittelte Kursreihe
+	@Transient
 	private Zeitraum zeitraum;
-	public String indexname;
-	private int land;
-	private int waehrung;
-	private String ISIN;
-	// die Datenquelle 1=Yahoo 2=Finanzen 3=Ariva
-	private int quelle;
-	// 2 = Xetra
-	public byte boersenplatz;
+
 	/*
 	 * die Indikator-Algorithmen, die an der Aktie hängen - Zugriff über Getter die
 	 * Liste stellt die Reihenfolge sicher
 	 */
+	@Transient
 	private List<IndikatorAlgorithmus> indikatorAlgorithmen = new ArrayList<IndikatorAlgorithmus>();
 
+	@Transient
 	private boolean indikatorenSindBerechnet = false;
 	// die Signal-Algorithmen werden an der Aktie festgehalten und beim Berechnen an
 	// die Kurse gehängt
+	@Transient
 	private List<SignalAlgorithmus> signalAlgorithmen = new ArrayList<SignalAlgorithmus>();
+	@Transient
 	private boolean signaleSindBerechnet = false;
 
-	/**
-	 * Wird nur für Hibernate benötigt
-	 */
-	protected Aktie() {
+	Aktie() {
 	}
 
 	/**
-	 * ein Konstruktor für die Klasse Aktien enthält alles, außer den Kursen
 	 * 
-	 * @param name         Kurzname, Kürzel - intern wird immer mit LowerCase
-	 *                     gearbeitet
-	 * @param firmenname   offizieller Firmenname, zur Beschriftung verwendet
-	 * @param indexname    zugehöriger Index zu Vergleichszwecken
-	 * @param boersenplatz
 	 */
-	public Aktie(String name, String firmenname, String indexname, byte boersenplatz) {
+	public Aktie(String name) {
 		this.name = name.toLowerCase();
-		this.firmenname = firmenname;
-		this.indexname = indexname;
-		this.boersenplatz = boersenplatz;
 	}
 
 	/**
@@ -93,17 +155,6 @@ public class Aktie extends Parameter {
 	 */
 	public List<IndikatorAlgorithmus> getIndikatorAlgorithmen() {
 		return this.indikatorAlgorithmen;
-	}
-
-	/**
-	 * Gibt den Inhalt der Kurse, ohne diese zu initialisieren
-	 * 
-	 * @return
-	 */
-	public ArrayList<Kurs> getKurse() {
-		if (this.kurse == null)
-			log.error("Kurse sind null");
-		return this.kurse;
 	}
 
 	/**
@@ -140,12 +191,12 @@ public class Aktie extends Parameter {
 			log.error("gewünschtes Kursdatum: " + testDatum + " liegt vor erstem vorhandenen Kurs: " + kurse.get(0));
 			return null;
 		}
-		ArrayList<Kurs> kurse = this.getKursListe();
+		List<Kurs> kurse = this.getKursListe();
 		// TODO hier könnte Performance gespart werden, wenn nicht von vorne iteriert
 		// wird, sondern intelligent gesucht wird
 		for (Kurs kurs : kurse) {
 			// wenn die Tage exakt passen oder die Tage-Gleichheit übersprungen wurde
-			if (DateUtil.istGleicherKalendertag(datum, kurs.datum) || datum.before(kurs.datum)) {
+			if (DateUtil.istGleicherKalendertag(datum, kurs.getDatum()) || datum.before(kurs.getDatum())) {
 				return kurs;
 			}
 
@@ -163,7 +214,7 @@ public class Aktie extends Parameter {
 	 * @param ende
 	 * @return
 	 */
-	public ArrayList<Kurs> getKurse(Zeitraum zeitraum) {
+	public List<Kurs> getKurse(Zeitraum zeitraum) {
 		ArrayList<Kurs> result = null;
 		if (zeitraum == null)
 			return this.getKursListe();
@@ -184,7 +235,7 @@ public class Aktie extends Parameter {
 	private ArrayList<Kurs> sucheBoersenkurse(Zeitraum zeitraum) {
 		ArrayList<Kurs> kurse = new ArrayList<Kurs>();
 		for (Kurs kurs : this.getKursListe()) {
-			if (DateUtil.istInZeitraum(kurs.datum, zeitraum)) {
+			if (DateUtil.istInZeitraum(kurs.getDatum(), zeitraum)) {
 				kurse.add(kurs);
 			}
 		}
@@ -193,36 +244,25 @@ public class Aktie extends Parameter {
 
 	/**
 	 * ermittelt und initialisiert eine Kursreihe mit allen vorhandenen Kursen
-	 * ungeeignet für Depot-Kursreihen
-	 * 
-	 * @param beginn
-	 * @param ende
-	 * @return
+	 * ungeeignet für Depot-Kursreihen 
 	 */
-	public ArrayList<Kurs> getKursListe() {
-		if (this.kurse == null) {
-			this.kurse = DBManager.getKursreihe(name);
+	public List<Kurs> getKursListe() {
+		try {
+			this.kurse.size();
+		} catch (LazyInitializationException e) {
+			this.initializeKurse();
 		}
-		return kurse;
+		return this.kurse;
 	}
 
 	/**
-	 * Ein Tag nach dem letzten vorhandenen Kurs in der DB Ab diesem Tag muss
-	 * eingelesen werden.
+	 * Liest Kurse aus der DB und hängt sie an die Aktie
 	 */
-	public GregorianCalendar ermittleNextKurs() {
-		// der letzte Kurs wird ermittelt
-		GregorianCalendar letzterKurs = DBManager.getLastKurs(this);
-		// bei einer ganz neuen Aktie gibt es keine Kurse.
-		// das Beginn-Datum muss dann manuell gesetzt werden.
-		if (letzterKurs == null) {
-			log.error("Aktie ohne Kurse! BeginnDatum muss manuell vorgegeben werden: " + this.getName());
-			return null;
-		}
-		// der nächste erwartete Kurs wird einfach 1 Tag hoch gezählt. Das stimmt nicht
-		// genau, spielt aber keine Rolle.
-		GregorianCalendar result = DateUtil.addTage(letzterKurs, 1);
-		return result;
+	private void initializeKurse() {
+		// eine vollständige Aktie in einer Transaktion laden 
+		Aktie aktie = aV.getAktieMitKurseNew(getId());
+		// die Kurse übernehmen 
+		this.setKurse(aktie.getKurse());
 	}
 
 	/**
@@ -236,8 +276,8 @@ public class Aktie extends Parameter {
 		int x = this.kurse.indexOf(this.aktuellerKurs);
 		if (x > this.kurse.size() - 2) {
 			log.error(
-					"Kursreihe zu Ende " + this.aktuellerKurs.wertpapier + DateUtil
-							.formatDate(this.aktuellerKurs.datum));
+					"Kursreihe zu Ende " + this.aktuellerKurs.getAktieName() + DateUtil
+							.formatDate(this.aktuellerKurs.getDatum()));
 			return this.aktuellerKurs;
 		}
 		Kurs kurs = this.kurse.get(x + 1);
@@ -276,13 +316,11 @@ public class Aktie extends Parameter {
 		if (this.kurse == null) {
 			this.kurse = DBManager.getKursreihe(name, beginn);
 		}
-		return kurse;
+		return (ArrayList<Kurs>) kurse;
 	}
 
 	/**
 	 * hängt einen Kurs an das Ende der bestehenden Kette an
-	 * 
-	 * @param ein beliebiger Kurs
 	 */
 	public void addKurs(Kurs kurs) {
 		if (kurs == null)
@@ -290,7 +328,9 @@ public class Aktie extends Parameter {
 		if (kurse == null) { // Aktie aus Depobewertung, die noch keine Kursliste besitzt
 			this.kurse = new ArrayList<Kurs>();
 		}
-		kurse.add(kurs);
+		Aktie newAktie = aV.getAktieMitKurse(this.getId());
+		this.kurse = newAktie.getKursListe();
+		this.kurse.add(kurs);
 	}
 
 	/**
@@ -426,13 +466,15 @@ public class Aktie extends Parameter {
 
 			// für alle Signale zu dieser SignalBeschreibung
 			for (Signal signal : signale) {
+				signal.setaV(aV);
+				//				System.out.println("signal" + signal.toString());
 				// Signale im vorgegebenen Zeitraum filtern
 				if (!DateUtil.istInZeitraum(signal.getKurs().getDatum(), zeitraum))
 					continue;
 				// die Bewertung des Signals: Kursentwicklung in die Zukunft
 				staerke = signal.getStaerke();
 				// die Bewertung wird am Signal ermittelt
-				Float bewertung = signal.getBewertung(tage);
+				Float bewertung = signal.getPerformance(tage);
 				if (bewertung == null)
 					continue; // wenn keine Bewertung vorhanden ist, dann nächstes Signal
 				float b = bewertung;
@@ -471,12 +513,7 @@ public class Aktie extends Parameter {
 	}
 
 	public String toString() {
-		String result;
-		result = name + " " + kurse.size() + " Kurse";
-		for (int i = 0; i < kurse.size(); i++) {
-			result = result + (kurse.get(i).toString());
-		}
-		return result;
+		return this.name;
 	}
 
 	/**
@@ -528,7 +565,7 @@ public class Aktie extends Parameter {
 			// #TODO der Vergleich mässte mit before() oder after() geläst werden, nicht mit
 			// Milli-Vergleich
 			kurs = this.kurse.get(i);
-			if (kurs.datum.getTimeInMillis() >= datum.getTimeInMillis()) {
+			if (kurs.getDatum().getTimeInMillis() >= datum.getTimeInMillis()) {
 				log.debug("Kurs gefunden: " + kurs);
 				this.aktuellerKurs = kurs;
 				this.startKurs = kurs;
@@ -606,7 +643,7 @@ public class Aktie extends Parameter {
 		if (this.zeitraumKurse != null)
 			result = this.zeitraumKurse;
 		else
-			result = new Zeitraum(this.kurse.get(0).datum, this.kurse.get(this.kurse.size()).datum);
+			result = new Zeitraum(this.kurse.get(0).getDatum(), this.kurse.get(this.kurse.size() - 1).getDatum());
 		return result;
 	}
 
@@ -705,6 +742,70 @@ public class Aktie extends Parameter {
 
 	public void setQuelle(int quelle) {
 		this.quelle = quelle;
+	}
+
+	public Long getId() {
+		return id;
+	}
+
+	public String getFirmenname() {
+		return firmenname;
+	}
+
+	public void setFirmenname(String firmenname) {
+		this.firmenname = firmenname;
+	}
+
+	public String getIndexname() {
+		return indexname;
+	}
+
+	public void setIndexname(String indexname) {
+		this.indexname = indexname;
+	}
+
+	public byte getBoersenplatz() {
+		return boersenplatz;
+	}
+
+	public void setBoersenplatz(byte boersenplatz) {
+		this.boersenplatz = boersenplatz;
+	}
+
+	public Date getTimestamp() {
+		return timestamp;
+	}
+
+	public void setaV(AktieVerwaltung aV) {
+		this.aV = aV;
+	}
+
+	public void setKurse(List<Kurs> kurse) {
+		this.kurse = kurse;
+	}
+
+	public void setName(String name) {
+		this.name = name.toLowerCase();
+	}
+
+	public String getWkn() {
+		return wkn;
+	}
+
+	public void setWkn(String wkn) {
+		this.wkn = wkn;
+	}
+
+	public String getKuerzel() {
+		return kuerzel;
+	}
+
+	public void setKuerzel(String kuerzel) {
+		this.kuerzel = kuerzel;
+	}
+
+	public List<Kurs> getKurse() {
+		return kurse;
 	}
 
 }

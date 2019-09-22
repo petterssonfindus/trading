@@ -5,10 +5,10 @@ import java.util.GregorianCalendar;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import com.algotrading.aktie.Aktie;
 import com.algotrading.util.DateUtil;
 import com.algotrading.util.Util;
-import com.algotrading.aktie.Aktie;
-import com.algotrading.aktie.AktieVerzeichnis;
+
 /**
  * repräsentiert einen Wertpapierauftrag mit allen Ausfährungsinformationen
  * zusätzlich wird auf Gesamt-Depotbestand aggregiert zum aktuellen Zeitpunkt 
@@ -31,7 +31,7 @@ public class Order {
 
 	public static final byte KAUF = 1;
 	public static final byte VERKAUF = 2;
-	
+
 	/**
 	 * keine Gelddisposition
 	 * schreibt Orderbuch
@@ -39,17 +39,20 @@ public class Order {
 	 * aktualisiert Depotbestand
 	 * @return die fertige Order
 	 */
-	public static Order orderAusfuehren (byte kaufVerkauf, String wertpapier, 
+	public static Order orderAusfuehren(byte kaufVerkauf, String wertpapier,
 			float stueckzahl, Depot depot) {
-		if (wertpapier == null) log.error("Inputvariable Wertpapier ist null");
-		if (depot == null) log.error("Inputvariable Depot ist null");
-		if (stueckzahl == 0) log.error("Inputvariable Stueckzahl ist 0");
+		if (wertpapier == null)
+			log.error("Inputvariable Wertpapier ist null");
+		if (depot == null)
+			log.error("Inputvariable Depot ist null");
+		if (stueckzahl == 0)
+			log.error("Inputvariable Stueckzahl ist 0");
 		// neue Order erzeugen
 		Order order = new Order();
 		// Referenz auf das zugehärige Depot setzen
-		order.depot = depot; 
-		// zugehärige Kursreihe ermitteln 
-		Aktie kursreihe = AktieVerzeichnis.getInstance().getAktieOhneKurse(wertpapier);
+		order.depot = depot;
+		// zugehörige Kursreihe ermitteln 
+		Aktie kursreihe = aV.getAktieOhneKurse(wertpapier);
 		// das Datum der Order stammt aus dem aktuellen Datum des Depot
 		order.datum = depot.heute;
 		order.datumString = DateUtil.formatDate(order.datum);
@@ -64,8 +67,7 @@ public class Order {
 		if (kaufVerkauf == Order.KAUF) {
 			// der Geldbestand im Depot reduziert sich 
 			depot.geld -= order.abrechnungsbetrag;
-		}
-		else {		// ein Verkauf
+		} else {		// ein Verkauf
 			// der Geldbestand im Depot erhäht sich
 			depot.geld += order.abrechnungsbetrag;
 		}
@@ -73,25 +75,23 @@ public class Order {
 		depot.orderEintragen(order);
 		return order;
 	}
-	
-	public String kaufVerkaufToString () {
-		if (this.kaufVerkauf == Order.KAUF) return "Kauf"; 
-		else return "Verkauf"; 
+
+	public String kaufVerkaufToString() {
+		if (this.kaufVerkauf == Order.KAUF)
+			return "Kauf";
+		else
+			return "Verkauf";
 	}
-	
-	public String toString () {
+
+	public String toString() {
 		String datum = DateUtil.formatDate(this.datum);
-		return this.depot.name + Util.separatorCSV + 
-				this.wertpapier + Util.separatorCSV + 
-				this.kaufVerkaufToString() + Util.separatorCSV + 
-				datum + Util.separatorCSV + 
-				Util.toString(this.stueckzahl) + Util.separatorCSV + 
-				Util.toString(this.kurs) + Util.separatorCSV + 
-				Util.toString(this.abrechnungsbetrag) + Util.separatorCSV +
-				Util.toString(depotgeld) + Util.separatorCSV +
-				trade.getDauer() + Util.separatorCSV + 
-				Util.toString(trade.erfolg);
-		
+		return this.depot.name + Util.separatorCSV + this.wertpapier + Util.separatorCSV + this
+				.kaufVerkaufToString() + Util.separatorCSV + datum + Util.separatorCSV + Util.toString(
+						this.stueckzahl) + Util.separatorCSV + Util.toString(this.kurs) + Util.separatorCSV + Util
+								.toString(this.abrechnungsbetrag) + Util.separatorCSV + Util
+										.toString(depotgeld) + Util.separatorCSV + trade
+												.getDauer() + Util.separatorCSV + Util.toString(trade.erfolg);
+
 	}
-	
+
 }

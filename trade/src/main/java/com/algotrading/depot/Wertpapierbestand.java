@@ -4,7 +4,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import com.algotrading.aktie.Aktie;
-import com.algotrading.aktie.AktieVerzeichnis;
+import com.algotrading.component.AktieVerzeichnis;
 
 /**
  * Repräsentiert den aktuellen Wertpapierbestand zu einem Zeitpunkt. 
@@ -57,7 +57,7 @@ public class Wertpapierbestand {
 	}
 	
 	Aktie getAktie () {
-		return AktieVerzeichnis.getInstance().getAktieOhneKurse(this.wertpapier);
+		return aV.getAktieOhneKurse(this.wertpapier);
 	}
 
 }

@@ -1,6 +1,6 @@
 package com.algotrading.indikator;
 
-import java.util.ArrayList;
+import java.util.List;
 
 import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
@@ -48,7 +48,7 @@ public class IndikatorStatisticSAR extends IndikatorAlgorithmus {
 		afstufe = (Float) getParameter("stufe");
 		afmaximum = (Float) getParameter("maximum");
 
-		ArrayList<Kurs> kurse = aktie.getKursListe();
+		List<Kurs> kurse = aktie.getKursListe();
 		Kurs kurs;
 		// die ersten 2 Tage finden Vorbereitungen statt. SAR wird nicht berechnet,
 		// sondern gesetzt

@@ -4,7 +4,7 @@ import java.util.GregorianCalendar;
 import java.util.List;
 
 import com.algotrading.aktie.Aktie;
-import com.algotrading.aktie.AktieVerzeichnis;
+import com.algotrading.component.AktieVerzeichnis;
 import com.algotrading.indikator.IndikatorAlgorithmus;
 import com.algotrading.indikator.IndikatorGDalt;
 import com.algotrading.util.AbstractTest;
@@ -26,7 +26,7 @@ public class TestGDDurchbruch extends AbstractTest {
 		// TODO Auto-generated method stub
 		super.setUp();
 
-		aktie = AktieVerzeichnis.newInstance().getAktieOhneKurse("testaktie");
+		aktie = aV.getAktieLazy("testaktie");
 		assertNotNull(aktie);
 		assertTrue(aktie.getKursListe().size() > 1);
 

@@ -32,7 +32,7 @@ public class TestMinMax extends AbstractTest {
 	 */
 
 	public void testKurswertMinMax() {
-// 		Aktie aktie = AktieVerzeichnis.getInstance().getAktie("testaktie");
+		// 		Aktie aktie = aV.getVerzeichnis().getAktie("testaktie");
 		assertNotNull(aktie);
 		assertTrue(aktie.getKursListe().size() > 1);
 
@@ -65,10 +65,10 @@ public class TestMinMax extends AbstractTest {
 		for (SignalBewertung sb : sbs) {
 			System.out.println("Sbs: " + sb);
 		}
-//		assertEquals(expected, actual);
+		//		assertEquals(expected, actual);
 
-//		aktie.writeFileIndikatoren();
-//		aktie.writeFileSignale();
+		//		aktie.writeFileIndikatoren();
+		//		aktie.writeFileSignale();
 	}
 
 }

@@ -1,6 +1,6 @@
 package com.algotrading.indikator;
 
-import java.util.ArrayList;
+import java.util.List;
 
 import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
@@ -36,7 +36,7 @@ public class IndikatorMinMax extends IndikatorAlgorithmus {
 		if (dauer == 0)
 			log.error("IndikatorMinMax enthält keine Dauer");
 
-		ArrayList<Kurs> kurse = aktie.getKursListe();
+		List<Kurs> kurse = aktie.getKursListe();
 		Kurs kurs;
 		DescriptiveStatistics stats = new DescriptiveStatistics();
 		// beim Einfügen weiterer Werte fliegt automatisch der erst raus

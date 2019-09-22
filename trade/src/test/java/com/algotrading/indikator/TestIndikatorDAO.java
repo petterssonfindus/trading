@@ -6,38 +6,27 @@ import java.util.List;
 
 import org.junit.Ignore;
 import org.junit.Test;
-import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.context.SpringBootTest.WebEnvironment;
-import org.springframework.test.annotation.DirtiesContext;
-import org.springframework.test.context.ActiveProfiles;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
-import com.algotrading.Application;
 import com.algotrading.aktie.Aktie;
-import com.algotrading.aktie.AktieVerzeichnis;
 import com.algotrading.jpa.IndikatorAlgorithmusDAO;
+import com.algotrading.util.AbstractTest;
 
-@ActiveProfiles("test")
-@RunWith(SpringJUnit4ClassRunner.class)
-@SpringBootTest(classes = Application.class, webEnvironment=WebEnvironment.RANDOM_PORT)
-@DirtiesContext
-public class TestIndikatorDAO {
+public class TestIndikatorDAO extends AbstractTest {
 
 	@Autowired
-	IndikatorAlgorithmusDAO iADAO; 
-	
+	IndikatorAlgorithmusDAO iADAO;
+
 	@Ignore
 	@Test
 	public void testFindByID() {
 		List<IndikatorAlgorithmus> liste = iADAO.findAll();
 		IndikatorAlgorithmus iA1 = liste.get(0);
-		
+
 		IndikatorAlgorithmus iA2 = iADAO.findByUUID(iA1.getId());
 		boolean test = iA1.equals(iA2);
 		assertTrue(test);
-		
+
 	}
 
 	/**
@@ -45,18 +34,18 @@ public class TestIndikatorDAO {
 	 */
 	@Test
 	public void testIADAO() {
-		
+
 		List<IndikatorAlgorithmus> liste = iADAO.findAll();
 		IndikatorAlgorithmus iA1 = liste.get(0);
 
-		Aktie aktie = AktieVerzeichnis.getInstance().getAktieOhneKurse("testaktie");
+		Aktie aktie = aV.getAktieOhneKurse("testaktie");
 		IndikatorAlgorithmus iA2 = aktie.addIndikatorAlgorithmus(new IndikatorAbweichung());
 		iA2.addParameter("typ", 1);  // Typ 1 = open
 		aktie.rechneIndikatoren();
-		
+
 		boolean test = iA1.equals(iA2);
 		assertTrue(test);
-		
+
 	}
 
 }

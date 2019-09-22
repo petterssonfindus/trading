@@ -1,6 +1,6 @@
 package com.algotrading.indikator;
 
-import java.util.ArrayList;
+import java.util.List;
 
 import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
@@ -23,7 +23,7 @@ public class IndikatorMFM extends IndikatorAlgorithmus {
 	 */
 	public void rechne(Aktie aktie) {
 		// holt die Kurse, an denen die Umsätze dran hängen.
-		ArrayList<Kurs> kurse = aktie.getKursListe();
+		List<Kurs> kurse = aktie.getKursListe();
 		// holt den Parameter aus dem Indikator
 		int x = (Integer) getParameter("dauer");
 		Kurs kurs;

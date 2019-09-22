@@ -2,13 +2,16 @@ package com.algotrading.indikator;
 
 import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
+import javax.persistence.Transient;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 import com.algotrading.aktie.Aktie;
-import com.algotrading.aktie.AktieVerzeichnis;
 import com.algotrading.aktie.Kurs;
+import com.algotrading.component.AktieVerwaltung;
 import com.algotrading.util.MathUtil;
 
 /**
@@ -22,10 +25,15 @@ import com.algotrading.util.MathUtil;
  * @author oskar
  *
  */
+@Service
 @Entity(name = "IndikatorAbweichung")
 @DiscriminatorValue("Abweichung")
 public class IndikatorAbweichung extends IndikatorAlgorithmus {
 	static final Logger log = LogManager.getLogger(IndikatorAbweichung.class);
+
+	@Autowired
+	@Transient
+	private AktieVerwaltung aV;
 
 	@Override
 	public void rechne(Aktie aktie) {
@@ -34,7 +42,7 @@ public class IndikatorAbweichung extends IndikatorAlgorithmus {
 		Kurs kurs2a = null;
 		Object oa = getParameter("aktie");
 		if (oa != null) {
-			aktie2 = AktieVerzeichnis.getInstance().getAktieMitKurse(oa.toString());
+			aktie2 = aV.getAktieMitKurse(aV.getAktieLazy(oa.toString()).getId());
 		} else {
 			aktie2 = aktie;
 		}

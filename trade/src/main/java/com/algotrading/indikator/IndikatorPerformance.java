@@ -31,11 +31,11 @@ public class IndikatorPerformance extends IndikatorAlgorithmus {
 		int x = ((Integer) getParameter("dauer")).intValue();
 
 		if (kurse.length <= x)
-			log.error(aktie.name + " zu wenig Kurse: " + kurse.length + " vorhanden: " + x + " benoetigt."); // wenn
-																												// weniger
-																												// Kurse
-																												// vorhanden
-																												// sind
+			log.error(aktie.getName() + " zu wenig Kurse: " + kurse.length + " vorhanden: " + x + " benoetigt."); // wenn
+																													// weniger
+																													// Kurse
+																													// vorhanden
+																													// sind
 
 		float kapitalBeginn = 0;
 		float kapitalEnde = 0;

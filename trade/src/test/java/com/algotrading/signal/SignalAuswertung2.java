@@ -1,21 +1,17 @@
 package com.algotrading.signal;
 
 import com.algotrading.aktie.Aktie;
-import com.algotrading.aktie.AktieVerzeichnis;
 import com.algotrading.indikator.IndikatorAlgorithmus;
-import com.algotrading.indikator.IndikatorGDalt;
 import com.algotrading.indikator.IndikatorMinMax;
 import com.algotrading.indikator.IndikatorMultiplikation;
 import com.algotrading.indikator.IndikatorVolatilitaet;
-import com.algotrading.util.Zeitraum;
+import com.algotrading.util.AbstractTest;
 
-import junit.framework.TestCase;
-
-public class SignalAuswertung2 extends TestCase {
+public class SignalAuswertung2 extends AbstractTest {
 
 	public void testSignalauswertung() {
-		Aktie aktie = AktieVerzeichnis.getInstance().getAktieOhneKurse("^gdaxi");
-		
+		Aktie aktie = aV.getAktieOhneKurse("^gdaxi");
+
 		// Indikator konfigurieren und an Aktie hängen
 		IndikatorAlgorithmus iB = aktie.addIndikatorAlgorithmus(new IndikatorMinMax());
 		iB.addParameter("dauer", 30);
@@ -26,19 +22,19 @@ public class SignalAuswertung2 extends TestCase {
 		iB3.addParameter("indikator2", iB2);
 		iB3.addParameter("reziprok2", 1);
 		iB3.addParameter("faktor", 100f);
-		
+
 		// Indikator berechnen und ausgeben 
 		aktie.rechneIndikatoren();
-		
+
 		// Signal konfigurieren und an Aktie hängen 
 		SignalAlgorithmus sB = aktie.addSignalAlgorithmus(new SignalAlgorithmus() {
-			
+
 			@Override
 			public int rechne(Aktie aktie) {
 				// TODO Auto-generated method stub
 				return 0;
 			}
-			
+
 			@Override
 			public String getKurzname() {
 				// TODO Auto-generated method stub
@@ -49,7 +45,7 @@ public class SignalAuswertung2 extends TestCase {
 		sB.addParameter("dauer", 30);		// Min-Max-Berechnung x Tage zurück 
 		sB.addParameter("schwelle", 2.5f);		// 1-fache Standardabweichung
 		sB.addParameter("durchbruch", 0);	// tägliches Signal in der Extremzone
-		
+
 		// Signale berechnen und ausgeben 
 		aktie.rechneSignale();
 		aktie.bewerteSignale(null, 10);
@@ -58,10 +54,9 @@ public class SignalAuswertung2 extends TestCase {
 		aktie.bewerteSignale(null, 50);
 		aktie.bewerteSignale(null, 60);
 		aktie.bewerteSignale(null, 90);
-		
-		
+
 		aktie.writeFileKursIndikatorSignal();
-//		aktie.writeFileSignale();
+		//		aktie.writeFileSignale();
 	}
-	
+
 }

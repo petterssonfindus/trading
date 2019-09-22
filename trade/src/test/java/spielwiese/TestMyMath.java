@@ -7,20 +7,21 @@ import org.mockito.Mock;
 // import static org.mockito.Mockito.mock;
 import org.mockito.Mockito;
 import org.mockito.runners.MockitoJUnitRunner;
+
 import junit.framework.TestCase;
 
 @RunWith(MockitoJUnitRunner.class)
 public class TestMyMath extends TestCase {
-	
+
 	@InjectMocks
 	@Mock
-	public MyMath myMath; 
-	
+	public MyMath myMath;
+
 	public void setUp() {
-		
-//		myMath = new MyMath();
+
+		//		myMath = new MyMath();
 	}
-	
+
 	@Test
 	public void testMyMath() {
 		MyMath myMathMock = Mockito.mock(MyMath.class);
@@ -29,10 +30,10 @@ public class TestMyMath extends TestCase {
 		double test = myMath.rechneAddition(1, 1);
 		// Ausführung der Methode über Mock 
 		double testMock = myMathMock.rechneAddition(1, 1);
-		
+
 		Mockito.verify(myMathMock).rechneAddition(1d, 1d);
 		assertEquals(3.0d, test);
-		
+
 		System.out.println("test = " + test);
 		System.out.println("testMock = " + testMock);
 	}
