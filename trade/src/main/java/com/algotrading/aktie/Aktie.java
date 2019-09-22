@@ -14,6 +14,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.OneToMany;
+import javax.persistence.OrderBy;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
@@ -22,6 +23,7 @@ import javax.persistence.Transient;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.hibernate.LazyInitializationException;
+import org.hibernate.annotations.BatchSize;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -99,6 +101,8 @@ public class Aktie extends Parameter {
 
 	@OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
 	@JoinColumn(name = "aktie")
+	@OrderBy("datum")
+	@BatchSize(size = 100) // alternativ JOIN FETCH
 	private List<Kurs> kurse = new ArrayList<Kurs>();
 
 	// der Kurs, der zum aktuellen Datum des Depot gehört. NextKurs() sorgt für die Aktualisierung
@@ -462,6 +466,7 @@ public class Aktie extends Parameter {
 
 			// für alle Signale zu dieser SignalBeschreibung
 			for (Signal signal : signale) {
+				signal.setaV(aV);
 				//				System.out.println("signal" + signal.toString());
 				// Signale im vorgegebenen Zeitraum filtern
 				if (!DateUtil.istInZeitraum(signal.getKurs().getDatum(), zeitraum))
@@ -469,7 +474,7 @@ public class Aktie extends Parameter {
 				// die Bewertung des Signals: Kursentwicklung in die Zukunft
 				staerke = signal.getStaerke();
 				// die Bewertung wird am Signal ermittelt
-				Float bewertung = signal.getBewertung(tage);
+				Float bewertung = signal.getPerformance(tage);
 				if (bewertung == null)
 					continue; // wenn keine Bewertung vorhanden ist, dann nächstes Signal
 				float b = bewertung;
@@ -638,7 +643,7 @@ public class Aktie extends Parameter {
 		if (this.zeitraumKurse != null)
 			result = this.zeitraumKurse;
 		else
-			result = new Zeitraum(this.kurse.get(0).getDatum(), this.kurse.get(this.kurse.size()).getDatum());
+			result = new Zeitraum(this.kurse.get(0).getDatum(), this.kurse.get(this.kurse.size() - 1).getDatum());
 		return result;
 	}
 

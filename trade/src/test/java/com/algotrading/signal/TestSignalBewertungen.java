@@ -38,7 +38,7 @@ public class TestSignalBewertungen extends AbstractTest {
 
 	@Test
 	public void testCreateSignalBewertungen() {
-		Aktie aktie = aV.getAktieOhneKurse("^gdaxi");
+		Aktie aktie = aV.getAktieLazy(48218L);
 		//		List<Aktie> aktien = aV.getVerzeichnis().getAktien(DateUtil.createGregorianCalendar(1, 1, 2000));
 		IndikatorAlgorithmus iA = new IndikatorGD();
 		iA.addParameter("dauer", 10);
@@ -71,9 +71,11 @@ public class TestSignalBewertungen extends AbstractTest {
 		SignalBewertungen sBs = new SignalBewertungen();
 		sBs.addSignalBewertungen(bewertungen);
 		sV.saveSignalBewertungen(sBs);
+
+		aktie.writeFileKursIndikatorSignal();
+
 		// Liste der Bewertungen wird gespeichert
 		// sV.saveSignalBewertungListe(bewertungen);
-
 	}
 
 }

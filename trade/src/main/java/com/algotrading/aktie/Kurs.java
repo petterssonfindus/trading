@@ -12,6 +12,7 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.PostLoad;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.persistence.Transient;
@@ -46,7 +47,10 @@ public class Kurs {
 
 	// Referenz auf die zugehörige Aktie
 	@Transient
-	private Aktie aktie;
+	private Aktie aktieRef;
+
+	@Column(name = "aktie")
+	private long aktie;
 
 	@Id
 	@Column(name = "id", nullable = false)
@@ -92,16 +96,22 @@ public class Kurs {
 
 	// Liste aller Signale - öffentlicher Zugriff nur über add() und get()
 	@Transient
-	private List<Signal> signale;
+	private List<Signal> signale = new ArrayList<Signal>();
 
 	@Transient
 	private static final Logger log = LogManager.getLogger(Kurs.class);
 
-	public Kurs() {
+	protected Kurs() {
 	}
 
 	public Kurs(Aktie aktie) {
-		this.aktie = aktie;
+		this.aktieRef = aktie;
+	}
+
+	// beim Laden aus DB (ProPersist)
+	@PostLoad
+	public void fillDatumString() {
+		this.datumString = DateUtil.formatDate(datum);
 	}
 
 	/**
@@ -127,9 +137,11 @@ public class Kurs {
 	}
 
 	public Signal getSignal(SignalAlgorithmus sA) {
-		for (Signal signal : this.signale) {
-			if (signal.getSignalAlgorithmus().equals(sA))
-				return signal;
+		if (this.signale != null) {
+			for (Signal signal : this.signale) {
+				if (signal.getSignalAlgorithmus().equals(sA))
+					return signal;
+			}
 		}
 		return null;
 	}
@@ -197,8 +209,9 @@ public class Kurs {
 	 * wenn nicht vorhanden, dann -null-
 	 * @param vorzurueck Anzahl Tage: positiv = Zukunft - negativ = Vergangenheit
 	 */
-	public Kurs getKursTage(int n) {
-		List<Kurs> kurse = this.getAktie().getKursListe();
+	public Kurs getKursTage(AktieVerwaltung aV, int n) {
+
+		List<Kurs> kurse = aV.getAktieMitKurse(this.getAktieID()).getKurse();
 		// an welcher Stelle ist der aktuelle Kurs ?
 		int x = kurse.indexOf(this);
 		try {
@@ -217,13 +230,17 @@ public class Kurs {
 	 * @return die Aktie, zu dem der Kurs gehört 
 	 */
 	public Aktie getAktie() {
+		return this.aktieRef;
+	}
+
+	public long getAktieID() {
 		return this.aktie;
 	}
 
 	/**
 	 * das Datum mit einem GregCalendar setzen
 	 */
-	public void setDatum(GregorianCalendar datum) {
+	public void setDatum(Calendar datum) {
 		this.datum = datum;
 		this.datumString = DateUtil.formatDate(datum);
 	}
@@ -236,21 +253,27 @@ public class Kurs {
 
 	/**
 	 * erzeugt einen String ohne Line-Separator
-	 * Datum ; Close-Kurs ;  n-Indikatoren ; n-Signale
+	 * Datum ; Close-Kurs ;  n-Indikatoren ; n-Signale ; n-Bewertungen
 	 */
+	// @formatter:off
 	public String toString() {
-		return DateUtil.formatDate(this.getDatum(), "-", true) + Util.separatorCSV + Util
-				.toString(close) + toStringIndikatoren() + toStringSignale();
+		return String.format("%s%s%s%s%s", 
+				DateUtil.formatDate(this.getDatum(), "-", true), 
+				Util.separatorCSV ,
+				Util.toString(close), 
+				toStringIndikatoren(), 
+				toStringSignale());
 	}
+	// @formatter:on
 
 	/**
-	 * Liefert einen String mit allen Indikatoren im Format Typ - Wert
+	 * Liefert einen String mit allen Indikatoren im Format ';Typ - Wert'
 	 * In der Reihenfolge des Einfügens der Indikatoren 
 	 */
 	private String toStringIndikatoren() {
 		String result = "";
 		for (IndikatorAlgorithmus iA : this.indikatorenListe) {
-			result = result.concat(Util.separatorCSV + Util.toString(this.getIndikatorWert(iA)));
+			result += String.format("%s%s", Util.separatorCSV, Util.toString(this.getIndikatorWert(iA)));
 		}
 		return result;
 	}
@@ -262,7 +285,7 @@ public class Kurs {
 	private String toStringSignale() {
 		String result = "";
 		for (Signal signal : this.signale) {
-			result = result.concat(Util.separatorCSV + signal.toStringShort());
+			result += String.format("%s%s", Util.separatorCSV, signal.toStringShort());
 		}
 		return result;
 	}
@@ -282,7 +305,7 @@ public class Kurs {
 	}
 
 	public String getAktieName() {
-		return this.aktie.getName();
+		return this.aktieRef.getName();
 	}
 
 }

@@ -53,6 +53,7 @@ public class AktieVerzeichnis {
 		for (Aktie aktie : aktien) {
 			this.verzeichnisName.put(aktie.getName(), aktie);
 			this.verzeichnisID.put(aktie.getId(), aktie);
+			aktie.setaV(aV);
 		}
 	}
 

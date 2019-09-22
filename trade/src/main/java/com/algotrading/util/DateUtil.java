@@ -17,7 +17,7 @@ public class DateUtil {
 	 * @param date das Datum, das umgewandelt werden soll
 	 * @return ein String oder der Wert 'NULL'
 	 */
-	public static String formatDate(GregorianCalendar cal) {
+	public static String formatDate(Calendar cal) {
 		if (cal == null)
 			return "NULL";
 		else {
@@ -89,18 +89,17 @@ public class DateUtil {
 	}
 
 	/**
-	 * Liefert Liste von typischen Berwertungstagen. 1 = 30,60,90,120,180,270,360
+	 * Liefert Liste von typischen Berwertungstagen. 1 = 10,30,60,90,180,360
 	 */
 	public static List<Integer> getBewertungTage(int variante) {
 		List<Integer> result = new ArrayList<Integer>();
 		switch (variante) {
 		case 1: {
+			result.add(10);
 			result.add(30);
 			result.add(60);
 			result.add(90);
-			result.add(120);
 			result.add(180);
-			result.add(270);
 			result.add(360);
 			break;
 		}

@@ -60,12 +60,14 @@ public class TestAktie extends AbstractTest {
 	@Test
 	public void testGetAktieMitKurse() {
 		long beginn = new GregorianCalendar().getTimeInMillis();
-		aktie = aV.getAktieMitKurse(8112l);
+		aktie = aV.getAktieMitKurse(122126L);
 		long ende = new GregorianCalendar().getTimeInMillis();
 		System.out.println("Auswertung dauerte Sekunden: " + ((ende - beginn) / 1000));
 		System.out.println("Kurs0: " + DateUtil.formatDate(aktie.getKursListe().get(0).getDatum()));
 		System.out
-				.println("Kursn: " + DateUtil.formatDate(aktie.getKursListe().get(aktie.getKursListe().size() - 1).getDatum()));
+				.println(
+						"Kursn: " + DateUtil
+								.formatDate(aktie.getKursListe().get(aktie.getKursListe().size() - 1).getDatum()));
 	}
 
 	@Test
@@ -99,9 +101,9 @@ public class TestAktie extends AbstractTest {
 		assertTrue(kursreihe.size() > 1);
 		Kurs kurs = kursreihe.get(100);
 		assertNotNull(kurs);
-		Kurs kurs2 = kurs.getKursTage(10);
+		Kurs kurs2 = kurs.getKursTage(aV, 10);
 		assertEquals(22.5f, kurs2.getKurs());
-		Kurs kurs3 = kurs.getKursTage(-10);
+		Kurs kurs3 = kurs.getKursTage(aV, -10);
 		assertEquals(23.03f, kurs3.getKurs());
 		// 
 	}

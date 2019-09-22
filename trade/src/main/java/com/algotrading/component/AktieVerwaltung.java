@@ -93,6 +93,7 @@ public class AktieVerwaltung {
 			aktieVerzeichnis = new AktieVerzeichnis();
 			aktieVerzeichnis.setVerzeichnis(getAktienAusDB(), this);
 		}
+
 		return aktieVerzeichnis;
 	}
 

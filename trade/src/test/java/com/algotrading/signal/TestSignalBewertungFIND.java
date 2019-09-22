@@ -30,7 +30,7 @@ public class TestSignalBewertungFIND extends AbstractTest {
 	 */
 	@Test
 	public void testFindSignalBewertungByID() {
-		SignalBewertung test = sV.find(Long.valueOf(110));
+		SignalBewertung test = sV.find(Long.valueOf(132154L));
 		assertNotNull(test);
 		SignalAlgorithmus sA = test.getSignalAlgorithmus();
 		assertNotNull(sA);
@@ -44,7 +44,7 @@ public class TestSignalBewertungFIND extends AbstractTest {
 	@Test
 	public void testFindEqualsNameAndTage() {
 		// sucht alle vergleichbaren SignalBewertungen
-		List<SignalBewertung> testSBs = sBDAO.findByAktieNameAndTage("testaktie", 10);
+		List<SignalBewertung> testSBs = sBDAO.findByAktieNameAndTage("dax ariva", 30);
 		assertTrue(testSBs.size() > 0);
 		System.out.println(
 				"Anzahl Bewertungen: " + testSBs.size());
@@ -77,7 +77,7 @@ public class TestSignalBewertungFIND extends AbstractTest {
 	 */
 	@Test
 	public void testFindByTypedQuery() {
-		SignalBewertung test = sV.find(Long.valueOf(110));
+		SignalBewertung test = sV.find(Long.valueOf(132158L));
 		// 		test.getSignalAlgorithmus().getIndikatorAlgorithmen().get(0).setP1wert("28");
 
 		List<SignalBewertung> testSBs = sBDAO.findByTypedQuery(test);
