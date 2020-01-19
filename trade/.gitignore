@@ -9,6 +9,8 @@
 *.csv
 *.zip
 *.txt
+*.jpg
+*.tmp
 *.doc*
 *.~*
 /target/

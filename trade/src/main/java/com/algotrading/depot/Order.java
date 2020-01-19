@@ -86,11 +86,11 @@ public class Order {
 	public String toString() {
 		String datum = DateUtil.formatDate(this.datum);
 		return this.depot.name + Util.separatorCSV + this.wertpapier + Util.separatorCSV + this
-				.kaufVerkaufToString() + Util.separatorCSV + datum + Util.separatorCSV + Util.toString(
-						this.stueckzahl) + Util.separatorCSV + Util.toString(this.kurs) + Util.separatorCSV + Util
-								.toString(this.abrechnungsbetrag) + Util.separatorCSV + Util
-										.toString(depotgeld) + Util.separatorCSV + trade
-												.getDauer() + Util.separatorCSV + Util.toString(trade.erfolg);
+				.kaufVerkaufToString() + Util.separatorCSV + datum + Util.separatorCSV + Util.toStringExcel(
+						this.stueckzahl) + Util.separatorCSV + Util.toStringExcel(this.kurs) + Util.separatorCSV + Util
+								.toStringExcel(this.abrechnungsbetrag) + Util.separatorCSV + Util
+										.toStringExcel(depotgeld) + Util.separatorCSV + trade
+												.getDauer() + Util.separatorCSV + Util.toStringExcel(trade.erfolg);
 
 	}
 

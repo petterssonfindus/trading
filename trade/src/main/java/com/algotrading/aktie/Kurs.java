@@ -9,9 +9,12 @@ import java.util.List;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.PostLoad;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
@@ -45,12 +48,9 @@ public class Kurs {
 	@Transient
 	private AktieVerwaltung aV;
 
-	// Referenz auf die zugehörige Aktie
-	@Transient
-	private Aktie aktieRef;
-
-	@Column(name = "aktie")
-	private long aktie;
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn
+	private Aktie aktie;
 
 	@Id
 	@Column(name = "id", nullable = false)
@@ -101,11 +101,14 @@ public class Kurs {
 	@Transient
 	private static final Logger log = LogManager.getLogger(Kurs.class);
 
+	/**
+	 * nur für JPA 
+	 */
 	protected Kurs() {
 	}
 
 	public Kurs(Aktie aktie) {
-		this.aktieRef = aktie;
+		this.aktie = aktie;
 	}
 
 	// beim Laden aus DB (ProPersist)
@@ -151,7 +154,7 @@ public class Kurs {
 	}
 
 	public String getClose() {
-		return Float.toString(close);
+		return Util.toStringExcel(close);
 	}
 
 	/**
@@ -210,6 +213,8 @@ public class Kurs {
 	 * @param vorzurueck Anzahl Tage: positiv = Zukunft - negativ = Vergangenheit
 	 */
 	public Kurs getKursTage(AktieVerwaltung aV, int n) {
+		if (aV == null)
+			return null;
 
 		List<Kurs> kurse = aV.getAktieMitKurse(this.getAktieID()).getKurse();
 		// an welcher Stelle ist der aktuelle Kurs ?
@@ -230,11 +235,11 @@ public class Kurs {
 	 * @return die Aktie, zu dem der Kurs gehört 
 	 */
 	public Aktie getAktie() {
-		return this.aktieRef;
+		return this.aktie;
 	}
 
 	public long getAktieID() {
-		return this.aktie;
+		return this.aktie.getId();
 	}
 
 	/**
@@ -260,9 +265,21 @@ public class Kurs {
 		return String.format("%s%s%s%s%s", 
 				DateUtil.formatDate(this.getDatum(), "-", true), 
 				Util.separatorCSV ,
-				Util.toString(close), 
+				Util.toStringExcel(close), 
 				toStringIndikatoren(), 
 				toStringSignale());
+	}
+	// @formatter:on
+
+	/**
+	 * Datum ; Close-Kurs ;  n-Indikatoren 
+	 */
+	// @formatter:off
+	public String toStringShort() {
+		return String.format("%s%s%s", 
+				DateUtil.formatDate(this.getDatum(), "-", true), 
+				Util.separatorCSV ,
+				Util.toStringExcel(close));
 	}
 	// @formatter:on
 
@@ -273,7 +290,7 @@ public class Kurs {
 	private String toStringIndikatoren() {
 		String result = "";
 		for (IndikatorAlgorithmus iA : this.indikatorenListe) {
-			result += String.format("%s%s", Util.separatorCSV, Util.toString(this.getIndikatorWert(iA)));
+			result += String.format("%s%s", Util.separatorCSV, Util.toStringExcel(this.getIndikatorWert(iA)));
 		}
 		return result;
 	}
@@ -283,11 +300,11 @@ public class Kurs {
 	 * Typ - Kauf/Verkauf - Wert
 	 */
 	private String toStringSignale() {
-		String result = "";
+		StringBuilder sb = new StringBuilder();
 		for (Signal signal : this.signale) {
-			result += String.format("%s%s", Util.separatorCSV, signal.toStringShort());
+			sb.append(String.format("%s%s", Util.separatorCSV, signal.toStringCSV()));
 		}
-		return result;
+		return sb.toString();
 	}
 
 	/**
@@ -300,12 +317,16 @@ public class Kurs {
 		Signal signal = new Signal(sA, this, kaufVerkauf, staerke);
 		sA.addSignal(signal);  // das Signal hängt am Signal-Algorithmus
 		addSignal(signal); // das Signal hängt am Kurs 
-		log.debug("neues Signal: " + signal.toString());
+		log.debug("neues Signal: " + signal.toStringShort());
 		return signal;
 	}
 
 	public String getAktieName() {
-		return this.aktieRef.getName();
+		return this.aktie.getName();
+	}
+
+	protected void setAktie(Aktie aktie) {
+		this.aktie = aktie;
 	}
 
 }

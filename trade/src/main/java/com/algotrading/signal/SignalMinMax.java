@@ -15,9 +15,11 @@ import com.algotrading.depot.Order;
 import com.algotrading.indikator.IndikatorAlgorithmus;
 
 /**
- * Für einen beliebigen Indikator geeignet Berechnet die Extremwerte in einem
- * vergangenen Zeitraum Sendet ein Signal, solange sich der Kurs aktuell im
- * Extrembereich befindet. Oder nur bei Durchbruch in die Extremzone Parameter:
+ * Bestimmt das Minimum und Maximum anhand statistischer Werte. 
+ * Für einen beliebigen Indikator geeignet 
+ * Berechnet die Extremwerte in einem vergangenen Zeitraum 
+ * Sendet ein Signal, solange sich der Kurs aktuell im Extrembereich befindet. 
+ * Oder nur bei Durchbruch in die Extremzone Parameter:
  * dauer - für den beobachteten Zeitraum in dem die Extremwerte bestimmt werden
  * schwelle - für den Extrem-Wertebereich - in Standardabweichungen 1 = 68 %
  * oben und unten; 2 = 95 %; 3 = 99,73% durchbruch (optional) - 0 = tägliches

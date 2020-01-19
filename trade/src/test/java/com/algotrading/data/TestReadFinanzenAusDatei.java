@@ -21,7 +21,7 @@ public class TestReadFinanzenAusDatei extends AbstractTest {
 		Aktie aktie = new Aktie("VDAX_NEW9M");
 		aktie.setLand(1);
 		aktie.setQuelle(1);
-		Aktie newAktie = aV.saveAktie(aktie);
+		Aktie newAktie = aV.createAktie(aktie);
 		readDataFinanzen.readFileWriteDB("vdax-new-9m%1554444300167.csv", newAktie.getName());
 	}
 }

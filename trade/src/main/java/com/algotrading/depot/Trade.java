@@ -132,7 +132,7 @@ public class Trade {
 			DateUtil.formatDate(beginn) + Util.separatorCSV + 
 			DateUtil.formatDate(ende) + Util.separatorCSV + 
 			Integer.toString(getDauer()) + Util.separatorCSV + 
-			Util.toString(erfolg);
+			Util.toStringExcel(erfolg);
 		return result; 
 	}
 	public String getWertpapier() {

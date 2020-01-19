@@ -6,7 +6,7 @@ import java.util.List;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import com.algotrading.component.Signalverwaltung;
+import com.algotrading.component.SignalVerwaltung;
 import com.algotrading.indikator.IndikatorAlgorithmus;
 import com.algotrading.jpa.SignalBewertungDAO;
 import com.algotrading.jpa.SignalBewertungRepository;
@@ -17,7 +17,7 @@ import com.algotrading.util.Zeitraum;
 public class TestSignalBewertungFIND extends AbstractTest {
 
 	@Autowired
-	Signalverwaltung sV;
+	SignalVerwaltung sV;
 
 	@Autowired
 	SignalBewertungDAO sBDAO;

@@ -21,7 +21,7 @@ import org.springframework.stereotype.Component;
 public class Parameter {
 	static final Logger log = LogManager.getLogger(Parameter.class);
 
-	private HashMap<String, Object> parameter = new HashMap<String, Object>();
+	private HashMap<String, Object> parameter = new HashMap<>();
 
 	/**
 	 * Holt ein Parameter, falls er vorhanden ist - ansonsten null
@@ -113,11 +113,17 @@ public class Parameter {
 		while (it.hasNext()) {
 			String key = it.next(); // der Key als String
 			String value = this.parameter.get(key).toString(); // der Value als Object
-			// der Parameter "indikator" ist eine Referenz auf eine IndikatorAlgorithmus
-//			if (key =="indikator") result = result.concat(value.toString());
 			result = result.concat(Util.separatorCSV + key + ":" + value);
 		}
 		return result;
+	}
+
+	public String toStringHeader() {
+		StringBuilder sB = new StringBuilder();
+		for (Para para : this.getParameterList()) {
+			sB.append(Util.separatorCSV + para.getName());
+		}
+		return sB.toString();
 	}
 
 	public boolean equalsValue(Object object1, Object object2) {
@@ -287,4 +293,38 @@ public class Parameter {
 		}
 	}
 
+	public HashMap<String, Object> getParameter() {
+		return parameter;
+	}
+
+	public void setParameter(HashMap<String, Object> parameter) {
+		this.parameter = parameter;
+	}
+
+	/**
+	 * die Parameter setzen, wobei die Werte als Strings vorliegen 
+	 */
+	public void setParameterString(HashMap<String, String> parameter) {
+		// iteriert über alle Elemente der HashMap
+		for (String key : parameter.keySet()) {
+			Object o = mapStringToObject(parameter.get(key));
+			this.parameter.put(key, o);
+		}
+	}
+
+	private Object mapStringToObject(String value) {
+		// zuerst versuchen, ob ein Float vorliegt 
+		try {
+			return Integer.parseInt(value);
+		} catch (NumberFormatException e) {
+
+		}
+		try {
+			return Float.parseFloat(value);
+		} catch (NumberFormatException e) {
+
+		}
+		// wenn es weder ein Float noch ein Integer ist, muss es ein String sein 
+		return value;
+	}
 }

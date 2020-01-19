@@ -8,7 +8,7 @@ import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import com.algotrading.aktie.Aktie;
-import com.algotrading.component.Signalverwaltung;
+import com.algotrading.component.SignalVerwaltung;
 import com.algotrading.indikator.IndikatorAbweichung;
 import com.algotrading.indikator.IndikatorAlgorithmus;
 import com.algotrading.indikator.IndikatorGD;
@@ -20,7 +20,7 @@ import com.algotrading.util.Zeitraum;
 public class TestSignalBewertungCreate extends AbstractTest {
 
 	@Autowired
-	Signalverwaltung sV;
+	SignalVerwaltung sV;
 
 	@Autowired
 	SignalBewertungDAO sBDAO;

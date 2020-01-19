@@ -81,8 +81,8 @@ public class DateUtil {
 		int ende = DateUtil.getJahr(zeitraum.getEnde()) - 1;
 		// Anzahl der Durchläufe
 		int anzahl = ende - beginn - turnus + 1;
-		for (int aktuell = 0; aktuell < anzahl; aktuell++) {
-			Zeitraum zeit = new Zeitraum(beginn + aktuell, beginn + aktuell + turnus);
+		for (int aktuell = 0; aktuell <= anzahl; aktuell++) {
+			Zeitraum zeit = new Zeitraum(beginn + aktuell, beginn + aktuell + turnus - 1);
 			result.add(zeit);
 		}
 		return result;
@@ -92,15 +92,49 @@ public class DateUtil {
 	 * Liefert Liste von typischen Berwertungstagen. 1 = 10,30,60,90,180,360
 	 */
 	public static List<Integer> getBewertungTage(int variante) {
-		List<Integer> result = new ArrayList<Integer>();
+		List<Integer> result = new ArrayList<>();
 		switch (variante) {
 		case 1: {
+			result.add(30);
+			break;
+		}
+		case 2: {
+			result.add(30);
+			result.add(90);
+			break;
+		}
+		case 3: {
+			result.add(10);
+			result.add(30);
+			result.add(90);
+			break;
+		}
+		case 4: {
+			result.add(10);
+			result.add(30);
+			result.add(60);
+			result.add(90);
+			break;
+		}
+		case 5: {
+			result.add(10);
+			result.add(30);
+			result.add(60);
+			result.add(90);
+			result.add(180);
+			break;
+		}
+		case 6: {
 			result.add(10);
 			result.add(30);
 			result.add(60);
 			result.add(90);
 			result.add(180);
 			result.add(360);
+			break;
+		}
+		default: {
+			result.add(10);
 			break;
 		}
 		}
@@ -169,6 +203,10 @@ public class DateUtil {
 
 	public static GregorianCalendar getHeute() {
 		return new GregorianCalendar();
+	}
+
+	public static long getTimeInMillis() {
+		return new GregorianCalendar().getTimeInMillis();
 	}
 
 	/**

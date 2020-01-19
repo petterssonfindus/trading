@@ -13,7 +13,7 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import com.algotrading.Application;
 import com.algotrading.aktie.Aktie;
-import com.algotrading.component.Signalverwaltung;
+import com.algotrading.component.SignalVerwaltung;
 import com.algotrading.indikator.IndikatorAlgorithmus;
 import com.algotrading.indikator.IndikatorGDalt;
 import com.algotrading.indikator.IndikatorOBV;
@@ -29,7 +29,7 @@ import com.algotrading.util.Zeitraum;
 public class TestSignalAuswertung3 extends AbstractTest {
 
 	@Autowired
-	Signalverwaltung sV;
+	SignalVerwaltung sV;
 
 	@Test
 	public void testSignalAuswertung() {

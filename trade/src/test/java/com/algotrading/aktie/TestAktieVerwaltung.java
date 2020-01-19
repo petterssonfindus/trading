@@ -5,6 +5,7 @@ import java.util.List;
 import org.junit.Test;
 
 import com.algotrading.util.AbstractTest;
+import com.algotrading.util.DateUtil;
 
 public class TestAktieVerwaltung extends AbstractTest {
 
@@ -32,9 +33,16 @@ public class TestAktieVerwaltung extends AbstractTest {
 
 	@Test
 	public void testGetAktieLazy() {
-		Aktie aktie = aV.getAktieLazy(31l);
+		long beginn = DateUtil.getTimeInMillis();
+		Aktie aktie = aV.getAktieLazy(259l);
+		long lazy = DateUtil.getTimeInMillis();
 		assertNotNull(aktie);
+		Aktie aktie2 = aV.getAktieLazy(259l);
+		long lazy2 = DateUtil.getTimeInMillis();
 		aktie.getKursListe();
-		System.out.println("Aktienkurse: " + aktie.getKursListe().size());
+		long ende = DateUtil.getTimeInMillis();
+		System.out.println("Aktienkurse: " + aktie.getKursListe().size() + " Dauer: " + (lazy - beginn));
+		System.out.println("Kurse lesen1 " + (ende - beginn));
+		System.out.println("Kurse lesen2 " + (lazy2 - lazy));
 	}
 }

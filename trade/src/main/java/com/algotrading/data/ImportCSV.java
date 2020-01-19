@@ -196,7 +196,7 @@ public class ImportCSV {
 			log.error("NumberFormatException beim String: " + zeile.toString());
 			e.printStackTrace();
 		}
-		aV.saveAktie(aktie);
+		aV.createAktie(aktie);
 		return aktie;
 	}
 
@@ -266,7 +266,7 @@ public class ImportCSV {
 			log.error("Feher beim Einlesen Datei: " + file.getAbsolutePath());
 			e.printStackTrace();
 		}
-		aV.saveAktie(aktie);
+		aV.createAktie(aktie);
 		System.out.println("Kurs eingelesen " + aktie.getName() + " - " + aktie.getKursListe().size());
 		return aktie;
 	}

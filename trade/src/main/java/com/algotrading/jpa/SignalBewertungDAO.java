@@ -1,5 +1,6 @@
 package com.algotrading.jpa;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.List;
@@ -54,6 +55,16 @@ public class SignalBewertungDAO {
 	}
 
 	@Transactional
+	public List<SignalBewertung> findAll() {
+		Iterable<SignalBewertung> result = sBR.findAll();
+		List<SignalBewertung> liste = new ArrayList<>();
+		for (SignalBewertung sB : result) {
+			liste.add(sB);
+		}
+		return liste;
+	}
+
+	@Transactional
 	public List<SignalBewertung> findByAktieName(String aktie) {
 		List<SignalBewertung> result = sBR.findByAktieName(aktie);
 		loadLazyLoaded(result);
@@ -85,9 +96,10 @@ public class SignalBewertungDAO {
 	 */
 	@Transactional
 	boolean loadLazyLoaded(List<SignalBewertung> sBs) {
-		if (sBs == null || sBs.size() == 0)
+		if (sBs == null || sBs.isEmpty())
 			return false;
 		for (SignalBewertung sB : sBs) {
+
 			sB.getSignalAlgorithmus().getIndikatorAlgorithmen().size();
 		}
 		return true;

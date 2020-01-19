@@ -18,9 +18,9 @@ import com.algotrading.util.Zeitraum;
  * Erreichbarkeit nur über die AktieVerwaltung
  * @author oskar
  */
-public class AktieVerzeichnis {
+public class AktieCache {
 
-	private static final Logger log = LogManager.getLogger(AktieVerzeichnis.class);
+	private static final Logger log = LogManager.getLogger(AktieCache.class);
 	public static final byte BOERSEDEPOT = 0;
 	public static final byte BOERSEINDEX = 1;
 	public static final byte BOERSENYSE = 2;
@@ -31,10 +31,11 @@ public class AktieVerzeichnis {
 	public static final String INDEXDAX = "dax";
 	public static final String INDEXDOWJONES = "dowjones";
 
-	private HashMap<String, Aktie> verzeichnisName = new HashMap<String, Aktie>();
+	// Aktien-Cache mit Name 
+	private HashMap<String, Aktie> cacheName = new HashMap<String, Aktie>();
 
-	// das Verzeichnis aller Aktien mit ID
-	private HashMap<Long, Aktie> verzeichnisID = new HashMap<Long, Aktie>();
+	// Aktien-Cache mit ID
+	private HashMap<Long, Aktie> cache = new HashMap<Long, Aktie>();
 
 	@Autowired
 	private AktieVerwaltung aV;
@@ -42,17 +43,14 @@ public class AktieVerzeichnis {
 	@Autowired
 	private AktieDAO aktieDAO;
 
-	protected AktieVerzeichnis() {
-	}
-
 	/**
-	 * Initialisiert die Verzeichnisse
+	 * Initialisiert den Cache mit Aktien-Stammdaten 
 	 */
-	protected void setVerzeichnis(Iterable<Aktie> aktien, AktieVerwaltung aV) {
+	protected AktieCache(Iterable<Aktie> aktien, AktieVerwaltung aV) {
 		this.setaV(aV);
 		for (Aktie aktie : aktien) {
-			this.verzeichnisName.put(aktie.getName(), aktie);
-			this.verzeichnisID.put(aktie.getId(), aktie);
+			this.cacheName.put(aktie.getName(), aktie);
+			this.cache.put(aktie.getId(), aktie);
 			aktie.setaV(aV);
 		}
 	}
@@ -60,9 +58,6 @@ public class AktieVerzeichnis {
 	/**
 	 * liest und initialisiert eine Aktie anhand eines WP-Namens die Kursreihe ist
 	 * eventuell noch nicht gefüllt. Wird beim Zugriff gefüllt.
-	 * 
-	 * @param name
-	 * @return
 	 */
 	protected Aktie getAktieOhneKurse(String name) {
 		if (name == null)
@@ -73,8 +68,8 @@ public class AktieVerzeichnis {
 		name = name.toLowerCase();
 		Aktie aktie = null;
 		// sucht das Wertpapier im Verzeichnis
-		if (this.getVerzeichnisName().containsKey(name)) {
-			aktie = verzeichnisName.get(name);
+		if (this.getCacheName().containsKey(name)) {
+			aktie = cacheName.get(name);
 			if (aktie == null)
 				log.error("Aktie ist null : " + name);
 		} else
@@ -87,8 +82,8 @@ public class AktieVerzeichnis {
 	protected Aktie getAktieOhneKurse(long id) {
 		Aktie aktie = null;
 		// sucht das Wertpapier im Verzeichnis
-		if (this.getVerzeichnisID().containsKey(id)) {
-			aktie = verzeichnisID.get(id);
+		if (this.getCache().containsKey(id)) {
+			aktie = cache.get(id);
 			if (aktie == null)
 				log.error("Aktie ist null : " + id);
 		} else
@@ -98,7 +93,7 @@ public class AktieVerzeichnis {
 
 	protected Aktie getAktieMitKurse(long id) {
 		// erst die Aktie ohne Kurse holen
-		Aktie aktie = getAktieOhneKurse(id);
+		Aktie aktie = this.getAktieOhneKurse(id);
 		// Kurse laden - bei Bedarf aus DB lesen
 		aktie.getKursListe();
 		return aktie;
@@ -117,7 +112,7 @@ public class AktieVerzeichnis {
 	 */
 	protected List<Aktie> getAllAktien() {
 		List<Aktie> result = new ArrayList<Aktie>();
-		for (Aktie aktie : verzeichnisName.values()) {
+		for (Aktie aktie : cacheName.values()) {
 			result.add(aktie);
 		}
 		return result;
@@ -128,7 +123,7 @@ public class AktieVerzeichnis {
 	 */
 	protected List<Aktie> getAktien(GregorianCalendar beginn) {
 		List<Aktie> result = new ArrayList<Aktie>();
-		for (Aktie aktie : verzeichnisName.values()) {
+		for (Aktie aktie : cacheName.values()) {
 			Zeitraum zeitraum = aktie.getZeitraumKurse();
 			if (zeitraum != null && zeitraum.beginn != null && zeitraum.beginn.before(beginn)) {
 				result.add(aktie);
@@ -145,12 +140,12 @@ public class AktieVerzeichnis {
 		this.aV = aV;
 	}
 
-	private HashMap<String, Aktie> getVerzeichnisName() {
-		return verzeichnisName;
+	private HashMap<String, Aktie> getCacheName() {
+		return cacheName;
 	}
 
-	private HashMap<Long, Aktie> getVerzeichnisID() {
-		return verzeichnisID;
+	private HashMap<Long, Aktie> getCache() {
+		return cache;
 	}
 
 }

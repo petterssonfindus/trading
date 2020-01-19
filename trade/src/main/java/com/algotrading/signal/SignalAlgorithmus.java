@@ -20,8 +20,14 @@ import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.persistence.Transient;
+import javax.validation.constraints.NotNull;
+
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import com.algotrading.aktie.Aktie;
+import com.algotrading.component.AktieVerwaltung;
 import com.algotrading.indikator.IndikatorAlgorithmus;
 import com.algotrading.signalbewertung.SignalBewertung;
 import com.algotrading.util.Parameter;
@@ -39,6 +45,9 @@ import com.algotrading.util.Zeitraum;
 @Inheritance(strategy = InheritanceType.SINGLE_TABLE)
 @DiscriminatorColumn(name = "typ", discriminatorType = DiscriminatorType.STRING)
 public abstract class SignalAlgorithmus extends Parameter {
+	@Transient
+	private static final Logger log = LogManager.getLogger(SignalAlgorithmus.class);
+
 	@Id
 	@Column(columnDefinition = "VARCHAR(36)")
 	private String id;
@@ -68,6 +77,10 @@ public abstract class SignalAlgorithmus extends Parameter {
 	@Transient
 	private List<SignalBewertung> signalBewertungen = new ArrayList<SignalBewertung>();
 
+	@Transient
+	@Autowired
+	private AktieVerwaltung aV;
+
 	private String p1name;
 	private String p1wert;
 	private String p2name;
@@ -81,6 +94,15 @@ public abstract class SignalAlgorithmus extends Parameter {
 
 	@Transient
 	private boolean istBerechnet = false;
+
+	/**
+	 * Instantiiert SignalAlgorithmen, die SignalAlgorithmus als Ober-Klasse haben
+	 */
+	public static SignalAlgorithmus getObject(String klassenName) {
+		if (klassenName.matches("SignalMinMax"))
+			return new SignalMinMax();
+		return null;
+	}
 
 	/**
 	 * vor dem Speichern werden alle Werte für die Datenbank vorbereitet
@@ -165,7 +187,7 @@ public abstract class SignalAlgorithmus extends Parameter {
 	 * @param aktie
 	 * @return Anzahl erzeugter Signale
 	 */
-	public abstract int rechne(Aktie aktie);
+	public abstract int rechne(@NotNull Aktie aktie);
 
 	public abstract String getKurzname();
 
@@ -252,7 +274,7 @@ public abstract class SignalAlgorithmus extends Parameter {
 	 * enthält den Kurznamen und eine Liste der vorhandenen Parameter
 	 */
 	public String toString() {
-//		String result = ";I:" + getKurzname();
+		//		String result = ";I:" + getKurzname();
 		String result = getKurzname();
 		for (String name : this.getAllParameter().keySet()) {
 			result = result + (Util.separatorCSV + name + ":" + this.getParameter(name));
@@ -323,6 +345,14 @@ public abstract class SignalAlgorithmus extends Parameter {
 
 	public String getP5wert() {
 		return p5wert;
+	}
+
+	public AktieVerwaltung getaV() {
+		return aV;
+	}
+
+	public void setaV(AktieVerwaltung aV) {
+		this.aV = aV;
 	}
 
 }

@@ -1,7 +1,7 @@
 package com.algotrading.signal;
 
 import java.util.HashMap;
-import java.util.Iterator;
+import java.util.List;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -95,25 +95,27 @@ public class Signal {
 		return this.sA;
 	}
 
+	private AktieVerwaltung getAV() {
+		return this.sA.getaV();
+	}
+
 	/**
 	 * Fügt eine Performance-Bewertung hinzu. Berechnet
-	 * die Performance in die Zukunft, wenn die Kursdaten verfügbar sind, ansonten 0. 
-	 * Ein Kauf-Signal wird bei steigenden Kursen positiv bewertet. 
-	 * Ein Verkauf-Signal wird bei fallenden Kursen positiv bewertet. 
+	 * die Performance in die Zukunft, wenn die Kursdaten verfügbar sind, ansonten null. 
 	 */
-	private float addPerformance(int tage) {
+	private Float addPerformance(int tage) {
 		float result = 0;
 		// hole den aktuellen Kurs
 		Kurs aktKurs = this.getKurs();
 		// hole den künftigen Kurs
-		Kurs kursTage = aktKurs.getKursTage(aV, tage);
+		Kurs kursTage = aktKurs.getKursTage(this.getAV(), tage);
 		if (kursTage == null)
-			return 0;
+			return null;
 		// berechne die Performance
-		result = Util.rechnePerformancePA(aktKurs.getKurs(), kursTage.getKurs(), tage);
+		result = (float) Util.rechnePerformancePA(aktKurs.getKurs(), kursTage.getKurs(), tage);
 		// Verkaufsignal werden im Vorzeichen umgedreht 
-		if (this.getKaufVerkauf() == Order.VERKAUF)
-			result *= -1;
+		// if (this.getKaufVerkauf() == Order.VERKAUF)
+		// 	result *= -1;
 		// trage die Performance ein
 		this.performance.put(tage, result);
 		return result;
@@ -128,51 +130,71 @@ public class Signal {
 		if (this.performance.containsKey(tage)) {
 			return this.performance.get(tage);
 		}
-		return new Float(this.addPerformance(tage));
+		return this.addPerformance(tage);
 	}
 
 	/**
-	 * ausführliche Ausgabe mit Bewertungen
+	 * allgemeine ausführliche Ausgabe mit Bewertungen 
 	 */
 	public String toString() {
 		String result;
 		result = this.kurs.getAktieID() + Util.separatorCSV + DateUtil.formatDate(
 				this.kurs.getDatum()) + Util.separatorCSV + this.kaufVerkaufToString() + Util.separatorCSV + this.sA
-						.getKurzname() + Util.separatorCSV + Util.toString(this.staerke) + this.toStringBewertungen();
+						.getKurzname() + Util.separatorCSV + Util
+								.toStringExcel(this.staerke) + this.toStringPerformance();
 		return result;
 	}
 
 	/**
-	 * Alle Bewertungen hintereinander, mit csv getrennt
+	 * Formatierte Ausgabe für Excel-Tabelle
 	 */
 	// @formatter:off
-	private String toStringBewertungen() {
-		String result = "";
-		Iterator<Float> it = this.performance.values().iterator();
-		while (it.hasNext()) {
-			result += String.format("%s%s", 
-					Util.separatorCSV, 
-					Util.toString(Util.rundeBetrag(it.next().floatValue(), 3)));
-		}
-		return result;
+	public String toStringCSV() {
+		StringBuilder sb = new StringBuilder(); 
+		sb.append(this.sA.getKurzname() + Util.separatorCSV);
+ 		sb.append(this.kaufVerkauf == Order.KAUF ? this.getKurs().getClose() : "");
+		sb.append(Util.separatorCSV);
+ 		sb.append(this.kaufVerkauf == Order.VERKAUF ? this.getKurs().getClose() : ""); 
+		sb.append(this.toStringPerformance());
+		return sb.toString();
 	}
 	// @formatter:on
 
 	/**
-	 * Kurz-Ausgabe: Typ + KV + Stärke + Bewertungen
+	 * Alle Bewertungen hintereinander, mit csv getrennt
+	 * Die Reihenfolge wird durch die Tage-Liste an der Aktie bestimmt 
+	 */
+	// @formatter:off
+	private String toStringPerformance() {
+		// die Aktie gibt vor, welche Tage-erformance ausgegeben wird 
+		List<Integer> tageListe = this.getKurs().getAktie().getPerformanceTage();
+		if (tageListe == null) {
+			log.error("Signal ohne Bewertung: " + DateUtil.formatDate(this.getKurs().getDatum()));
+			return "";
+		}
+		StringBuilder sb = new StringBuilder(); 
+		for (Integer tag : tageListe) {
+			if (this.getPerformance(tag) != null) {
+				sb.append(String.format("%s%s", 
+					Util.separatorCSV, 
+					Util.toStringExcel(Util.rundeBetrag(this.getPerformance(tag), 3))));
+			}
+		}
+		return sb.toString();
+	}
+	// @formatter:on
+
+	/**
+	 * Kurz-Ausgabe: Typ + KV + Stärke ohne Bewertungen
 	 */
 	// @formatter:off
 	public String toStringShort() {
-		String result = String.format("%s%s%s%s%s%s%s%s", 
-				this.sA.getKurzname(), 
-				Util.separatorCSV,  
-				this.kaufVerkauf == Order.KAUF?this.kaufVerkaufToString():"", 
+		return String.format("%s%s%s%s%s", 
+				Util.toStringExcel(this.staerke),
 				Util.separatorCSV,
-				this.kaufVerkauf == Order.VERKAUF?this.kaufVerkaufToString():"", 
+				this.kaufVerkauf == Order.KAUF ? this.getKurs().getClose() : "", 
 				Util.separatorCSV,
-				Util.toString(this.staerke),
-				this.toStringBewertungen());
-		return result;
+				this.kaufVerkauf == Order.VERKAUF ? this.getKurs().getClose() : ""); 
 	// @formatter:off
 	}
 	

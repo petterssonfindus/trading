@@ -4,7 +4,7 @@ import java.util.List;
 
 import com.algotrading.aktie.Aktie;
 import com.algotrading.aktie.Kurs;
-import com.algotrading.component.AktieVerzeichnis;
+import com.algotrading.component.AktieCache;
 import com.algotrading.util.AbstractTest;
 
 public class TestSAR extends AbstractTest {

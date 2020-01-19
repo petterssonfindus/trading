@@ -120,7 +120,7 @@ public class ReadDataFinanzen {
 		Aktie aktie = aV.getAktieLazy(aktieName);
 		aktie.setKurse(importKursreihe.getKurse());
 		// die Kursreihe in die DB schreiben
-		aV.saveAktie(aktie);
+		aV.createAktie(aktie);
 		//		DBManager.schreibeKurse(importKursreihe);
 	}
 

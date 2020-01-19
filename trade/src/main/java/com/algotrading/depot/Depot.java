@@ -13,7 +13,7 @@ import org.apache.logging.log4j.Logger;
 
 import com.algotrading.aktie.Aktie;
 import com.algotrading.aktie.Kurs;
-import com.algotrading.component.AktieVerzeichnis;
+import com.algotrading.component.AktieCache;
 import com.algotrading.indikator.IndikatorAlgorithmus;
 import com.algotrading.signal.Signal;
 import com.algotrading.util.DateUtil;
@@ -87,8 +87,8 @@ public class Depot {
 		this.tagesStrategie = tagesStrategie;
 		this.signalStrategie = signalStratgie;
 		// eine Aktie mit Zeitreihe wird angelegt, um die Depotwerte zu speichern 
-		this.depotwert = new Aktie(this.name, "Depot " + this.name, AktieVerzeichnis.INDEXDAX,
-				AktieVerzeichnis.BOERSEDEPOT);
+		this.depotwert = new Aktie(this.name, "Depot " + this.name, AktieCache.INDEXDAX,
+				AktieCache.BOERSEDEPOT);
 
 		// die Berechnungen an den Aktien werden durchgeführt
 		for (Aktie aktie : aktien) {

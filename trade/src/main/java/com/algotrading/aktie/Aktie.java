@@ -1,5 +1,6 @@
 package com.algotrading.aktie;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.GregorianCalendar;
@@ -13,6 +14,8 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
+import javax.persistence.NamedAttributeNode;
+import javax.persistence.NamedEntityGraph;
 import javax.persistence.OneToMany;
 import javax.persistence.OrderBy;
 import javax.persistence.Table;
@@ -23,17 +26,15 @@ import javax.persistence.Transient;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.hibernate.LazyInitializationException;
-import org.hibernate.annotations.BatchSize;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.algotrading.component.AktieVerwaltung;
 import com.algotrading.data.DBManager;
-import com.algotrading.depot.Order;
 import com.algotrading.indikator.IndikatorAlgorithmus;
 import com.algotrading.signal.Signal;
 import com.algotrading.signal.SignalAlgorithmus;
-import com.algotrading.signalbewertung.SignalBewertung;
+import com.algotrading.uimodel.UIFileText;
 import com.algotrading.util.DateUtil;
 import com.algotrading.util.FileUtil;
 import com.algotrading.util.Parameter;
@@ -50,6 +51,9 @@ import com.algotrading.util.Zeitraum;
 @Service
 @Entity
 @Table(name = "aktiestamm")
+// @formatter:off
+@NamedEntityGraph(name = "aktie.kurs", attributeNodes = @NamedAttributeNode("kurse"))
+// @formatter:on
 public class Aktie extends Parameter {
 	@Transient
 	private static final Logger log = LogManager.getLogger(Aktie.class);
@@ -102,7 +106,6 @@ public class Aktie extends Parameter {
 	@OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
 	@JoinColumn(name = "aktie")
 	@OrderBy("datum")
-	@BatchSize(size = 100) // alternativ JOIN FETCH
 	private List<Kurs> kurse = new ArrayList<Kurs>();
 
 	// der Kurs, der zum aktuellen Datum des Depot gehört. NextKurs() sorgt für die Aktualisierung
@@ -127,6 +130,10 @@ public class Aktie extends Parameter {
 	 */
 	@Transient
 	private List<IndikatorAlgorithmus> indikatorAlgorithmen = new ArrayList<IndikatorAlgorithmus>();
+
+	// eine Liste Tage, die für die Performance-Berechnung genutzt werden. 
+	@Transient
+	private List<Integer> performanceTage;
 
 	@Transient
 	private boolean indikatorenSindBerechnet = false;
@@ -232,13 +239,20 @@ public class Aktie extends Parameter {
 		return result;
 	}
 
+	/**
+	 * Eine Liste von Kursen, die innerhalb des gewünschten Zeitraums liegen 
+	 */
 	private ArrayList<Kurs> sucheBoersenkurse(Zeitraum zeitraum) {
-		ArrayList<Kurs> kurse = new ArrayList<Kurs>();
-		for (Kurs kurs : this.getKursListe()) {
-			if (DateUtil.istInZeitraum(kurs.getDatum(), zeitraum)) {
-				kurse.add(kurs);
-			}
-		}
+		ArrayList<Kurs> kurse = new ArrayList<>();
+		this.getKursListe().stream()
+				.filter(kurs -> DateUtil.istInZeitraum(kurs.getDatum(), zeitraum))
+				.forEach(kurs -> kurse.add(kurs));
+
+		//		for (Kurs kurs : this.getKursListe()) {
+		//			if (DateUtil.istInZeitraum(kurs.getDatum(), zeitraum)) {
+		//				kurse.add(kurs);
+		//			}
+		//		}
 		return kurse;
 	}
 
@@ -260,7 +274,7 @@ public class Aktie extends Parameter {
 	 */
 	private void initializeKurse() {
 		// eine vollständige Aktie in einer Transaktion laden 
-		Aktie aktie = aV.getAktieMitKurseNew(getId());
+		Aktie aktie = aV.getAktieMitKurseFromDB(getId());
 		// die Kurse übernehmen 
 		this.setKurse(aktie.getKurse());
 	}
@@ -375,21 +389,18 @@ public class Aktie extends Parameter {
 	}
 
 	/**
-	 * Rechnet die Performance der Aktie im gewünschten Zeitraum
+	 * rechnet die Signal-Performance für alle Signale an der Aktie mit allen Laufzeit-Tagen 
 	 */
-	public float rechnePerformance(Zeitraum zeitraum) {
-		if (zeitraum == null) {
-			log.error("Performance-Berechnung mit Zeitraum = null");
+	public void rechneSignalPerformance(List<Integer> tage) {
+		this.setPerformanceTage(tage);
+		for (SignalAlgorithmus sa : this.signalAlgorithmen) {
+			sa.setaV(aV);
+			for (int i : tage) {
+				for (Signal signal : sa.getSignale()) {
+					signal.getPerformance(i);
+				}
+			}
 		}
-		Kurs kursBeginn = this.getKurs(zeitraum.beginn);
-		if (kursBeginn == null) {
-			log.error("Performance-Berechnung mit Kursbeginn = null");
-		}
-		Kurs kursEnde = this.getKurs(zeitraum.ende);
-		if (kursEnde == null) {
-			log.error("Performance-Berechnung mit Kursende = null");
-		}
-		return Util.rechnePerformancePA(kursBeginn.getKurs(), kursEnde.getKurs(), zeitraum.getHandestage());
 	}
 
 	/**
@@ -430,84 +441,6 @@ public class Aktie extends Parameter {
 		this.signaleSindBerechnet = true;
 	}
 
-	/**
-	 * Bewertet alle Signale und schreibt das Ergebnis in die Datenbank Signalstärke
-	 * * Erfolg (Performance) Signalstärke ist positiv für Kauf-_Signale - negativ
-	 * für Verkauf-Signale Erfolg ist positiv bei steigenden Kursen - negativ bei
-	 * fallenden Kursen. ==> Hohe positive Werte bedeuten gute Prognose-Qualität bei
-	 * Kauf und Verkauf ! ==> Hohe negative Wert bedeuten entgegen gesetzte
-	 * Prognose-Qualität Prognose-Quantität: wie viele Signale gehen in die
-	 * erwartete Richtung. Prognose-Qualität:
-	 * 
-	 * @param zeitraum   der Zeitraum in dem die signale auftreten Wenn null, dann
-	 *                   maximaler Zeitraum, für den Signale vorliegen.
-	 * @param tageVoraus für die Erfolgsmessung in die Zukunft
-	 */
-	public List<SignalBewertung> bewerteSignale(Zeitraum zeitraum, int tage) {
-		List<SignalBewertung> result = new ArrayList<SignalBewertung>();
-		// alle Signal-Typen an der Aktie
-		for (SignalAlgorithmus sA : this.signalAlgorithmen) {
-			// an der Beschreibung eine neue Bewertung erzeugen
-			SignalBewertung sBW = sA.createBewertung();
-			sBW.setTage(tage);
-			if (zeitraum == null) {
-				// maximaler Zeitraum ermitteln
-				zeitraum = sA.getZeitraumSignale();
-			}
-
-			sBW.setZeitraum(zeitraum);
-			// alle zugehörigen Signale
-			// TODO: hier könnte man den Zeitraum bereits berücksichtigen
-			List<Signal> signale = this.getSignale(sA);
-
-			float staerke = 0; // die Signal-Stärke eines einzelnen Signals
-			int kaufKorrekt = 0;
-			int verkaufKorrekt = 0;
-
-			// für alle Signale zu dieser SignalBeschreibung
-			for (Signal signal : signale) {
-				signal.setaV(aV);
-				//				System.out.println("signal" + signal.toString());
-				// Signale im vorgegebenen Zeitraum filtern
-				if (!DateUtil.istInZeitraum(signal.getKurs().getDatum(), zeitraum))
-					continue;
-				// die Bewertung des Signals: Kursentwicklung in die Zukunft
-				staerke = signal.getStaerke();
-				// die Bewertung wird am Signal ermittelt
-				Float bewertung = signal.getPerformance(tage);
-				if (bewertung == null)
-					continue; // wenn keine Bewertung vorhanden ist, dann nächstes Signal
-				float b = bewertung;
-				sBW.summeBewertungen += b;
-				if (signal.getKaufVerkauf() == Order.KAUF) {
-					sBW.kauf++;
-					sBW.summeBKauf += b;
-					sBW.summeSKauf += staerke;
-					if (b > 0)
-						kaufKorrekt++;
-				} else {
-					sBW.verkauf++;
-					sBW.summeBVerkauf += b;
-					sBW.summeSVerkauf += staerke;
-					if (b > 0)
-						verkaufKorrekt++;
-				}
-			}
-			// Aufbereitung der Gesamt-Ergebnisse
-			// Prüfung auf Division 0, da ansonsten NaN entsteht
-			if (sBW.kauf > 0)
-				sBW.kaufKorrekt = (float) ((double) kaufKorrekt / sBW.kauf);
-			if (sBW.verkauf > 0)
-				sBW.verkaufKorrekt = (float) ((double) verkaufKorrekt / sBW.verkauf);
-			sBW.performance = rechnePerformance(zeitraum);
-			System.out.println(
-					this.name + " B:" + tage + Util.separatorCSV + zeitraum.toStringJahre() + Util.separatorCSV + sBW
-							.toString());
-			result.add(sBW);
-		}
-		return result;
-	}
-
 	public String toSmallString() {
 		return this.name;
 	}
@@ -517,13 +450,15 @@ public class Aktie extends Parameter {
 	}
 
 	/**
-	 * schreibt eine neue Datei mit Kursen, Indikatoren, Signalen
+	 * schreibt eine neue Datei mit Kursen, Indikatoren, Signalen, SignalPerformance
 	 */
-	public void writeFileKursIndikatorSignal() {
+	public UIFileText writeFileKursIndikatorSignal() {
 		String dateiname = "indisig" + this.name + Long.toString(System.currentTimeMillis());
-		ArrayList<String> zeilen = this.writeIndikatorenSignale();
-		FileUtil.writeCSVFile(zeilen, dateiname);
+		List<String> zeilen = this.writeIndikatorenSignale();
+		File file = FileUtil.writeCSVFile(zeilen, dateiname);
+		UIFileText result = new UIFileText(file.getAbsolutePath(), zeilen);
 		log.info("Datei geschrieben: " + dateiname);
+		return result;
 	}
 
 	/**
@@ -671,13 +606,13 @@ public class Aktie extends Parameter {
 	/**
 	 * schreibt pro Tag alle Kurse, und Indikatoren als Zeilen
 	 */
-	private ArrayList<String> writeIndikatorenSignale() {
-		ArrayList<String> zeilen = new ArrayList<String>();
+	private List<String> writeIndikatorenSignale() {
+		List<String> zeilen = new ArrayList<>();
 		// Header-Zeile
 		zeilen.add("Datum;Close" + toStringIndikatorenSignalHeader());
-
-		for (int i = 0; i < kurse.size(); i++) {
-			zeilen.add(kurse.get(i).toString());
+		// für jeden Kurs eine Zeile
+		for (Kurs kurs : kurse) {
+			zeilen.add(kurs.toString());
 		}
 		return zeilen;
 	}
@@ -685,14 +620,29 @@ public class Aktie extends Parameter {
 	/**
 	 * ein Header als Liste der Indikatoren, die an einer Aktie vorhanden sind
 	 */
+	// @formatter:off
 	private String toStringIndikatorenSignalHeader() {
-		String result = "";
+		StringBuilder header = new StringBuilder();
+		// erst die Indikatoren 
 		for (IndikatorAlgorithmus iA : this.indikatorAlgorithmen) {
-			result = result.concat(";" + iA.getKurzname());
+			header.append(";" + iA.getKurzname());
 		}
-		result = result.concat(";STyp1;KV1;Wert1;STyp2;KV2;Wert2");
-		return result;
+		// dann die Signale 
+		for (SignalAlgorithmus sA : this.signalAlgorithmen) {
+			header.append(String.format("%s%s%s%s%s%s", 
+				Util.separatorCSV,
+				sA.getKurzname(), 
+				Util.separatorCSV,
+				"Kauf",
+				Util.separatorCSV,
+				"Verkauf"));
+			for (Integer i : this.getPerformanceTage()) {
+				header.append(String.format("%s%s%s", Util.separatorCSV, i, "-Tage Performance"));
+			}
+		}
+		return header.toString();
 	}
+	// @formatter:on
 
 	/**
 	 * schreibt die Signale der Aktie als Zeilen
@@ -781,6 +731,9 @@ public class Aktie extends Parameter {
 	}
 
 	public void setKurse(List<Kurs> kurse) {
+		for (Kurs kurs : kurse) {
+			kurs.setAktie(this);
+		}
 		this.kurse = kurse;
 	}
 
@@ -806,6 +759,18 @@ public class Aktie extends Parameter {
 
 	public List<Kurs> getKurse() {
 		return kurse;
+	}
+
+	public List<Integer> getPerformanceTage() {
+		return performanceTage;
+	}
+
+	public void setPerformanceTage(List<Integer> performanceTage) {
+		this.performanceTage = performanceTage;
+	}
+
+	public void setId(Long id) {
+		this.id = id;
 	}
 
 }

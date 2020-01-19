@@ -4,7 +4,7 @@ import java.util.GregorianCalendar;
 import java.util.List;
 
 import com.algotrading.aktie.Aktie;
-import com.algotrading.component.AktieVerzeichnis;
+import com.algotrading.component.AktieCache;
 import com.algotrading.indikator.IndikatorAlgorithmus;
 import com.algotrading.indikator.IndikatorGDalt;
 import com.algotrading.util.AbstractTest;

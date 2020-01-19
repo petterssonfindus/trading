@@ -15,7 +15,7 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import com.algotrading.Application;
-import com.algotrading.component.Signalverwaltung;
+import com.algotrading.component.SignalVerwaltung;
 import com.algotrading.signalbewertung.SignalBewertung;
 
 @ActiveProfiles("test")
@@ -26,7 +26,7 @@ import com.algotrading.signalbewertung.SignalBewertung;
 public class TestSignalVerwaltung {
 
 	@Autowired
-	Signalverwaltung sV;
+	SignalVerwaltung sV;
 
 	@Test
 	public void testExistsInDB() {

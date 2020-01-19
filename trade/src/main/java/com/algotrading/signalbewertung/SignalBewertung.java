@@ -2,14 +2,17 @@ package com.algotrading.signalbewertung;
 
 import java.util.Date;
 import java.util.GregorianCalendar;
+import java.util.List;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.OneToOne;
 import javax.persistence.PrePersist;
 import javax.persistence.Table;
@@ -17,6 +20,16 @@ import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.persistence.Transient;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import com.algotrading.aktie.Aktie;
+import com.algotrading.component.AktieVerwaltung;
+import com.algotrading.component.SignalVerwaltung;
+import com.algotrading.depot.Order;
+import com.algotrading.signal.Signal;
 import com.algotrading.signal.SignalAlgorithmus;
 import com.algotrading.util.DateUtil;
 import com.algotrading.util.Util;
@@ -30,10 +43,12 @@ import com.algotrading.util.Zeitraum;
  * @author oskar
  *
  */
-
+@Service
 @Entity
 @Table(name = "SIGNALBEWERTUNG")
 public class SignalBewertung {
+	@Transient
+	private static final Logger log = LogManager.getLogger(SignalBewertung.class);
 
 	// der Zeithorizont in Tagen
 	@Column(name = "tage")
@@ -41,7 +56,9 @@ public class SignalBewertung {
 
 	private String aktieName;
 
-	private Long aktieID;
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn
+	private Aktie aktie;
 
 	private String ISIN;
 
@@ -67,17 +84,27 @@ public class SignalBewertung {
 
 	public int kauf; // Anzahl Kauf-Signale
 	public float kaufKorrekt; // Anzahl korrekter Kauf-Signale im Verhältnis zu Käufen
-	public float summeBKauf; // Bewertungs-Summe als Saldo aller Kauf-Empfehlungen
+	public float summePKauf; // Bewertungs-Summe als Saldo aller Kauf-Empfehlungen
 	public float summeSKauf; // die Summe aller Kauf-Prognosen
+	private float performanceProKauf;
+	private float performanceKaufDelta;
 
 	public int verkauf; // Anzahl Verkauf-Signale
 	public float verkaufKorrekt; // Anzahl korrekter Verkauf-Signale im Verhältnis zu Verkäufen
-	public float summeBVerkauf; // Bewertungs-Summe als Saldo aller Verkauf-Empfehlungen
+	public float summePVerkauf; // Bewertungs-Summe als Saldo aller Verkauf-Empfehlungen
 	public float summeSVerkauf;// die Summe aller Verkauf-Empfehlungen
-
-	public float summeBewertungen; // Bewertungs-Summe als Saldo positiver und negativer Prognosequalität.
+	private float performanceProVerkauf;
+	private float performanceVerkaufDelta;
 
 	public float performance; // die Performance des Kurses im betrachteten Zeitraum
+
+	@Transient
+	@Autowired
+	private SignalVerwaltung sV;
+
+	@Transient
+	@Autowired
+	private AktieVerwaltung aV;
 
 	protected SignalBewertung() {
 	} // für JPA
@@ -88,9 +115,10 @@ public class SignalBewertung {
 	 * aus der Aktie geholt
 	 */
 	public SignalBewertung(SignalAlgorithmus sA) {
+		this.setaV(sA.getaV());
 		this.signalAlgorithmus = sA;
 		this.aktieName = sA.getAktie().getName();
-		this.aktieID = sA.getAktie().getId();
+		this.aktie = sA.getAktie();
 		this.ISIN = sA.getAktie().getISIN();
 
 	}
@@ -124,11 +152,9 @@ public class SignalBewertung {
 			return false;
 		if (!floatEquals(this.performance, sB.performance))
 			return false;
-		if (!floatEquals(this.summeBewertungen, sB.summeBewertungen))
+		if (!floatEquals(this.summePKauf, sB.summePKauf))
 			return false;
-		if (!floatEquals(this.summeBKauf, sB.summeBKauf))
-			return false;
-		if (!floatEquals(this.summeBVerkauf, sB.summeBVerkauf))
+		if (!floatEquals(this.summePVerkauf, sB.summePVerkauf))
 			return false;
 		if (!floatEquals(this.summeSKauf, sB.summeSKauf))
 			return false;
@@ -175,41 +201,128 @@ public class SignalBewertung {
 		return result;
 	}
 
+	/**
+	 * Bewertet alle Signale und schreibt das Ergebnis in die Datenbank Signalstärke
+	 * * Erfolg (Performance) Signalstärke ist positiv für Kauf-_Signale - negativ
+	 * für Verkauf-Signale Erfolg ist positiv bei steigenden Kursen - negativ bei
+	 * fallenden Kursen. ==> Hohe positive Werte bedeuten gute Prognose-Qualität bei
+	 * Kauf und Verkauf ! ==> Hohe negative Wert bedeuten entgegen gesetzte
+	 * Prognose-Qualität Prognose-Quantität: wie viele Signale gehen in die
+	 * erwartete Richtung. Prognose-Qualität:
+	 * 
+	 * @param zeitraum   der Zeitraum in dem die signale auftreten Wenn null, dann
+	 *                   maximaler Zeitraum, für den Signale vorliegen.
+	 * @param tageVoraus für die Erfolgsmessung in die Zukunft
+	 */
+	public SignalBewertung bewerteSignale(Zeitraum zeitraum, int tage) {
+		this.setTage(tage);
+		if (zeitraum == null) {
+			// maximaler Zeitraum ermitteln
+			zeitraum = sV.getZeitraumSignale(this.getSignalAlgorithmus());
+		}
+		this.setZeitraum(zeitraum);
+		// alle zugehörigen Signale
+		// TODO: hier könnte man den Zeitraum bereits berücksichtigen
+		List<Signal> signale = this.getSignalAlgorithmus().getSignale();
+
+		this.performance = aV.rechnePerformance(this.getSignalAlgorithmus().getAktie(), zeitraum);
+		float staerke = 0; // die Signal-Stärke eines einzelnen Signals
+		int kaufKorrekt = 0;
+		int verkaufKorrekt = 0;
+
+		// für alle Signale zu dieser SignalBeschreibung
+		for (Signal signal : signale) {
+			// Signale im vorgegebenen Zeitraum filtern
+			if (!DateUtil.istInZeitraum(signal.getKurs().getDatum(), zeitraum))
+				continue;
+			// die Bewertung wird am Signal ermittelt
+			Float performanceFloat = signal.getPerformance(tage);
+			// wenn Performance nicht berechnet werden kann, z.B. am Ende der Laufzeit
+			if (performanceFloat == null)
+				continue;
+			float p = performanceFloat;
+			if (signal.getKaufVerkauf() == Order.KAUF) {
+				this.kauf++;
+				this.summePKauf += p;
+				this.summeSKauf += signal.getStaerke();
+				if (p > this.performance)
+					kaufKorrekt++;
+			} else {
+				this.verkauf++;
+				this.summePVerkauf += p;
+				this.summeSVerkauf += signal.getStaerke();
+				// die tatsächliche Wertentwicklung ist geringer als der Durchschnitt  
+				if (p < this.performance)
+					verkaufKorrekt++;
+			}
+		}
+
+		// Aufbereitung der Gesamt-Ergebnisse
+		// Prüfung auf Division 0, da ansonsten NaN entsteht
+		if (this.kauf > 0) {
+			this.kaufKorrekt = (float) ((double) kaufKorrekt / this.kauf);
+			this.performanceProKauf = (float) ((double) summePKauf / this.kauf);
+			this.performanceKaufDelta = this.performanceProKauf - this.performance;
+		}
+		if (this.verkauf > 0) {
+			this.verkaufKorrekt = (float) ((double) verkaufKorrekt / this.verkauf);
+			this.performanceProVerkauf = (float) ((double) summePVerkauf / this.verkauf);
+			this.performanceVerkaufDelta = this.performanceProVerkauf - this.performance;
+		}
+
+		// @formatter:off
+		System.out.printf("%s%s%s%s%s%s%s", 
+				this.getSignalAlgorithmus().getAktie().getName(),
+				" B:",
+				tage,
+				Util.separatorCSV,
+				zeitraum.toStringJahre(),
+				Util.separatorCSV,
+				this.toString());
+		// @formatter:on
+		return this;
+	}
+
 //	@formatter:off
 	public String toString() {
-		return this.signalAlgorithmus + " Kauf:" + kauf + " korrekt:" + Util
-				.rundeBetrag(kaufKorrekt, 3) + " Signal:" + Util.rundeBetrag(summeSKauf, 3) + " Bewertung:" + Util
-						.rundeBetrag(summeBKauf, 3) + " Verkauf:" + verkauf + " korrekt:" + Util.rundeBetrag(
-								verkaufKorrekt,
-								3) + " Signal:" + Util.rundeBetrag(summeSVerkauf, 3) + " Bewertung:" + Util
-										.rundeBetrag(summeBVerkauf, 3) + " BewSumme:" + Util.rundeBetrag(
-												summeBewertungen,
-												3) + " Performance:" + Util.rundeBetrag(performance, 3);
+		return this.signalAlgorithmus + 
+				" Kauf:" + kauf + 
+				" korrekt:" + Util.rundeBetrag(kaufKorrekt, 3) + 
+				" Signal:" + Util.rundeBetrag(summeSKauf, 3) + 
+				" Bewertung:" + Util.rundeBetrag(summePKauf, 3) + 
+				" Verkauf:" + verkauf + 
+				" korrekt:" + Util.rundeBetrag(verkaufKorrekt,3) + 
+				" Signal:" + Util.rundeBetrag(summeSVerkauf, 3) + 
+				" Bewertung:" + Util.rundeBetrag(summePVerkauf, 3) + 
+				" Performance:" + Util.rundeBetrag(performance, 3);
 	}
+//	@formatter:on
 
 	/**
 	 * Kauf, KaufKorrekt, SummeSignalKauf, Bewertung, 
 	 * Verkauf, VerkaufKorrekt, SummeSignalVerkauf, Bewertung, 
 	 * BewertungSumme, Performance
 	 */
-//	@formatter:off
+
 	public String toCSVString() {
-		return this.signalAlgorithmus.toString() + Util.separatorCSV
-				.concat(DateUtil.formatDate(this.zeitraumBeginn) + Util.separatorCSV)
-				.concat(DateUtil.formatDate(this.zeitraumEnde) + Util.separatorCSV)
-				.concat(tage + Util.separatorCSV)
-				.concat(kauf + Util.separatorCSV)
-				.concat(Util.toString(Util.rundeBetrag(kaufKorrekt, 3)) + Util.separatorCSV)
-				.concat(Util.toString(Util.rundeBetrag(summeSKauf, 3)) + Util.separatorCSV)
-				.concat(Util.toString(Util.rundeBetrag(summeBKauf, 3)) + Util.separatorCSV) 
-				.concat(verkauf + Util.separatorCSV) 
-				.concat(Util.toString(Util.rundeBetrag(verkaufKorrekt,3)) + Util.separatorCSV) 
-				.concat(Util.toString(Util.rundeBetrag(summeSVerkauf, 3)) + Util.separatorCSV) 
-				.concat(Util.toString(Util.rundeBetrag(summeBVerkauf, 3)) + Util.separatorCSV) 
-				.concat(Util.toString(Util.rundeBetrag(summeBewertungen,3)) + Util.separatorCSV) 
-				.concat(Util.toString(Util.rundeBetrag(performance, 3)) + Util.separatorCSV);
+		StringBuilder sB = new StringBuilder();
+		sB.append(DateUtil.formatDate(this.zeitraumBeginn) + Util.separatorCSV);
+		sB.append(DateUtil.formatDate(this.zeitraumEnde) + Util.separatorCSV);
+		sB.append(tage + Util.separatorCSV);
+		sB.append(kauf + Util.separatorCSV);
+		sB.append(Util.toStringExcel(kaufKorrekt, 3) + Util.separatorCSV);
+		sB.append(Util.toStringExcel(summePKauf, 3) + Util.separatorCSV);
+		sB.append(Util.toStringExcel(performanceProKauf, 3) + Util.separatorCSV);
+		sB.append(Util.toStringExcel(performanceKaufDelta, 3) + Util.separatorCSV);
+		sB.append(verkauf + Util.separatorCSV);
+		sB.append(Util.toStringExcel(verkaufKorrekt, 3) + Util.separatorCSV);
+		sB.append(Util.toStringExcel(summePVerkauf, 3) + Util.separatorCSV);
+		sB.append(Util.toStringExcel(performanceProVerkauf, 3) + Util.separatorCSV);
+		sB.append(Util.toStringExcel(performanceVerkaufDelta, 3) + Util.separatorCSV);
+		sB.append(Util.toStringExcel(performance, 3) + Util.separatorCSV);
+		sB.append(this.signalAlgorithmus.toString() + Util.separatorCSV);
+		return sB.toString();
 	}
-//	@formatter:on
 
 	private String toCSVStringKauf() {
 		return " Kauf:" + kauf + Util.separatorCSV;
@@ -268,11 +381,11 @@ public class SignalBewertung {
 	}
 
 	public float getSummeBKauf() {
-		return summeBKauf;
+		return summePKauf;
 	}
 
 	public void setSummeBKauf(float summeBKauf) {
-		this.summeBKauf = summeBKauf;
+		this.summePKauf = summeBKauf;
 	}
 
 	public float getSummeSKauf() {
@@ -300,11 +413,11 @@ public class SignalBewertung {
 	}
 
 	public float getSummeBVerkauf() {
-		return summeBVerkauf;
+		return summePVerkauf;
 	}
 
 	public void setSummeBVerkauf(float summeBVerkauf) {
-		this.summeBVerkauf = summeBVerkauf;
+		this.summePVerkauf = summeBVerkauf;
 	}
 
 	public float getSummeSVerkauf() {
@@ -313,14 +426,6 @@ public class SignalBewertung {
 
 	public void setSummeSVerkauf(float summeSVerkauf) {
 		this.summeSVerkauf = summeSVerkauf;
-	}
-
-	public float getSummeBewertungen() {
-		return summeBewertungen;
-	}
-
-	public void setSummeBewertungen(float summeBewertungen) {
-		this.summeBewertungen = summeBewertungen;
 	}
 
 	public float getPerformance() {
@@ -401,12 +506,40 @@ public class SignalBewertung {
 		return signalAlgorithmus;
 	}
 
-	public Long getAktieID() {
-		return aktieID;
+	public void setaV(AktieVerwaltung aV) {
+		this.aV = aV;
 	}
 
-	public void setAktieID(Long aktieID) {
-		this.aktieID = aktieID;
+	public float getPerformanceProKauf() {
+		return performanceProKauf;
+	}
+
+	protected void setPerformanceProKauf(float performanceProKauf) {
+		this.performanceProKauf = performanceProKauf;
+	}
+
+	public float getPerformanceProVerkauf() {
+		return performanceProVerkauf;
+	}
+
+	protected void setPerformanceProVerkauf(float performanceProVerkauf) {
+		this.performanceProVerkauf = performanceProVerkauf;
+	}
+
+	public float getPerformanceKaufDelta() {
+		return performanceKaufDelta;
+	}
+
+	protected void setPerformanceKaufDelta(float performanceKaufDelta) {
+		this.performanceKaufDelta = performanceKaufDelta;
+	}
+
+	public float getPerformanceVerkaufDelta() {
+		return performanceVerkaufDelta;
+	}
+
+	protected void setPerformanceVerkaufDelta(float performanceVerkaufDelta) {
+		this.performanceVerkaufDelta = performanceVerkaufDelta;
 	}
 
 }

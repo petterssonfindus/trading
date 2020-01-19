@@ -64,6 +64,12 @@ public abstract class IndikatorAlgorithmus extends Parameter {
 	 */
 	public abstract void rechne(Aktie aktie);
 
+	public static IndikatorAlgorithmus getObject(String klassenName) {
+		if (klassenName.matches("GleitenderDurchschnitt"))
+			return new IndikatorGD();
+		return null;
+	}
+
 	public void synchronizeSAVE() {
 		if (this.id == null)
 			this.id = UUID.randomUUID().toString();

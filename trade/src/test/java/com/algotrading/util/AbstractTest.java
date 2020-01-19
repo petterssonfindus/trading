@@ -14,7 +14,10 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import com.algotrading.Application;
 import com.algotrading.aktie.Aktie;
 import com.algotrading.component.AktieVerwaltung;
-import com.algotrading.component.Signalverwaltung;
+import com.algotrading.component.KursVerwaltung;
+import com.algotrading.component.SignalVerwaltung;
+import com.algotrading.jpa.AktieDAO;
+import com.algotrading.jpa.KursDAO;
 import com.algotrading.jpa.SignalBewertungDAO;
 import com.algotrading.jpa.SignalBewertungRepository;
 
@@ -30,10 +33,19 @@ public class AbstractTest extends TestCase {
 	protected AktieVerwaltung aV;
 
 	@Autowired
-	protected Signalverwaltung sV;
+	protected KursVerwaltung kV;
+
+	@Autowired
+	protected SignalVerwaltung sV;
 
 	@Autowired
 	protected SignalBewertungDAO sBDAO;
+
+	@Autowired
+	protected KursDAO kursDAO;
+
+	@Autowired
+	protected AktieDAO aktieDAO;
 
 	@Autowired
 	protected SignalBewertungRepository sBR;
@@ -60,7 +72,7 @@ public class AbstractTest extends TestCase {
 		aktie.setFirmenname("AG");
 		aktie.setBoersenplatz((byte) 2);
 
-		aV.saveAktie(aktie);
+		aV.createAktie(aktie);
 
 	}
 

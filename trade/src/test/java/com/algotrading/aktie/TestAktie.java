@@ -25,7 +25,7 @@ public class TestAktie extends AbstractTest {
 	@Test
 	public void testNewAktieMinimal() {
 		Aktie aktie = new Aktie("VDAX_NEW");
-		aV.saveAktie(aktie);
+		aV.createAktie(aktie);
 	}
 
 	@Test
@@ -35,7 +35,7 @@ public class TestAktie extends AbstractTest {
 		aktie.setQuelle(aV.QUELLE_Ariva);
 		aktie.setWkn(null);
 		aktie.setKuerzel(null);
-		aV.saveAktie(aktie);
+		aV.createAktie(aktie);
 		aktie.setaV(aV);
 		Aktie aktieNew = importCSV.readKurseArivaCSV("wkn_846900_historic", aktie);
 	}
@@ -44,7 +44,7 @@ public class TestAktie extends AbstractTest {
 	public void testChangeAktie() {
 		Aktie aktie = aV.getAktieLazy("VDAX_NEW1M");
 		aktie.setQuelle(1);
-		aV.saveAktie(aktie);
+		aV.createAktie(aktie);
 		Aktie aktie2 = aV.getAktieLazy(aktie.getId());
 	}
 
@@ -58,11 +58,11 @@ public class TestAktie extends AbstractTest {
 	}
 
 	@Test
-	public void testGetAktieMitKurse() {
+	public void testGetAktieMitKurseFromDB() {
 		long beginn = new GregorianCalendar().getTimeInMillis();
-		aktie = aV.getAktieMitKurse(122126L);
+		aktie = aV.getAktieMitKurseFromDB(122126L);
 		long ende = new GregorianCalendar().getTimeInMillis();
-		System.out.println("Auswertung dauerte Sekunden: " + ((ende - beginn) / 1000));
+		System.out.println("Auswertung dauerte Millis: " + (ende - beginn));
 		System.out.println("Kurs0: " + DateUtil.formatDate(aktie.getKursListe().get(0).getDatum()));
 		System.out
 				.println(
@@ -81,6 +81,20 @@ public class TestAktie extends AbstractTest {
 	}
 
 	@Test
+	public void testFindByQuelle() {
+		List<Aktie> test = aktieDAO.findByQuelle(1);
+		System.out.println("FindByQuelle: " + test.size());
+	}
+
+	@Test
+	public void testFindByName() {
+		List<Aktie> test = aktieDAO.findByName("dax");
+		for (Aktie aktie : test) {
+			System.out.println("Treffer: " + aktie.toString());
+		}
+	}
+
+	@Test
 	public void testKursAktie() {
 		Aktie aktie = aV.getAktieLazy(257l);
 		// ein neuer Kurs
@@ -89,7 +103,7 @@ public class TestAktie extends AbstractTest {
 		kurs.close = 100;
 		aktie.addKurs(kurs);
 		// die Kursliste speichern
-		aV.saveAktie(aktie);
+		aV.createAktie(aktie);
 	}
 
 	public void testGetKursZukunft() {

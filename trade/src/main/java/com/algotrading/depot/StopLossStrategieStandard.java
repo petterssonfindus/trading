@@ -6,7 +6,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import com.algotrading.aktie.Aktie;
-import com.algotrading.component.AktieVerzeichnis;
+import com.algotrading.component.AktieCache;
 import com.algotrading.util.DateUtil;
 
 /**

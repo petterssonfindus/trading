@@ -1,5 +1,9 @@
 package com.algotrading.signal;
 
+import javax.persistence.DiscriminatorValue;
+import javax.persistence.Entity;
+import javax.validation.constraints.NotNull;
+
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -10,6 +14,8 @@ import com.algotrading.indikator.IndikatorAlgorithmus;
 import com.algotrading.util.DateUtil;
 import com.algotrading.util.Zeitraum;
 
+@Entity(name = "SignalDurchbruch")
+@DiscriminatorValue("SignalDurchbruch")
 public class SignalGDDurchbruch extends SignalAlgorithmus {
 	static final Logger log = LogManager.getLogger(SignalGDDurchbruch.class);
 
@@ -21,16 +27,16 @@ public class SignalGDDurchbruch extends SignalAlgorithmus {
 	 * Parameter "zeitraum" - der zu berechnende Zeitraum
 	 * @param kursreihe
 	 */
-	public int rechne(Aktie aktie) {
-		if (aktie == null)
-			log.error("Inputparameter Aktie ist null");
+	@Override
+	public int rechne(@NotNull Aktie aktie) {
 		int anzahl = 0;
-		IndikatorAlgorithmus indikator = (IndikatorAlgorithmus) getParameter("indikator");
+		IndikatorAlgorithmus indikator = (IndikatorAlgorithmus) getIndikatorAlgorithmen().get(0);
 		if (indikator == null)
-			log.error("Signal enthaelt keinen Indikator");
+			log.error("Signal enthält keinen Indikator");
 		// wie weit muss der Kurs den Gleitenden Durchschnitt durchbrechen
 		float schwelle = (Float) getParameter("schwelle");
-		schwelle = schwelle + 1;
+		float schwelleSteigung = 1 + schwelle;
+		float schwelleSinkflug = 1 - schwelle;
 		// wenn der Zeitraum explizit gesetzt wurde (ansonsten werden alle Kurse geholt) 
 		Zeitraum zeitraum = (Zeitraum) getParameter("zeitraum");
 
@@ -39,11 +45,11 @@ public class SignalGDDurchbruch extends SignalAlgorithmus {
 			if (vortageskurs != null) {
 				// bisher darunter, jetzt darüber
 				// dabei werden die Signale erstellt und mit dem Kurs verbunden 
-				if (pruefeGleitenderDurchschnittSteigung(kurs, vortageskurs, indikator, schwelle))
+				if (pruefeGleitenderDurchschnittSteigung(kurs, vortageskurs, indikator, schwelleSteigung))
 					anzahl++;
 
 				// bisher darüber, jetzt darunter
-				if (pruefeGleitenderDurchschnittSinkflug(kurs, vortageskurs, indikator, schwelle))
+				if (pruefeGleitenderDurchschnittSinkflug(kurs, vortageskurs, indikator, schwelleSinkflug))
 					anzahl++;
 			}
 		}

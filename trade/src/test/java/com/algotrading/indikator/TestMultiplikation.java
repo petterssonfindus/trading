@@ -1,7 +1,7 @@
 package com.algotrading.indikator;
 
 import com.algotrading.aktie.Aktie;
-import com.algotrading.component.AktieVerzeichnis;
+import com.algotrading.component.AktieCache;
 import com.algotrading.util.AbstractTest;
 import com.algotrading.util.Util;
 
@@ -28,8 +28,8 @@ public class TestMultiplikation extends AbstractTest {
 		aktie.rechneIndikatoren();
 
 		assertEquals(21.39f, aktie.getKursListe().get(20).getIndikatorWert(iB));
-		assertEquals("0,51", Util.toString(aktie.getKursListe().get(20).getIndikatorWert(iB2)));
-		assertEquals("10,909", Util.toString(aktie.getKursListe().get(20).getIndikatorWert(iB3)));
+		assertEquals("0,51", Util.toStringExcel(aktie.getKursListe().get(20).getIndikatorWert(iB2)));
+		assertEquals("10,909", Util.toStringExcel(aktie.getKursListe().get(20).getIndikatorWert(iB3)));
 	}
 
 	/**
@@ -65,8 +65,8 @@ public class TestMultiplikation extends AbstractTest {
 		aktie.rechneIndikatoren();
 
 		assertEquals(21.39f, aktie.getKursListe().get(20).getIndikatorWert(iB));
-		assertEquals("0,51", Util.toString(aktie.getKursListe().get(20).getIndikatorWert(iB2)));
-		assertEquals("41,942", Util.toString(aktie.getKursListe().get(20).getIndikatorWert(iB3)));
+		assertEquals("0,51", Util.toStringExcel(aktie.getKursListe().get(20).getIndikatorWert(iB2)));
+		assertEquals("41,942", Util.toStringExcel(aktie.getKursListe().get(20).getIndikatorWert(iB3)));
 	}
 
 }
